@@ -1,7 +1,71 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import {
+  listCampaigns,
+  createCampaign,
+  updateCampaign,
+  deleteCampaign,
+} from '../lib/campaigns'
+import CampaignForm from './CampaignForm'
+import CampaignList from './CampaignList'
 
 export default function Layout({ user, onSignOut }) {
-  const [activeCampaign, setActiveCampaign] = useState(null)
+  const [campaigns, setCampaigns] = useState([])
+  const [activeCampaignId, setActiveCampaignId] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [editingCampaign, setEditingCampaign] = useState(null)
+
+  // Load campaigns on mount
+  useEffect(() => {
+    refreshCampaigns()
+  }, [])
+
+  const refreshCampaigns = async () => {
+    setLoading(true)
+    try {
+      const list = await listCampaigns(user.uid)
+      setCampaigns(list)
+    } catch (err) {
+      console.error('Failed to load campaigns:', err)
+    }
+    setLoading(false)
+  }
+
+  const handleCreateOrUpdate = async (data) => {
+    try {
+      if (editingCampaign) {
+        await updateCampaign(user.uid, editingCampaign.id, data)
+      } else {
+        await createCampaign(user.uid, data)
+      }
+      setShowForm(false)
+      setEditingCampaign(null)
+      await refreshCampaigns()
+    } catch (err) {
+      console.error('Failed to save campaign:', err)
+      alert('Could not save campaign — check console.')
+    }
+  }
+
+  const handleDelete = async (campaignId) => {
+    if (!confirm('Delete this campaign? This cannot be undone.')) return
+    try {
+      await deleteCampaign(user.uid, campaignId)
+      if (activeCampaignId === campaignId) setActiveCampaignId(null)
+      setShowForm(false)
+      setEditingCampaign(null)
+      await refreshCampaigns()
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    }
+  }
+
+  const handleEdit = (campaign) => {
+    setEditingCampaign(campaign)
+    setShowForm(true)
+  }
+
+  const activeCampaign = campaigns.find((c) => c.id === activeCampaignId)
 
   return (
     <div style={{
@@ -10,7 +74,7 @@ export default function Layout({ user, onSignOut }) {
       height: '100vh',
       background: 'var(--bg)',
     }}>
-      {/* LEFT SIDEBAR — campaign switcher + session list */}
+      {/* LEFT SIDEBAR */}
       <aside style={{
         background: 'var(--bg-elevated)',
         borderRight: '1px solid var(--border-subtle)',
@@ -25,50 +89,41 @@ export default function Layout({ user, onSignOut }) {
             fontWeight: 'normal',
             fontStyle: 'italic',
             color: 'var(--accent)',
-            letterSpacing: '0.02em'
-          }}>
+            letterSpacing: '0.02em',
+            cursor: 'pointer',
+          }}
+            onClick={() => setActiveCampaignId(null)}
+          >
             Marginalia
           </h1>
         </div>
 
         <div style={{ marginBottom: 'var(--space-lg)' }}>
-          <label style={{
-            display: 'block',
-            fontSize: '0.75rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--ink-faint)',
-            fontFamily: 'var(--font-ui)',
-            marginBottom: 'var(--space-sm)'
-          }}>
-            Campaign
-          </label>
+          <label style={sidebarLabelStyle}>Campaign</label>
           <select
-            value={activeCampaign || ''}
-            onChange={(e) => setActiveCampaign(e.target.value)}
+            value={activeCampaignId || ''}
+            onChange={(e) => setActiveCampaignId(e.target.value || null)}
             style={{ width: '100%' }}
           >
-            <option value="">— select a campaign —</option>
-            {/* Will populate from Firestore */}
+            <option value="">— home —</option>
+            {campaigns.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.shortName || c.name}
+              </option>
+            ))}
           </select>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <label style={{
-            display: 'block',
-            fontSize: '0.75rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--ink-faint)',
-            fontFamily: 'var(--font-ui)',
-            marginBottom: 'var(--space-sm)'
-          }}>
-            Sessions
-          </label>
-          <p style={{ color: 'var(--ink-faint)', fontSize: '0.9rem', fontStyle: 'italic' }}>
-            no sessions yet
-          </p>
-        </div>
+        {activeCampaign && (
+          <div style={{ marginBottom: 'var(--space-lg)' }}>
+            <label style={sidebarLabelStyle}>Sessions</label>
+            <p style={{ color: 'var(--ink-faint)', fontSize: '0.9rem', fontStyle: 'italic' }}>
+              no sessions yet
+            </p>
+          </div>
+        )}
+
+        <div style={{ flex: 1 }} />
 
         <div style={{
           paddingTop: 'var(--space-md)',
@@ -86,48 +141,140 @@ export default function Layout({ user, onSignOut }) {
         </div>
       </aside>
 
-      {/* CENTER — writing area */}
-      <main style={{
-        padding: 'var(--space-xl)',
-        overflowY: 'auto',
-      }}>
-        <div style={{
-          maxWidth: '720px',
-          margin: '0 auto',
-          color: 'var(--ink-muted)',
-          textAlign: 'center',
-          marginTop: '20vh',
-          fontStyle: 'italic',
-        }}>
-          <p>select or create a campaign to begin</p>
-          <p style={{ fontSize: '0.85rem', marginTop: 'var(--space-md)', color: 'var(--ink-faint)' }}>
-            session entries, character thoughts, and threads will live here
-          </p>
-        </div>
+      {/* CENTER */}
+      <main style={{ padding: 'var(--space-xl)', overflowY: 'auto' }}>
+        {loading ? (
+          <div style={{
+            textAlign: 'center',
+            color: 'var(--ink-faint)',
+            fontStyle: 'italic',
+            marginTop: '20vh',
+          }}>
+            loading the archive…
+          </div>
+        ) : activeCampaign ? (
+          <CampaignDetail
+            campaign={activeCampaign}
+            onEdit={() => handleEdit(activeCampaign)}
+            onDelete={() => handleDelete(activeCampaign.id)}
+          />
+        ) : (
+          <CampaignList
+            campaigns={campaigns}
+            onSelect={setActiveCampaignId}
+            onEdit={handleEdit}
+            onCreate={() => {
+              setEditingCampaign(null)
+              setShowForm(true)
+            }}
+          />
+        )}
       </main>
 
-      {/* RIGHT PANEL — quick reference (NPCs, threads, character) */}
+      {/* RIGHT PANEL */}
       <aside style={{
         background: 'var(--bg-elevated)',
         borderLeft: '1px solid var(--border-subtle)',
         padding: 'var(--space-md)',
         overflowY: 'auto',
       }}>
-        <label style={{
-          display: 'block',
-          fontSize: '0.75rem',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--ink-faint)',
-          fontFamily: 'var(--font-ui)',
-          marginBottom: 'var(--space-sm)'
-        }}>
-          Quick Reference
-        </label>
+        <label style={sidebarLabelStyle}>Quick Reference</label>
         <p style={{ color: 'var(--ink-faint)', fontSize: '0.9rem', fontStyle: 'italic' }}>
           tagged entities will appear here as you write
         </p>
       </aside>
+
+      {/* MODAL */}
+      {showForm && (
+        <CampaignForm
+          initial={editingCampaign || {}}
+          onSubmit={handleCreateOrUpdate}
+          onCancel={() => {
+            setShowForm(false)
+            setEditingCampaign(null)
+          }}
+        />
+      )}
     </div>
   )
+}
+
+function CampaignDetail({ campaign, onEdit, onDelete }) {
+  return (
+    <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 'var(--space-lg)',
+      }}>
+        <div>
+          <h2 style={{
+            fontSize: '2rem',
+            fontWeight: 'normal',
+            fontStyle: 'italic',
+            color: 'var(--accent)',
+          }}>
+            {campaign.name}
+          </h2>
+          <div style={{
+            color: 'var(--ink-muted)',
+            fontSize: '0.95rem',
+            marginTop: 'var(--space-xs)',
+          }}>
+            {[campaign.system, campaign.characterName && `playing ${campaign.characterName}`, campaign.dmName && `GM: ${campaign.dmName}`]
+              .filter(Boolean)
+              .join(' · ')}
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+          <button
+            onClick={onEdit}
+            style={{
+              fontSize: '0.85rem',
+              color: 'var(--ink-muted)',
+              fontFamily: 'var(--font-ui)',
+            }}
+          >
+            edit
+          </button>
+          <button
+            onClick={onDelete}
+            style={{
+              fontSize: '0.85rem',
+              color: 'var(--danger)',
+              fontFamily: 'var(--font-ui)',
+            }}
+          >
+            delete
+          </button>
+        </div>
+      </div>
+
+      <div style={{
+        background: 'var(--bg-elevated)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius)',
+        padding: 'var(--space-xl)',
+        textAlign: 'center',
+        color: 'var(--ink-muted)',
+        fontStyle: 'italic',
+      }}>
+        sessions, character, and entities go here
+        <div style={{ fontSize: '0.85rem', color: 'var(--ink-faint)', marginTop: 'var(--space-sm)' }}>
+          (coming soon)
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const sidebarLabelStyle = {
+  display: 'block',
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.1em',
+  color: 'var(--ink-faint)',
+  fontFamily: 'var(--font-ui)',
+  marginBottom: 'var(--space-sm)',
 }
