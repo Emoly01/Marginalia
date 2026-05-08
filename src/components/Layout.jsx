@@ -5,20 +5,49 @@ import {
   updateCampaign,
   deleteCampaign,
 } from '../lib/campaigns'
+import { listSessions, getSession } from '../lib/sessions'
 import CampaignForm from './CampaignForm'
 import CampaignList from './CampaignList'
+import CampaignDetail from './CampaignDetail'
+import SessionEditor from './SessionEditor'
 
 export default function Layout({ user, onSignOut }) {
   const [campaigns, setCampaigns] = useState([])
   const [activeCampaignId, setActiveCampaignId] = useState(null)
+  const [activeSessionId, setActiveSessionId] = useState(null)
+  const [activeSession, setActiveSession] = useState(null)
+  const [sidebarSessions, setSidebarSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingCampaign, setEditingCampaign] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   // Load campaigns on mount
   useEffect(() => {
     refreshCampaigns()
   }, [])
+
+  // Load sidebar sessions whenever active campaign changes (or refresh triggered)
+  useEffect(() => {
+    if (!activeCampaignId) {
+      setSidebarSessions([])
+      return
+    }
+    listSessions(user.uid, activeCampaignId)
+      .then(setSidebarSessions)
+      .catch((err) => console.error('Failed to load sidebar sessions:', err))
+  }, [activeCampaignId, refreshKey, user.uid])
+
+  // Load active session when sessionId changes
+  useEffect(() => {
+    if (!activeSessionId || !activeCampaignId) {
+      setActiveSession(null)
+      return
+    }
+    getSession(user.uid, activeCampaignId, activeSessionId)
+      .then(setActiveSession)
+      .catch((err) => console.error('Failed to load session:', err))
+  }, [activeSessionId, activeCampaignId, user.uid])
 
   const refreshCampaigns = async () => {
     setLoading(true)
@@ -31,7 +60,7 @@ export default function Layout({ user, onSignOut }) {
     setLoading(false)
   }
 
-  const handleCreateOrUpdate = async (data) => {
+  const handleCreateOrUpdateCampaign = async (data) => {
     try {
       if (editingCampaign) {
         await updateCampaign(user.uid, editingCampaign.id, data)
@@ -47,11 +76,14 @@ export default function Layout({ user, onSignOut }) {
     }
   }
 
-  const handleDelete = async (campaignId) => {
-    if (!confirm('Delete this campaign? This cannot be undone.')) return
+  const handleDeleteCampaign = async (campaignId) => {
+    if (!confirm('Delete this campaign? All sessions inside it will be orphaned. This cannot be undone.')) return
     try {
       await deleteCampaign(user.uid, campaignId)
-      if (activeCampaignId === campaignId) setActiveCampaignId(null)
+      if (activeCampaignId === campaignId) {
+        setActiveCampaignId(null)
+        setActiveSessionId(null)
+      }
       setShowForm(false)
       setEditingCampaign(null)
       await refreshCampaigns()
@@ -60,9 +92,32 @@ export default function Layout({ user, onSignOut }) {
     }
   }
 
-  const handleEdit = (campaign) => {
+  const handleEditCampaign = (campaign) => {
     setEditingCampaign(campaign)
     setShowForm(true)
+  }
+
+  const handleSelectCampaign = (id) => {
+    setActiveCampaignId(id)
+    setActiveSessionId(null)
+  }
+
+  const handleOpenSession = (sessionId) => {
+    setActiveSessionId(sessionId)
+  }
+
+  const handleBackToCampaign = () => {
+    setActiveSessionId(null)
+    setRefreshKey((k) => k + 1) // refresh session list
+  }
+
+  const handleSessionDeleted = () => {
+    setActiveSessionId(null)
+    setRefreshKey((k) => k + 1)
+  }
+
+  const handleSessionUpdated = () => {
+    setRefreshKey((k) => k + 1)
   }
 
   const activeCampaign = campaigns.find((c) => c.id === activeCampaignId)
@@ -92,7 +147,10 @@ export default function Layout({ user, onSignOut }) {
             letterSpacing: '0.02em',
             cursor: 'pointer',
           }}
-            onClick={() => setActiveCampaignId(null)}
+            onClick={() => {
+              setActiveCampaignId(null)
+              setActiveSessionId(null)
+            }}
           >
             Marginalia
           </h1>
@@ -102,7 +160,7 @@ export default function Layout({ user, onSignOut }) {
           <label style={sidebarLabelStyle}>Campaign</label>
           <select
             value={activeCampaignId || ''}
-            onChange={(e) => setActiveCampaignId(e.target.value || null)}
+            onChange={(e) => handleSelectCampaign(e.target.value || null)}
             style={{ width: '100%' }}
           >
             <option value="">— home —</option>
@@ -115,15 +173,47 @@ export default function Layout({ user, onSignOut }) {
         </div>
 
         {activeCampaign && (
-          <div style={{ marginBottom: 'var(--space-lg)' }}>
+          <div style={{ marginBottom: 'var(--space-lg)', flex: 1 }}>
             <label style={sidebarLabelStyle}>Sessions</label>
-            <p style={{ color: 'var(--ink-faint)', fontSize: '0.9rem', fontStyle: 'italic' }}>
-              no sessions yet
-            </p>
+            {sidebarSessions.length === 0 ? (
+              <p style={{ color: 'var(--ink-faint)', fontSize: '0.85rem', fontStyle: 'italic' }}>
+                no sessions yet
+              </p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                {sidebarSessions.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => handleOpenSession(s.id)}
+                    style={{
+                      textAlign: 'left',
+                      padding: '6px 8px',
+                      borderRadius: '4px',
+                      background: activeSessionId === s.id ? 'var(--bg-input)' : 'transparent',
+                      color: activeSessionId === s.id ? 'var(--ink)' : 'var(--ink-muted)',
+                      fontSize: '0.9rem',
+                      fontFamily: 'var(--font-ui)',
+                      transition: 'background 0.15s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (activeSessionId !== s.id) e.currentTarget.style.background = 'var(--bg-input)'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeSessionId !== s.id) e.currentTarget.style.background = 'transparent'
+                    }}
+                  >
+                    <span style={{ color: 'var(--ink-faint)', marginRight: '6px' }}>
+                      #{s.sessionNumber}
+                    </span>
+                    {s.title}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        <div style={{ flex: 1 }} />
+        {!activeCampaign && <div style={{ flex: 1 }} />}
 
         <div style={{
           paddingTop: 'var(--space-md)',
@@ -152,17 +242,29 @@ export default function Layout({ user, onSignOut }) {
           }}>
             loading the archive…
           </div>
+        ) : activeSession && activeCampaign ? (
+          <SessionEditor
+            userId={user.uid}
+            campaignId={activeCampaign.id}
+            session={activeSession}
+            onBack={handleBackToCampaign}
+            onDeleted={handleSessionDeleted}
+            onUpdated={handleSessionUpdated}
+          />
         ) : activeCampaign ? (
           <CampaignDetail
+            userId={user.uid}
             campaign={activeCampaign}
-            onEdit={() => handleEdit(activeCampaign)}
-            onDelete={() => handleDelete(activeCampaign.id)}
+            onEdit={() => handleEditCampaign(activeCampaign)}
+            onDelete={() => handleDeleteCampaign(activeCampaign.id)}
+            onOpenSession={handleOpenSession}
+            refreshTrigger={refreshKey}
           />
         ) : (
           <CampaignList
             campaigns={campaigns}
-            onSelect={setActiveCampaignId}
-            onEdit={handleEdit}
+            onSelect={handleSelectCampaign}
+            onEdit={handleEditCampaign}
             onCreate={() => {
               setEditingCampaign(null)
               setShowForm(true)
@@ -188,83 +290,13 @@ export default function Layout({ user, onSignOut }) {
       {showForm && (
         <CampaignForm
           initial={editingCampaign || {}}
-          onSubmit={handleCreateOrUpdate}
+          onSubmit={handleCreateOrUpdateCampaign}
           onCancel={() => {
             setShowForm(false)
             setEditingCampaign(null)
           }}
         />
       )}
-    </div>
-  )
-}
-
-function CampaignDetail({ campaign, onEdit, onDelete }) {
-  return (
-    <div style={{ maxWidth: '720px', margin: '0 auto' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 'var(--space-lg)',
-      }}>
-        <div>
-          <h2 style={{
-            fontSize: '2rem',
-            fontWeight: 'normal',
-            fontStyle: 'italic',
-            color: 'var(--accent)',
-          }}>
-            {campaign.name}
-          </h2>
-          <div style={{
-            color: 'var(--ink-muted)',
-            fontSize: '0.95rem',
-            marginTop: 'var(--space-xs)',
-          }}>
-            {[campaign.system, campaign.characterName && `playing ${campaign.characterName}`, campaign.dmName && `GM: ${campaign.dmName}`]
-              .filter(Boolean)
-              .join(' · ')}
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-          <button
-            onClick={onEdit}
-            style={{
-              fontSize: '0.85rem',
-              color: 'var(--ink-muted)',
-              fontFamily: 'var(--font-ui)',
-            }}
-          >
-            edit
-          </button>
-          <button
-            onClick={onDelete}
-            style={{
-              fontSize: '0.85rem',
-              color: 'var(--danger)',
-              fontFamily: 'var(--font-ui)',
-            }}
-          >
-            delete
-          </button>
-        </div>
-      </div>
-
-      <div style={{
-        background: 'var(--bg-elevated)',
-        border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--radius)',
-        padding: 'var(--space-xl)',
-        textAlign: 'center',
-        color: 'var(--ink-muted)',
-        fontStyle: 'italic',
-      }}>
-        sessions, character, and entities go here
-        <div style={{ fontSize: '0.85rem', color: 'var(--ink-faint)', marginTop: 'var(--space-sm)' }}>
-          (coming soon)
-        </div>
-      </div>
     </div>
   )
 }
