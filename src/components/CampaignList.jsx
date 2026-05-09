@@ -1,3 +1,5 @@
+import { formatRelative } from '../lib/formatRelative'
+
 export default function CampaignList({ campaigns, onSelect, onEdit, onCreate }) {
   if (campaigns.length === 0) {
     return (
@@ -43,33 +45,44 @@ export default function CampaignList({ campaigns, onSelect, onEdit, onCreate }) 
   return (
     <div style={{ maxWidth: '720px', margin: '0 auto' }}>
       <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
         marginBottom: 'var(--space-xl)',
       }}>
-        <h2 style={{
-          fontSize: '1.75rem',
-          fontWeight: 'normal',
-          fontStyle: 'italic',
-          color: 'var(--accent)',
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 'var(--space-xs)',
         }}>
-          your campaigns
-        </h2>
-        <button
-          onClick={onCreate}
-          style={{
-            background: 'var(--accent)',
-            color: 'var(--bg)',
-            padding: 'var(--space-sm) var(--space-md)',
-            borderRadius: 'var(--radius)',
-            fontWeight: 600,
-            fontFamily: 'var(--font-ui)',
-            fontSize: '0.9rem',
-          }}
-        >
-          + New
-        </button>
+          <h2 style={{
+            fontSize: '1.75rem',
+            fontWeight: 'normal',
+            fontStyle: 'italic',
+            color: 'var(--accent)',
+          }}>
+            your campaigns
+          </h2>
+          <button
+            onClick={onCreate}
+            style={{
+              background: 'var(--accent)',
+              color: 'var(--bg)',
+              padding: 'var(--space-sm) var(--space-md)',
+              borderRadius: 'var(--radius)',
+              fontWeight: 600,
+              fontFamily: 'var(--font-ui)',
+              fontSize: '0.9rem',
+            }}
+          >
+            + New
+          </button>
+        </div>
+        <p style={{
+          color: 'var(--ink-faint)',
+          fontSize: '0.9rem',
+          fontStyle: 'italic',
+        }}>
+          {campaigns.length} {campaigns.length === 1 ? 'story in progress' : 'stories in progress'}
+        </p>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
@@ -125,22 +138,38 @@ export default function CampaignList({ campaigns, onSelect, onEdit, onCreate }) 
                 .filter(Boolean)
                 .join(' · ')}
             </div>
-            {c.status !== 'active' && (
-              <div style={{
-                display: 'inline-block',
-                marginTop: 'var(--space-sm)',
-                padding: '2px 8px',
-                background: 'var(--bg)',
-                color: 'var(--ink-faint)',
-                fontSize: '0.7rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                borderRadius: 'var(--radius)',
-                fontFamily: 'var(--font-ui)',
-              }}>
-                {c.status}
-              </div>
-            )}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-sm)',
+              marginTop: 'var(--space-sm)',
+            }}>
+              {c.status !== 'active' && (
+                <div style={{
+                  display: 'inline-block',
+                  padding: '2px 8px',
+                  background: 'var(--bg)',
+                  color: 'var(--ink-faint)',
+                  fontSize: '0.7rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  borderRadius: 'var(--radius)',
+                  fontFamily: 'var(--font-ui)',
+                }}>
+                  {c.status}
+                </div>
+              )}
+              {c.lastActiveAt && (
+                <div style={{
+                  color: 'var(--ink-faint)',
+                  fontSize: '0.75rem',
+                  fontFamily: 'var(--font-ui)',
+                  fontStyle: 'italic',
+                }}>
+                  active {formatRelative(c.lastActiveAt)}
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>

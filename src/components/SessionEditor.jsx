@@ -71,6 +71,38 @@ export default function SessionEditor({ userId, campaignId, session, onBack, onD
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
   }, [saveStatus])
 
+  // Cmd/Ctrl+S to force-save immediately
+  useEffect(() => {
+    const handleKeyDown = async (e) => {
+      const isCmdS = (e.metaKey || e.ctrlKey) && e.key === 's'
+      if (!isCmdS) return
+      e.preventDefault()
+      if (saveStatus === 'saved') {
+        // Flash the indicator briefly to confirm
+        setSaveStatus('saving')
+        setTimeout(() => setSaveStatus('saved'), 300)
+        return
+      }
+      setSaveStatus('saving')
+      try {
+        await updateSession(userId, campaignId, session.id, {
+          title,
+          date,
+          sessionNumber: Number(sessionNumber) || 1,
+          content,
+        })
+        setSaveStatus('saved')
+        onUpdated?.()
+      } catch (err) {
+        console.error('Force-save failed:', err)
+        setSaveStatus('unsaved')
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, date, sessionNumber, content, saveStatus])
+
   const handleBack = () => {
     if (saveStatus !== 'saved') {
       if (!confirm('You have unsaved changes. Leave anyway?')) return

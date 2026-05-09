@@ -18,7 +18,13 @@ const sessionsRef = (userId, campaignId) =>
   collection(db, 'users', userId, 'campaigns', campaignId, 'sessions')
 
 export async function listSessions(userId, campaignId) {
-  const q = query(sessionsRef(userId, campaignId), orderBy('date', 'desc'))
+  // Sort by date desc, then session number desc as tiebreak
+  // (so multiple sessions on the same date order predictably)
+  const q = query(
+    sessionsRef(userId, campaignId),
+    orderBy('date', 'desc'),
+    orderBy('sessionNumber', 'desc')
+  )
   const snap = await getDocs(q)
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
 }

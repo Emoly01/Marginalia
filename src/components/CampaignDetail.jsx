@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { listSessions, createSession } from '../lib/sessions'
+import { formatRelative } from '../lib/formatRelative'
 
 // Strip HTML tags for plain-text preview
 function stripHtml(html) {
@@ -190,8 +191,14 @@ export default function CampaignDetail({
                   color: 'var(--ink-faint)',
                   fontSize: '0.85rem',
                   fontFamily: 'var(--font-ui)',
+                  textAlign: 'right',
                 }}>
-                  {s.date}
+                  <div>{s.date}</div>
+                  {s.updatedAt && (
+                    <div style={{ fontSize: '0.75rem', fontStyle: 'italic', marginTop: '2px' }}>
+                      edited {formatRelative(s.updatedAt)}
+                    </div>
+                  )}
                 </span>
               </div>
               {stripHtml(s.content) && (
