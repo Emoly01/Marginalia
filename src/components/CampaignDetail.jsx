@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { listSessions, createSession } from '../lib/sessions'
 import { formatRelative } from '../lib/formatRelative'
+import CharacterDossier from './CharacterDossier'
 
 // Strip HTML tags for plain-text preview
 function stripHtml(html) {
@@ -19,6 +20,7 @@ export default function CampaignDetail({
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
+  const [activeTab, setActiveTab] = useState('sessions') // 'sessions' | 'character'
 
   const refresh = async () => {
     setLoading(true)
@@ -105,7 +107,69 @@ export default function CampaignDetail({
         </div>
       </div>
 
-      {/* Sessions */}
+      {/* Tab navigation */}
+      <div style={{
+        display: 'flex',
+        gap: 'var(--space-md)',
+        borderBottom: '1px solid var(--border-subtle)',
+        marginBottom: 'var(--space-lg)',
+      }}>
+        <TabButton
+          active={activeTab === 'sessions'}
+          onClick={() => setActiveTab('sessions')}
+        >
+          Sessions
+        </TabButton>
+        <TabButton
+          active={activeTab === 'character'}
+          onClick={() => setActiveTab('character')}
+        >
+          Character
+        </TabButton>
+      </div>
+
+      {activeTab === 'character' ? (
+        <CharacterDossier
+          userId={userId}
+          campaignId={campaign.id}
+          campaignCharacterName={campaign.characterName}
+        />
+      ) : (
+        <SessionsView
+          sessions={sessions}
+          loading={loading}
+          loadError={loadError}
+          onNewSession={handleNewSession}
+          onOpenSession={onOpenSession}
+        />
+      )}
+    </div>
+  )
+}
+
+function TabButton({ active, onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: 'var(--space-sm) var(--space-md)',
+        background: 'transparent',
+        color: active ? 'var(--accent)' : 'var(--ink-muted)',
+        fontFamily: 'var(--font-ui)',
+        fontSize: '0.95rem',
+        borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
+        marginBottom: '-1px',
+        transition: 'color 0.15s, border-color 0.15s',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
+function SessionsView({ sessions, loading, loadError, onNewSession, onOpenSession }) {
+  return (
+    <>
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -123,7 +187,7 @@ export default function CampaignDetail({
           Sessions
         </h3>
         <button
-          onClick={handleNewSession}
+          onClick={onNewSession}
           style={{
             background: 'var(--accent)',
             color: 'var(--bg)',
@@ -236,6 +300,6 @@ export default function CampaignDetail({
           ))}
         </div>
       )}
-    </div>
+    </>
   )
 }
