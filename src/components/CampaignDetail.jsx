@@ -18,14 +18,17 @@ export default function CampaignDetail({
 }) {
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(null)
 
   const refresh = async () => {
     setLoading(true)
+    setLoadError(null)
     try {
       const list = await listSessions(userId, campaign.id)
       setSessions(list)
     } catch (err) {
       console.error('Failed to load sessions:', err)
+      setLoadError(err.message || 'Failed to load sessions')
     }
     setLoading(false)
   }
@@ -137,6 +140,20 @@ export default function CampaignDetail({
 
       {loading ? (
         <p style={{ color: 'var(--ink-faint)', fontStyle: 'italic' }}>loading…</p>
+      ) : loadError ? (
+        <div style={{
+          background: 'var(--bg-elevated)',
+          border: '1px solid var(--danger)',
+          borderRadius: 'var(--radius)',
+          padding: 'var(--space-lg)',
+          color: 'var(--danger)',
+          fontSize: '0.9rem',
+        }}>
+          <strong>Could not load sessions:</strong>
+          <div style={{ marginTop: 'var(--space-xs)', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
+            {loadError}
+          </div>
+        </div>
       ) : sessions.length === 0 ? (
         <div style={{
           background: 'var(--bg-elevated)',

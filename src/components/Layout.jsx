@@ -22,6 +22,8 @@ export default function Layout({ user, onSignOut }) {
   const [editingCampaign, setEditingCampaign] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
+  const [sidebarSessionsError, setSidebarSessionsError] = useState(null)
+
   // Load campaigns on mount
   useEffect(() => {
     refreshCampaigns()
@@ -31,11 +33,16 @@ export default function Layout({ user, onSignOut }) {
   useEffect(() => {
     if (!activeCampaignId) {
       setSidebarSessions([])
+      setSidebarSessionsError(null)
       return
     }
+    setSidebarSessionsError(null)
     listSessions(user.uid, activeCampaignId)
       .then(setSidebarSessions)
-      .catch((err) => console.error('Failed to load sidebar sessions:', err))
+      .catch((err) => {
+        console.error('Failed to load sidebar sessions:', err)
+        setSidebarSessionsError(err.message || 'Failed to load sessions')
+      })
   }, [activeCampaignId, refreshKey, user.uid])
 
   // Load active session when sessionId changes
@@ -175,7 +182,11 @@ export default function Layout({ user, onSignOut }) {
         {activeCampaign && (
           <div style={{ marginBottom: 'var(--space-lg)', flex: 1 }}>
             <label style={sidebarLabelStyle}>Sessions</label>
-            {sidebarSessions.length === 0 ? (
+            {sidebarSessionsError ? (
+              <p style={{ color: 'var(--danger)', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                error: {sidebarSessionsError}
+              </p>
+            ) : sidebarSessions.length === 0 ? (
               <p style={{ color: 'var(--ink-faint)', fontSize: '0.85rem', fontStyle: 'italic' }}>
                 no sessions yet
               </p>

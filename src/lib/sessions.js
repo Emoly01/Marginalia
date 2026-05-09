@@ -18,15 +18,17 @@ const sessionsRef = (userId, campaignId) =>
   collection(db, 'users', userId, 'campaigns', campaignId, 'sessions')
 
 export async function listSessions(userId, campaignId) {
-  // Sort by date desc, then session number desc as tiebreak
-  // (so multiple sessions on the same date order predictably)
-  const q = query(
-    sessionsRef(userId, campaignId),
-    orderBy('date', 'desc'),
-    orderBy('sessionNumber', 'desc')
-  )
+  // Use a simple single-field query (no composite index needed),
+  // then tiebreak by session number client-side.
+  const q = query(sessionsRef(userId, campaignId), orderBy('date', 'desc'))
   const snap = await getDocs(q)
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+  const sessions = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+  // Stable secondary sort: same date → higher session number first
+  sessions.sort((a, b) => {
+    if (a.date !== b.date) return 0 // already sorted by Firestore
+    return (b.sessionNumber || 0) - (a.sessionNumber || 0)
+  })
+  return sessions
 }
 
 export async function getSession(userId, campaignId, sessionId) {
