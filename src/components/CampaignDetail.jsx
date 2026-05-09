@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react'
 import { listSessions, createSession } from '../lib/sessions'
 
+// Strip HTML tags for plain-text preview
+function stripHtml(html) {
+  if (!html) return ''
+  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+}
+
 export default function CampaignDetail({
   userId,
   campaign,
@@ -188,7 +194,7 @@ export default function CampaignDetail({
                   {s.date}
                 </span>
               </div>
-              {s.content && (
+              {stripHtml(s.content) && (
                 <div style={{
                   color: 'var(--ink-muted)',
                   fontSize: '0.9rem',
@@ -199,7 +205,7 @@ export default function CampaignDetail({
                   overflow: 'hidden',
                   fontStyle: 'italic',
                 }}>
-                  {s.content.slice(0, 120)}{s.content.length > 120 ? '…' : ''}
+                  {stripHtml(s.content).slice(0, 120)}{stripHtml(s.content).length > 120 ? '…' : ''}
                 </div>
               )}
             </div>

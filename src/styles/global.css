@@ -37,6 +37,7 @@
   --radius: 6px;
   --radius-lg: 10px;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -87,4 +88,127 @@ a {
 
 a:hover {
   color: var(--accent-hover);
+}
+
+/* ============================================ */
+/* Tiptap editor — prose styles                  */
+/* ============================================ */
+
+.marginalia-prose {
+  outline: none;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  min-height: 60vh;
+}
+
+.marginalia-prose p {
+  margin-bottom: 1em;
+}
+
+.marginalia-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.marginalia-prose h1,
+.marginalia-prose h2,
+.marginalia-prose h3 {
+  font-style: italic;
+  font-weight: normal;
+  color: var(--accent);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  letter-spacing: 0.01em;
+}
+
+.marginalia-prose h1 { font-size: 1.75rem; }
+.marginalia-prose h2 { font-size: 1.4rem; }
+.marginalia-prose h3 { font-size: 1.15rem; }
+
+.marginalia-prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.marginalia-prose em {
+  font-style: italic;
+}
+
+.marginalia-prose s {
+  color: var(--ink-muted);
+}
+
+.marginalia-prose ul,
+.marginalia-prose ol {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.marginalia-prose li {
+  margin-bottom: 0.3em;
+}
+
+.marginalia-prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1em;
+  margin: 1em 0;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+.marginalia-prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(201, 169, 97, 0.4);
+  text-underline-offset: 3px;
+}
+
+.marginalia-prose a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.marginalia-prose code {
+  background: var(--bg-input);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--accent);
+}
+
+.marginalia-prose hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2em 0;
+}
+
+/* Placeholder for empty editor */
+.marginalia-prose p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--ink-faint);
+  font-style: italic;
+  pointer-events: none;
+  height: 0;
+  float: left;
+}
+
+/* ============================================ */
+/* Bubble menu (floating selection toolbar)      */
+/* ============================================ */
+
+.marginalia-bubble-menu {
+  display: flex;
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+  box-shadow: var(--shadow-lg);
+  gap: 1px;
+}
+
+/* Tippy.js (used by Tiptap) overrides */
+.tippy-box {
+  background: transparent !important;
 }

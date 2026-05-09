@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { updateSession, deleteSession } from '../lib/sessions'
 import { useDebounce } from '../lib/useDebounce'
+import RichTextEditor from './RichTextEditor'
 
 export default function SessionEditor({ userId, campaignId, session, onBack, onDeleted, onUpdated }) {
   const [title, setTitle] = useState(session.title)
@@ -58,6 +59,25 @@ export default function SessionEditor({ userId, campaignId, session, onBack, onD
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedTitle, debouncedDate, debouncedSessionNumber, debouncedContent])
 
+  // Warn before leaving with unsaved changes (browser refresh/close)
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (saveStatus !== 'saved') {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [saveStatus])
+
+  const handleBack = () => {
+    if (saveStatus !== 'saved') {
+      if (!confirm('You have unsaved changes. Leave anyway?')) return
+    }
+    onBack()
+  }
+
   const handleDelete = async () => {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return
     try {
@@ -78,7 +98,7 @@ export default function SessionEditor({ userId, campaignId, session, onBack, onD
         marginBottom: 'var(--space-lg)',
       }}>
         <button
-          onClick={onBack}
+          onClick={handleBack}
           style={{
             color: 'var(--ink-muted)',
             fontFamily: 'var(--font-ui)',
@@ -171,23 +191,11 @@ export default function SessionEditor({ userId, campaignId, session, onBack, onD
         }}
       />
 
-      {/* Body */}
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
+      {/* Body — Tiptap rich text editor */}
+      <RichTextEditor
+        content={content}
+        onChange={setContent}
         placeholder="What happened this session?"
-        style={{
-          width: '100%',
-          minHeight: '60vh',
-          background: 'transparent',
-          border: 'none',
-          color: 'var(--ink)',
-          fontSize: '1.05rem',
-          lineHeight: 1.7,
-          fontFamily: 'var(--font-body)',
-          resize: 'vertical',
-          padding: 0,
-        }}
       />
     </div>
   )
