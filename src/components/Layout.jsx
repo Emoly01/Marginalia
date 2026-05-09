@@ -6,6 +6,7 @@ import {
   deleteCampaign,
 } from '../lib/campaigns'
 import { listSessions, getSession } from '../lib/sessions'
+import { applyTheme } from '../lib/themes'
 import CampaignForm from './CampaignForm'
 import CampaignList from './CampaignList'
 import CampaignDetail from './CampaignDetail'
@@ -128,6 +129,12 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const activeCampaign = campaigns.find((c) => c.id === activeCampaignId)
+
+  // Apply theme based on active campaign
+  useEffect(() => {
+    applyTheme(activeCampaign?.theme || 'parchment')
+    return () => applyTheme('parchment') // cleanup on unmount
+  }, [activeCampaign?.theme])
 
   return (
     <div style={{

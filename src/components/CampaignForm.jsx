@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { THEME_LIST } from '../lib/themes'
 
 const COLORS = [
   '#c9a961', // gold
@@ -19,6 +20,7 @@ export default function CampaignForm({ onSubmit, onCancel, initial = {} }) {
   const [characterClass, setCharacterClass] = useState(initial.characterClass || '')
   const [color, setColor] = useState(initial.color || COLORS[0])
   const [status, setStatus] = useState(initial.status || 'active')
+  const [theme, setTheme] = useState(initial.theme || 'parchment')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -32,6 +34,7 @@ export default function CampaignForm({ onSubmit, onCancel, initial = {} }) {
       characterClass: characterClass.trim(),
       color,
       status,
+      theme,
     })
   }
 
@@ -149,6 +152,62 @@ export default function CampaignForm({ onSubmit, onCancel, initial = {} }) {
                 }}
                 aria-label={`Color ${c}`}
               />
+            ))}
+          </div>
+        </Field>
+
+        <Field label="Theme" hint="visual palette while inside this campaign">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+            gap: 'var(--space-sm)',
+          }}>
+            {THEME_LIST.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setTheme(t.id)}
+                style={{
+                  background: theme === t.id ? 'var(--bg-input)' : 'transparent',
+                  border: theme === t.id ? '1px solid var(--accent)' : '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius)',
+                  padding: 'var(--space-sm)',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  fontFamily: 'var(--font-ui)',
+                  transition: 'border-color 0.15s',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
+                  {t.swatch.map((c, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '4px',
+                        background: c,
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                    />
+                  ))}
+                </div>
+                <div style={{
+                  color: 'var(--ink)',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                }}>
+                  {t.name}
+                </div>
+                <div style={{
+                  color: 'var(--ink-faint)',
+                  fontSize: '0.75rem',
+                  fontStyle: 'italic',
+                  marginTop: '2px',
+                }}>
+                  {t.description}
+                </div>
+              </button>
             ))}
           </div>
         </Field>

@@ -32,6 +32,7 @@ export async function createCampaign(userId, data) {
     characterClass: data.characterClass || '',
     color: data.color || '#c9a961',
     status: data.status || 'active',
+    theme: data.theme || 'parchment',
     createdAt: now,
     lastActiveAt: now,
   })
