@@ -11,6 +11,7 @@ import CampaignForm from './CampaignForm'
 import CampaignList from './CampaignList'
 import CampaignDetail from './CampaignDetail'
 import SessionEditor from './SessionEditor'
+import MarginsPanel from './MarginsPanel'
 
 export default function Layout({ user, onSignOut }) {
   const [campaigns, setCampaigns] = useState([])
@@ -296,12 +297,23 @@ export default function Layout({ user, onSignOut }) {
         background: 'var(--bg-elevated)',
         borderLeft: '1px solid var(--border-subtle)',
         padding: 'var(--space-md)',
-        overflowY: 'auto',
+        overflowY: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
       }}>
-        <label style={sidebarLabelStyle}>Quick Reference</label>
-        <p style={{ color: 'var(--ink-faint)', fontSize: '0.9rem', fontStyle: 'italic' }}>
-          tagged entities will appear here as you write
-        </p>
+        {activeCampaign ? (
+          <MarginsPanel
+            userId={user.uid}
+            campaignId={activeCampaign.id}
+          />
+        ) : (
+          <>
+            <label style={sidebarLabelStyle}>Margins</label>
+            <p style={{ color: 'var(--ink-faint)', fontSize: '0.85rem', fontStyle: 'italic' }}>
+              open a campaign to capture loose thoughts
+            </p>
+          </>
+        )}
       </aside>
 
       {/* MODAL */}
