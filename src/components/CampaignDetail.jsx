@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { listSessions, createSession } from '../lib/sessions'
 import { formatRelative } from '../lib/formatRelative'
 import CharacterDossier from './CharacterDossier'
+import EntitiesView from './EntitiesView'
 
 // Strip HTML tags for plain-text preview
 function stripHtml(html) {
@@ -15,12 +16,13 @@ export default function CampaignDetail({
   onEdit,
   onDelete,
   onOpenSession,
+  onOpenEntity,
   refreshTrigger,
 }) {
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
-  const [activeTab, setActiveTab] = useState('sessions') // 'sessions' | 'character'
+  const [activeTab, setActiveTab] = useState('sessions') // 'sessions' | 'character' | 'entities'
 
   const refresh = async () => {
     setLoading(true)
@@ -121,6 +123,12 @@ export default function CampaignDetail({
           Sessions
         </TabButton>
         <TabButton
+          active={activeTab === 'entities'}
+          onClick={() => setActiveTab('entities')}
+        >
+          Entities
+        </TabButton>
+        <TabButton
           active={activeTab === 'character'}
           onClick={() => setActiveTab('character')}
         >
@@ -133,6 +141,13 @@ export default function CampaignDetail({
           userId={userId}
           campaignId={campaign.id}
           campaignCharacterName={campaign.characterName}
+        />
+      ) : activeTab === 'entities' ? (
+        <EntitiesView
+          userId={userId}
+          campaignId={campaign.id}
+          onOpenEntity={onOpenEntity}
+          refreshTrigger={refreshTrigger}
         />
       ) : (
         <SessionsView

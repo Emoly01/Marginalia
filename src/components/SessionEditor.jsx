@@ -1,9 +1,21 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { updateSession, deleteSession } from '../lib/sessions'
+import { createEntity } from '../lib/entities'
 import { useDebounce } from '../lib/useDebounce'
+import { buildMentionSuggestion } from '../lib/mentionSuggestion'
 import RichTextEditor from './RichTextEditor'
 
-export default function SessionEditor({ userId, campaignId, session, onBack, onDeleted, onUpdated }) {
+export default function SessionEditor({
+  userId,
+  campaignId,
+  session,
+  entities,
+  onEntityCreated,
+  onOpenEntity,
+  onBack,
+  onDeleted,
+  onUpdated,
+}) {
   const [title, setTitle] = useState(session.title)
   const [date, setDate] = useState(session.date)
   const [sessionNumber, setSessionNumber] = useState(session.sessionNumber)
@@ -17,6 +29,33 @@ export default function SessionEditor({ userId, campaignId, session, onBack, onD
 
   // Track whether we've actually touched anything since loading
   const isDirty = useRef(false)
+
+  // Keep a live ref to entities so the mention suggestion always sees current data
+  const entitiesRef = useRef(entities)
+  useEffect(() => {
+    entitiesRef.current = entities
+  }, [entities])
+
+  // Build the @-mention suggestion config once
+  const mentionSuggestion = useMemo(
+    () =>
+      buildMentionSuggestion({
+        getEntities: () => entitiesRef.current,
+        onCreateEntity: async (name) => {
+          try {
+            const id = await createEntity(userId, campaignId, { name, type: 'npc' })
+            const created = { id, name, type: 'npc' }
+            onEntityCreated?.()
+            return created
+          } catch (err) {
+            console.error('Failed to create entity from mention:', err)
+            return null
+          }
+        },
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [userId, campaignId]
+  )
 
   // Mark dirty on any change
   useEffect(() => {
@@ -227,7 +266,9 @@ export default function SessionEditor({ userId, campaignId, session, onBack, onD
       <RichTextEditor
         content={content}
         onChange={setContent}
-        placeholder="What happened this session?"
+        placeholder="What happened this session? Type @ to mention an NPC, place, or thread."
+        mentionSuggestion={mentionSuggestion}
+        onMentionClick={onOpenEntity}
       />
     </div>
   )

@@ -6,11 +6,13 @@ import {
   deleteCampaign,
 } from '../lib/campaigns'
 import { listSessions, getSession } from '../lib/sessions'
+import { listEntities } from '../lib/entities'
 import { applyTheme } from '../lib/themes'
 import CampaignForm from './CampaignForm'
 import CampaignList from './CampaignList'
 import CampaignDetail from './CampaignDetail'
 import SessionEditor from './SessionEditor'
+import EntityDetail from './EntityDetail'
 import MarginsPanel from './MarginsPanel'
 
 export default function Layout({ user, onSignOut }) {
@@ -18,11 +20,14 @@ export default function Layout({ user, onSignOut }) {
   const [activeCampaignId, setActiveCampaignId] = useState(null)
   const [activeSessionId, setActiveSessionId] = useState(null)
   const [activeSession, setActiveSession] = useState(null)
+  const [activeEntityId, setActiveEntityId] = useState(null)
+  const [entities, setEntities] = useState([])
   const [sidebarSessions, setSidebarSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingCampaign, setEditingCampaign] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [entityRefreshKey, setEntityRefreshKey] = useState(0)
 
   const [sidebarSessionsError, setSidebarSessionsError] = useState(null)
 
@@ -46,6 +51,17 @@ export default function Layout({ user, onSignOut }) {
         setSidebarSessionsError(err.message || 'Failed to load sessions')
       })
   }, [activeCampaignId, refreshKey, user.uid])
+
+  // Load entities whenever active campaign changes (or entities refreshed)
+  useEffect(() => {
+    if (!activeCampaignId) {
+      setEntities([])
+      return
+    }
+    listEntities(user.uid, activeCampaignId)
+      .then(setEntities)
+      .catch((err) => console.error('Failed to load entities:', err))
+  }, [activeCampaignId, entityRefreshKey, user.uid])
 
   // Load active session when sessionId changes
   useEffect(() => {
@@ -109,14 +125,17 @@ export default function Layout({ user, onSignOut }) {
   const handleSelectCampaign = (id) => {
     setActiveCampaignId(id)
     setActiveSessionId(null)
+    setActiveEntityId(null)
   }
 
   const handleOpenSession = (sessionId) => {
     setActiveSessionId(sessionId)
+    setActiveEntityId(null)
   }
 
   const handleBackToCampaign = () => {
     setActiveSessionId(null)
+    setActiveEntityId(null)
     setRefreshKey((k) => k + 1) // refresh session list
   }
 
@@ -127,6 +146,20 @@ export default function Layout({ user, onSignOut }) {
 
   const handleSessionUpdated = () => {
     setRefreshKey((k) => k + 1)
+  }
+
+  const handleOpenEntity = (entityId) => {
+    setActiveEntityId(entityId)
+    setActiveSessionId(null)
+  }
+
+  const handleEntityRefresh = () => {
+    setEntityRefreshKey((k) => k + 1)
+  }
+
+  const handleBackFromEntity = () => {
+    setActiveEntityId(null)
+    setEntityRefreshKey((k) => k + 1)
   }
 
   const activeCampaign = campaigns.find((c) => c.id === activeCampaignId)
@@ -261,11 +294,23 @@ export default function Layout({ user, onSignOut }) {
           }}>
             loading the archive…
           </div>
+        ) : activeEntityId && activeCampaign ? (
+          <EntityDetail
+            userId={user.uid}
+            campaignId={activeCampaign.id}
+            entityId={activeEntityId}
+            onBack={handleBackFromEntity}
+            onOpenEntity={handleOpenEntity}
+            onOpenSession={handleOpenSession}
+          />
         ) : activeSession && activeCampaign ? (
           <SessionEditor
             userId={user.uid}
             campaignId={activeCampaign.id}
             session={activeSession}
+            entities={entities}
+            onEntityCreated={handleEntityRefresh}
+            onOpenEntity={handleOpenEntity}
             onBack={handleBackToCampaign}
             onDeleted={handleSessionDeleted}
             onUpdated={handleSessionUpdated}
@@ -277,7 +322,8 @@ export default function Layout({ user, onSignOut }) {
             onEdit={() => handleEditCampaign(activeCampaign)}
             onDelete={() => handleDeleteCampaign(activeCampaign.id)}
             onOpenSession={handleOpenSession}
-            refreshTrigger={refreshKey}
+            onOpenEntity={handleOpenEntity}
+            refreshTrigger={refreshKey + entityRefreshKey}
           />
         ) : (
           <CampaignList

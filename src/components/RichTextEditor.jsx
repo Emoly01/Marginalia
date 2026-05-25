@@ -2,15 +2,26 @@ import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
-import { useEffect } from 'react'
+import Mention from '@tiptap/extension-mention'
+import { useEffect, useMemo } from 'react'
 
 /**
  * RichTextEditor — Tiptap-based editor with floating bubble menu.
  * Stores content as HTML string.
+ *
+ * Optional props:
+ *   mentionSuggestion — a Tiptap suggestion config (enables @-mentions)
+ *   onMentionClick — called with entityId when a mention tag is clicked
  */
-export default function RichTextEditor({ content, onChange, placeholder = 'Start writing…' }) {
-  const editor = useEditor({
-    extensions: [
+export default function RichTextEditor({
+  content,
+  onChange,
+  placeholder = 'Start writing…',
+  mentionSuggestion = null,
+  onMentionClick = null,
+}) {
+  const extensions = useMemo(() => {
+    const base = [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
       }),
@@ -25,7 +36,33 @@ export default function RichTextEditor({ content, onChange, placeholder = 'Start
           target: '_blank',
         },
       }),
-    ],
+    ]
+    if (mentionSuggestion) {
+      base.push(
+        Mention.configure({
+          HTMLAttributes: { class: 'marginalia-mention' },
+          suggestion: mentionSuggestion,
+          renderHTML({ options, node }) {
+            return [
+              'span',
+              {
+                ...options.HTMLAttributes,
+                'data-type': 'mention',
+                'data-id': node.attrs.id,
+                'data-label': node.attrs.label,
+              },
+              `@${node.attrs.label ?? node.attrs.id}`,
+            ]
+          },
+        })
+      )
+    }
+    return base
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mentionSuggestion])
+
+  const editor = useEditor({
+    extensions,
     content: content || '',
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
@@ -33,6 +70,13 @@ export default function RichTextEditor({ content, onChange, placeholder = 'Start
     editorProps: {
       attributes: {
         class: 'marginalia-prose',
+      },
+      handleClickOn: (view, pos, node) => {
+        if (node.type.name === 'mention' && onMentionClick) {
+          onMentionClick(node.attrs.id)
+          return true
+        }
+        return false
       },
     },
   })

@@ -212,3 +212,96 @@ a:hover {
 .tippy-box {
   background: transparent !important;
 }
+
+/* ============================================ */
+/* Mentions — inline entity tags                 */
+/* ============================================ */
+
+.marginalia-mention {
+  color: var(--accent);
+  background: rgba(201, 169, 97, 0.12);
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-weight: 600;
+  font-style: normal;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.marginalia-mention:hover {
+  background: rgba(201, 169, 97, 0.25);
+}
+
+/* ============================================ */
+/* Mention autocomplete dropdown                 */
+/* ============================================ */
+
+.mention-dropdown {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+  min-width: 220px;
+  max-height: 280px;
+  overflow-y: auto;
+  font-family: var(--font-ui);
+}
+
+.mention-empty {
+  color: var(--ink-faint);
+  font-size: 0.85rem;
+  font-style: italic;
+  padding: 8px 10px;
+}
+
+.mention-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.9rem;
+  transition: background 0.1s;
+}
+
+.mention-item:hover,
+.mention-item.is-selected {
+  background: var(--bg-input);
+}
+
+.mention-type-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mention-item-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mention-item-type {
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mention-create {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 2px;
+  padding-top: 9px;
+}
+
+.mention-create .mention-item-name {
+  color: var(--ink-muted);
+}
