@@ -4,6 +4,7 @@ import { createEntity } from '../lib/entities'
 import { useDebounce } from '../lib/useDebounce'
 import { buildMentionSuggestion } from '../lib/mentionSuggestion'
 import RichTextEditor from './RichTextEditor'
+import NpcQuickCapture from './NpcQuickCapture'
 
 export default function SessionEditor({
   userId,
@@ -260,6 +261,15 @@ export default function SessionEditor({
           marginBottom: 'var(--space-md)',
           fontFamily: 'var(--font-body)',
         }}
+      />
+
+      {/* Quick-add NPC roster — capture names fast without breaking flow */}
+      <NpcQuickCapture
+        userId={userId}
+        campaignId={campaignId}
+        entities={entities}
+        onEntityCreated={onEntityCreated}
+        onOpenEntity={onOpenEntity}
       />
 
       {/* Body — Tiptap rich text editor */}
