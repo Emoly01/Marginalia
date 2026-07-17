@@ -25,7 +25,7 @@
   - sessionNumber     // 47
   - date              // when session happened
   - content           // rich text body of journal entry
-  - mentions          // array of { entityId, entityType, position }
+  - mentionIds        // array of entity IDs mentioned in content (auto-derived on save)
   - createdAt
   - updatedAt
 
@@ -56,8 +56,9 @@
 
 - **All under `/users/{userId}/`** — strict per-user privacy. Firestore rules can be a single
   rule: `allow read, write: if request.auth.uid == userId`. Simple, secure.
-- **Sessions store `mentions` array** — when you @-tag an NPC inline, we record the link.
-  Rendering an entity page = query sessions where `mentions` contains this entityId.
+- **Sessions store a `mentionIds` array** — when you @-tag an NPC inline, we record the link.
+  It's re-derived from the content on every save, so it can't drift. Entity pages check
+  `mentionIds` (falling back to scanning content for pre-v0.3 sessions).
 - **Entities are flat per campaign** — no subcollections by type. Filter by `type` field.
   Easier to query "all things in this campaign" and easier to convert types later
   (e.g. "this NPC is actually a location now").

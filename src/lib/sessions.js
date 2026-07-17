@@ -13,6 +13,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore'
 import { db } from '../firebase'
+import { extractMentionIds } from './mentions'
 
 const sessionsRef = (userId, campaignId) =>
   collection(db, 'users', userId, 'campaigns', campaignId, 'sessions')
@@ -61,6 +62,7 @@ export async function createSession(userId, campaignId, data = {}) {
     sessionNumber,
     date: data.date || today,
     content: data.content || '',
+    mentionIds: extractMentionIds(data.content || ''),
     createdAt: now,
     updatedAt: now,
   })
@@ -69,10 +71,12 @@ export async function createSession(userId, campaignId, data = {}) {
 
 export async function updateSession(userId, campaignId, sessionId, data) {
   const ref = doc(db, 'users', userId, 'campaigns', campaignId, 'sessions', sessionId)
-  await updateDoc(ref, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  })
+  const patch = { ...data, updatedAt: serverTimestamp() }
+  // Keep the denormalized mention index in sync whenever content changes
+  if (data.content !== undefined) {
+    patch.mentionIds = extractMentionIds(data.content)
+  }
+  await updateDoc(ref, patch)
 }
 
 export async function deleteSession(userId, campaignId, sessionId) {
