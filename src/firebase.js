@@ -3,7 +3,11 @@
 
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: "AIzaSyC92ZZvnXtrPs--bAKy_wOAcOP_Lj6zLGk",
@@ -18,4 +22,11 @@ const app = initializeApp(firebaseConfig)
 
 export const auth = getAuth(app)
 export const googleProvider = new GoogleAuthProvider()
-export const db = getFirestore(app)
+
+// Offline persistence: reads served from IndexedDB when the network is
+// down, writes queued and synced when it returns — spotty table wifi safe.
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+  }),
+})

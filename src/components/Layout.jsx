@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import {
   listCampaigns,
   createCampaign,
@@ -16,11 +17,21 @@ import EntityDetail from './EntityDetail'
 import MarginsPanel from './MarginsPanel'
 
 export default function Layout({ user, onSignOut }) {
+  // Navigation lives in the URL: /campaigns/:campaignId[/sessions/:sessionId | /entities/:entityId]
+  const { campaignId: activeCampaignId, sessionId: activeSessionId, entityId: activeEntityId } = useParams()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // Mobile drawers (no-ops on desktop where both panels are always visible)
+  const [leftOpen, setLeftOpen] = useState(false)
+  const [rightOpen, setRightOpen] = useState(false)
+  useEffect(() => {
+    setLeftOpen(false)
+    setRightOpen(false)
+  }, [location.pathname])
+
   const [campaigns, setCampaigns] = useState([])
-  const [activeCampaignId, setActiveCampaignId] = useState(null)
-  const [activeSessionId, setActiveSessionId] = useState(null)
   const [activeSession, setActiveSession] = useState(null)
-  const [activeEntityId, setActiveEntityId] = useState(null)
   const [entities, setEntities] = useState([])
   const [sidebarSessions, setSidebarSessions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -106,8 +117,7 @@ export default function Layout({ user, onSignOut }) {
     try {
       await deleteCampaign(user.uid, campaignId)
       if (activeCampaignId === campaignId) {
-        setActiveCampaignId(null)
-        setActiveSessionId(null)
+        navigate('/')
       }
       setShowForm(false)
       setEditingCampaign(null)
@@ -123,24 +133,20 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const handleSelectCampaign = (id) => {
-    setActiveCampaignId(id)
-    setActiveSessionId(null)
-    setActiveEntityId(null)
+    navigate(id ? `/campaigns/${id}` : '/')
   }
 
   const handleOpenSession = (sessionId) => {
-    setActiveSessionId(sessionId)
-    setActiveEntityId(null)
+    navigate(`/campaigns/${activeCampaignId}/sessions/${sessionId}`)
   }
 
   const handleBackToCampaign = () => {
-    setActiveSessionId(null)
-    setActiveEntityId(null)
+    navigate(`/campaigns/${activeCampaignId}`)
     setRefreshKey((k) => k + 1) // refresh session list
   }
 
   const handleSessionDeleted = () => {
-    setActiveSessionId(null)
+    navigate(`/campaigns/${activeCampaignId}`)
     setRefreshKey((k) => k + 1)
   }
 
@@ -149,8 +155,7 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const handleOpenEntity = (entityId) => {
-    setActiveEntityId(entityId)
-    setActiveSessionId(null)
+    navigate(`/campaigns/${activeCampaignId}/entities/${entityId}`)
   }
 
   const handleEntityRefresh = () => {
@@ -158,7 +163,7 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const handleBackFromEntity = () => {
-    setActiveEntityId(null)
+    navigate(`/campaigns/${activeCampaignId}`)
     setEntityRefreshKey((k) => k + 1)
   }
 
@@ -171,21 +176,16 @@ export default function Layout({ user, onSignOut }) {
   }, [activeCampaign?.theme])
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: '260px 1fr 300px',
-      height: '100vh',
-      background: 'var(--bg)',
-    }}>
+    <div className="app-shell">
+      {/* MOBILE TOP BAR */}
+      <header className="app-topbar">
+        <button onClick={() => setLeftOpen(true)} title="Campaigns & sessions">☰</button>
+        <span className="app-topbar-title" onClick={() => navigate('/')}>Marginalia</span>
+        <button onClick={() => setRightOpen(true)} title="Margins">✎</button>
+      </header>
+
       {/* LEFT SIDEBAR */}
-      <aside style={{
-        background: 'var(--bg-elevated)',
-        borderRight: '1px solid var(--border-subtle)',
-        padding: 'var(--space-md)',
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <aside className={`app-sidebar${leftOpen ? ' open' : ''}`}>
         <div style={{ marginBottom: 'var(--space-lg)' }}>
           <h1 style={{
             fontSize: '1.5rem',
@@ -195,10 +195,7 @@ export default function Layout({ user, onSignOut }) {
             letterSpacing: '0.02em',
             cursor: 'pointer',
           }}
-            onClick={() => {
-              setActiveCampaignId(null)
-              setActiveSessionId(null)
-            }}
+            onClick={() => navigate('/')}
           >
             Marginalia
           </h1>
@@ -284,7 +281,7 @@ export default function Layout({ user, onSignOut }) {
       </aside>
 
       {/* CENTER */}
-      <main style={{ padding: 'var(--space-xl)', overflowY: 'auto' }}>
+      <main className="app-main">
         {loading ? (
           <div style={{
             textAlign: 'center',
@@ -303,7 +300,16 @@ export default function Layout({ user, onSignOut }) {
             onOpenEntity={handleOpenEntity}
             onOpenSession={handleOpenSession}
           />
-        ) : activeSession && activeCampaign ? (
+        ) : activeSessionId && activeCampaign && (!activeSession || activeSession.id !== activeSessionId) ? (
+          <div style={{
+            textAlign: 'center',
+            color: 'var(--ink-faint)',
+            fontStyle: 'italic',
+            marginTop: '20vh',
+          }}>
+            loading…
+          </div>
+        ) : activeSessionId && activeSession && activeCampaign ? (
           <SessionEditor
             userId={user.uid}
             campaignId={activeCampaign.id}
@@ -339,14 +345,7 @@ export default function Layout({ user, onSignOut }) {
       </main>
 
       {/* RIGHT PANEL */}
-      <aside style={{
-        background: 'var(--bg-elevated)',
-        borderLeft: '1px solid var(--border-subtle)',
-        padding: 'var(--space-md)',
-        overflowY: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <aside className={`app-margins${rightOpen ? ' open' : ''}`}>
         {activeCampaign ? (
           <MarginsPanel
             userId={user.uid}
@@ -361,6 +360,17 @@ export default function Layout({ user, onSignOut }) {
           </>
         )}
       </aside>
+
+      {/* MOBILE DRAWER BACKDROP */}
+      {(leftOpen || rightOpen) && (
+        <div
+          className="app-backdrop"
+          onClick={() => {
+            setLeftOpen(false)
+            setRightOpen(false)
+          }}
+        />
+      )}
 
       {/* MODAL */}
       {showForm && (

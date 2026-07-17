@@ -75,27 +75,33 @@ export default function SessionEditor({
     setContent(session.content || '')
   }, [session.id])
 
+  // Single save path shared by autosave and Cmd+S
+  const persist = async (values) => {
+    setSaveStatus('saving')
+    try {
+      await updateSession(userId, campaignId, session.id, {
+        title: values.title,
+        date: values.date,
+        sessionNumber: Number(values.sessionNumber) || 1,
+        content: values.content,
+      })
+      setSaveStatus('saved')
+      onUpdated?.()
+    } catch (err) {
+      console.error('Save failed:', err)
+      setSaveStatus('unsaved')
+    }
+  }
+
   // Autosave when debounced values change
   useEffect(() => {
     if (!isDirty.current) return
-
-    const save = async () => {
-      setSaveStatus('saving')
-      try {
-        await updateSession(userId, campaignId, session.id, {
-          title: debouncedTitle,
-          date: debouncedDate,
-          sessionNumber: Number(debouncedSessionNumber) || 1,
-          content: debouncedContent,
-        })
-        setSaveStatus('saved')
-        onUpdated?.()
-      } catch (err) {
-        console.error('Save failed:', err)
-        setSaveStatus('unsaved')
-      }
-    }
-    save()
+    persist({
+      title: debouncedTitle,
+      date: debouncedDate,
+      sessionNumber: debouncedSessionNumber,
+      content: debouncedContent,
+    })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedTitle, debouncedDate, debouncedSessionNumber, debouncedContent])
 
@@ -123,20 +129,7 @@ export default function SessionEditor({
         setTimeout(() => setSaveStatus('saved'), 300)
         return
       }
-      setSaveStatus('saving')
-      try {
-        await updateSession(userId, campaignId, session.id, {
-          title,
-          date,
-          sessionNumber: Number(sessionNumber) || 1,
-          content,
-        })
-        setSaveStatus('saved')
-        onUpdated?.()
-      } catch (err) {
-        console.error('Force-save failed:', err)
-        setSaveStatus('unsaved')
-      }
+      await persist({ title, date, sessionNumber, content })
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
