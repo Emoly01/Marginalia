@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import {
   listCampaigns,
   createCampaign,
@@ -20,6 +20,15 @@ export default function Layout({ user, onSignOut }) {
   // Navigation lives in the URL: /campaigns/:campaignId[/sessions/:sessionId | /entities/:entityId]
   const { campaignId: activeCampaignId, sessionId: activeSessionId, entityId: activeEntityId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Mobile drawers (no-ops on desktop where both panels are always visible)
+  const [leftOpen, setLeftOpen] = useState(false)
+  const [rightOpen, setRightOpen] = useState(false)
+  useEffect(() => {
+    setLeftOpen(false)
+    setRightOpen(false)
+  }, [location.pathname])
 
   const [campaigns, setCampaigns] = useState([])
   const [activeSession, setActiveSession] = useState(null)
@@ -167,21 +176,16 @@ export default function Layout({ user, onSignOut }) {
   }, [activeCampaign?.theme])
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: '260px 1fr 300px',
-      height: '100vh',
-      background: 'var(--bg)',
-    }}>
+    <div className="app-shell">
+      {/* MOBILE TOP BAR */}
+      <header className="app-topbar">
+        <button onClick={() => setLeftOpen(true)} title="Campaigns & sessions">☰</button>
+        <span className="app-topbar-title" onClick={() => navigate('/')}>Marginalia</span>
+        <button onClick={() => setRightOpen(true)} title="Margins">✎</button>
+      </header>
+
       {/* LEFT SIDEBAR */}
-      <aside style={{
-        background: 'var(--bg-elevated)',
-        borderRight: '1px solid var(--border-subtle)',
-        padding: 'var(--space-md)',
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <aside className={`app-sidebar${leftOpen ? ' open' : ''}`}>
         <div style={{ marginBottom: 'var(--space-lg)' }}>
           <h1 style={{
             fontSize: '1.5rem',
@@ -277,7 +281,7 @@ export default function Layout({ user, onSignOut }) {
       </aside>
 
       {/* CENTER */}
-      <main style={{ padding: 'var(--space-xl)', overflowY: 'auto' }}>
+      <main className="app-main">
         {loading ? (
           <div style={{
             textAlign: 'center',
@@ -341,14 +345,7 @@ export default function Layout({ user, onSignOut }) {
       </main>
 
       {/* RIGHT PANEL */}
-      <aside style={{
-        background: 'var(--bg-elevated)',
-        borderLeft: '1px solid var(--border-subtle)',
-        padding: 'var(--space-md)',
-        overflowY: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <aside className={`app-margins${rightOpen ? ' open' : ''}`}>
         {activeCampaign ? (
           <MarginsPanel
             userId={user.uid}
@@ -363,6 +360,17 @@ export default function Layout({ user, onSignOut }) {
           </>
         )}
       </aside>
+
+      {/* MOBILE DRAWER BACKDROP */}
+      {(leftOpen || rightOpen) && (
+        <div
+          className="app-backdrop"
+          onClick={() => {
+            setLeftOpen(false)
+            setRightOpen(false)
+          }}
+        />
+      )}
 
       {/* MODAL */}
       {showForm && (
