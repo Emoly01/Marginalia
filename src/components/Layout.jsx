@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import {
   listCampaigns,
   createCampaign,
@@ -16,11 +17,12 @@ import EntityDetail from './EntityDetail'
 import MarginsPanel from './MarginsPanel'
 
 export default function Layout({ user, onSignOut }) {
+  // Navigation lives in the URL: /campaigns/:campaignId[/sessions/:sessionId | /entities/:entityId]
+  const { campaignId: activeCampaignId, sessionId: activeSessionId, entityId: activeEntityId } = useParams()
+  const navigate = useNavigate()
+
   const [campaigns, setCampaigns] = useState([])
-  const [activeCampaignId, setActiveCampaignId] = useState(null)
-  const [activeSessionId, setActiveSessionId] = useState(null)
   const [activeSession, setActiveSession] = useState(null)
-  const [activeEntityId, setActiveEntityId] = useState(null)
   const [entities, setEntities] = useState([])
   const [sidebarSessions, setSidebarSessions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -106,8 +108,7 @@ export default function Layout({ user, onSignOut }) {
     try {
       await deleteCampaign(user.uid, campaignId)
       if (activeCampaignId === campaignId) {
-        setActiveCampaignId(null)
-        setActiveSessionId(null)
+        navigate('/')
       }
       setShowForm(false)
       setEditingCampaign(null)
@@ -123,24 +124,20 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const handleSelectCampaign = (id) => {
-    setActiveCampaignId(id)
-    setActiveSessionId(null)
-    setActiveEntityId(null)
+    navigate(id ? `/campaigns/${id}` : '/')
   }
 
   const handleOpenSession = (sessionId) => {
-    setActiveSessionId(sessionId)
-    setActiveEntityId(null)
+    navigate(`/campaigns/${activeCampaignId}/sessions/${sessionId}`)
   }
 
   const handleBackToCampaign = () => {
-    setActiveSessionId(null)
-    setActiveEntityId(null)
+    navigate(`/campaigns/${activeCampaignId}`)
     setRefreshKey((k) => k + 1) // refresh session list
   }
 
   const handleSessionDeleted = () => {
-    setActiveSessionId(null)
+    navigate(`/campaigns/${activeCampaignId}`)
     setRefreshKey((k) => k + 1)
   }
 
@@ -149,8 +146,7 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const handleOpenEntity = (entityId) => {
-    setActiveEntityId(entityId)
-    setActiveSessionId(null)
+    navigate(`/campaigns/${activeCampaignId}/entities/${entityId}`)
   }
 
   const handleEntityRefresh = () => {
@@ -158,7 +154,7 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const handleBackFromEntity = () => {
-    setActiveEntityId(null)
+    navigate(`/campaigns/${activeCampaignId}`)
     setEntityRefreshKey((k) => k + 1)
   }
 
@@ -195,10 +191,7 @@ export default function Layout({ user, onSignOut }) {
             letterSpacing: '0.02em',
             cursor: 'pointer',
           }}
-            onClick={() => {
-              setActiveCampaignId(null)
-              setActiveSessionId(null)
-            }}
+            onClick={() => navigate('/')}
           >
             Marginalia
           </h1>
@@ -303,7 +296,16 @@ export default function Layout({ user, onSignOut }) {
             onOpenEntity={handleOpenEntity}
             onOpenSession={handleOpenSession}
           />
-        ) : activeSession && activeCampaign ? (
+        ) : activeSessionId && activeCampaign && (!activeSession || activeSession.id !== activeSessionId) ? (
+          <div style={{
+            textAlign: 'center',
+            color: 'var(--ink-faint)',
+            fontStyle: 'italic',
+            marginTop: '20vh',
+          }}>
+            loading…
+          </div>
+        ) : activeSessionId && activeSession && activeCampaign ? (
           <SessionEditor
             userId={user.uid}
             campaignId={activeCampaign.id}

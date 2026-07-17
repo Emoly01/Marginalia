@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
 import { auth, googleProvider } from './firebase'
 import Layout from './components/Layout'
@@ -47,5 +48,15 @@ export default function App() {
     return <SignIn onSignIn={handleSignIn} />
   }
 
-  return <Layout user={user} onSignOut={handleSignOut} />
+  const layout = <Layout user={user} onSignOut={handleSignOut} />
+
+  return (
+    <Routes>
+      <Route path="/" element={layout} />
+      <Route path="/campaigns/:campaignId" element={layout} />
+      <Route path="/campaigns/:campaignId/sessions/:sessionId" element={layout} />
+      <Route path="/campaigns/:campaignId/entities/:entityId" element={layout} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
 }
