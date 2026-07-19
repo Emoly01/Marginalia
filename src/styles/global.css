@@ -211,6 +211,55 @@ a:hover {
 }
 
 /* ============================================ */
+/* Toasts — transient error/info notices         */
+/* ============================================ */
+
+.toast-stack {
+  position: fixed;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  cursor: pointer;
+  background: var(--bg-elevated);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-style: italic;
+  box-shadow: var(--shadow-lg);
+  max-width: min(90vw, 480px);
+  animation: toast-in 0.2s ease;
+}
+
+.toast-error {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================ */
 /* Tiptap editor — prose styles                  */
 /* ============================================ */
 

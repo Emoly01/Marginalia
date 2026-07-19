@@ -4,11 +4,11 @@ import {
   doc,
   addDoc,
   updateDoc,
-  deleteDoc,
   getDocs,
   query,
   orderBy,
   serverTimestamp,
+  writeBatch,
 } from 'firebase/firestore'
 import { db } from '../firebase'
 
@@ -47,7 +47,26 @@ export async function updateCampaign(userId, campaignId, data) {
   })
 }
 
+// Firestore doesn't cascade-delete subcollections, so gather every doc
+// under the campaign and delete them along with the campaign itself.
+const SUBCOLLECTIONS = ['sessions', 'entities', 'margins', 'character']
+
 export async function deleteCampaign(userId, campaignId) {
-  const ref = doc(db, 'users', userId, 'campaigns', campaignId)
-  await deleteDoc(ref)
+  const campaignDoc = doc(db, 'users', userId, 'campaigns', campaignId)
+
+  const refs = []
+  for (const name of SUBCOLLECTIONS) {
+    const snap = await getDocs(collection(campaignDoc, name))
+    snap.forEach((d) => refs.push(d.ref))
+  }
+  // Campaign doc goes last: if a batch fails midway, the campaign stays
+  // visible instead of silently stranding its remaining subcollection docs.
+  refs.push(campaignDoc)
+
+  // Batches cap at 500 operations
+  for (let i = 0; i < refs.length; i += 500) {
+    const batch = writeBatch(db)
+    refs.slice(i, i + 500).forEach((r) => batch.delete(r))
+    await batch.commit()
+  }
 }
