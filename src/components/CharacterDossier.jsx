@@ -8,6 +8,7 @@ import {
   CHARACTER_STATUSES,
 } from '../lib/character'
 import { useDebounce } from '../lib/useDebounce'
+import { toast } from '../lib/toast'
 import RichTextEditor from './RichTextEditor'
 
 export default function CharacterDossier({ userId, campaignId, campaignCharacterName }) {
@@ -35,6 +36,7 @@ export default function CharacterDossier({ userId, campaignId, campaignCharacter
       })
       .catch((err) => {
         console.error('Failed to load character:', err)
+        toast('Could not load character.')
         setLoading(false)
       })
     return () => { cancelled = true }
@@ -50,6 +52,7 @@ export default function CharacterDossier({ userId, campaignId, campaignCharacter
       .catch((err) => {
         console.error('Save failed:', err)
         setSaveStatus('unsaved')
+        toast('Autosave failed — your latest changes are not saved yet.')
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedCharacter])

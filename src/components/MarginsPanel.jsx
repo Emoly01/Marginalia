@@ -7,6 +7,7 @@ import {
   deleteMargin,
 } from '../lib/margins'
 import { formatRelative } from '../lib/formatRelative'
+import { toast } from '../lib/toast'
 
 export default function MarginsPanel({ userId, campaignId }) {
   const [margins, setMargins] = useState([])
@@ -49,6 +50,7 @@ export default function MarginsPanel({ userId, campaignId }) {
         inputRef.current?.focus()
       } catch (err) {
         console.error('Failed to create margin:', err)
+        toast('Could not save that note.')
       }
     }
   }
@@ -59,6 +61,7 @@ export default function MarginsPanel({ userId, campaignId }) {
       await refresh()
     } catch (err) {
       console.error('Failed to archive:', err)
+      toast('Could not archive that note.')
     }
   }
 
@@ -68,6 +71,7 @@ export default function MarginsPanel({ userId, campaignId }) {
       await refresh()
     } catch (err) {
       console.error('Failed to restore:', err)
+      toast('Could not restore that note.')
     }
   }
 
@@ -78,6 +82,7 @@ export default function MarginsPanel({ userId, campaignId }) {
       await refresh()
     } catch (err) {
       console.error('Failed to delete:', err)
+      toast('Could not delete that note.')
     }
   }
 

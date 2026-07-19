@@ -3,6 +3,7 @@ import { updateSession, deleteSession } from '../lib/sessions'
 import { createEntity } from '../lib/entities'
 import { useDebounce } from '../lib/useDebounce'
 import { buildMentionSuggestion } from '../lib/mentionSuggestion'
+import { toast } from '../lib/toast'
 import RichTextEditor from './RichTextEditor'
 import NpcQuickCapture from './NpcQuickCapture'
 
@@ -50,6 +51,7 @@ export default function SessionEditor({
             return created
           } catch (err) {
             console.error('Failed to create entity from mention:', err)
+            toast('Could not create that entity.')
             return null
           }
         },
@@ -90,6 +92,7 @@ export default function SessionEditor({
     } catch (err) {
       console.error('Save failed:', err)
       setSaveStatus('unsaved')
+      toast('Autosave failed — your latest changes are not saved yet.')
     }
   }
 
@@ -150,6 +153,7 @@ export default function SessionEditor({
       onDeleted?.()
     } catch (err) {
       console.error('Delete failed:', err)
+      toast('Could not delete session.')
     }
   }
 

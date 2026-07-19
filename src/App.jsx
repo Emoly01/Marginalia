@@ -4,6 +4,8 @@ import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
 import { auth, googleProvider } from './firebase'
 import Layout from './components/Layout'
 import SignIn from './components/SignIn'
+import Toasts from './components/Toasts'
+import { toast } from './lib/toast'
 
 export default function App() {
   const [user, setUser] = useState(null)
@@ -22,6 +24,7 @@ export default function App() {
       await signInWithPopup(auth, googleProvider)
     } catch (err) {
       console.error('Sign-in error:', err)
+      toast('Sign-in failed — try again.')
     }
   }
 
@@ -44,19 +47,22 @@ export default function App() {
     )
   }
 
-  if (!user) {
-    return <SignIn onSignIn={handleSignIn} />
-  }
-
   const layout = <Layout user={user} onSignOut={handleSignOut} />
 
   return (
-    <Routes>
-      <Route path="/" element={layout} />
-      <Route path="/campaigns/:campaignId" element={layout} />
-      <Route path="/campaigns/:campaignId/sessions/:sessionId" element={layout} />
-      <Route path="/campaigns/:campaignId/entities/:entityId" element={layout} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      <Toasts />
+      {!user ? (
+        <SignIn onSignIn={handleSignIn} />
+      ) : (
+        <Routes>
+          <Route path="/" element={layout} />
+          <Route path="/campaigns/:campaignId" element={layout} />
+          <Route path="/campaigns/:campaignId/sessions/:sessionId" element={layout} />
+          <Route path="/campaigns/:campaignId/entities/:entityId" element={layout} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      )}
+    </>
   )
 }

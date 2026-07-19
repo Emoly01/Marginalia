@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { listSessions, createSession } from '../lib/sessions'
 import { formatRelative } from '../lib/formatRelative'
+import { toast } from '../lib/toast'
 import CharacterDossier from './CharacterDossier'
 import EntitiesView from './EntitiesView'
 
@@ -49,7 +50,7 @@ export default function CampaignDetail({
       onOpenSession(id)
     } catch (err) {
       console.error('Failed to create session:', err)
-      alert('Could not create session — check console.')
+      toast('Could not create session.')
     }
   }
 

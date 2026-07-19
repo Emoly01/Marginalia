@@ -11,6 +11,7 @@ import {
 } from '../lib/entities'
 import { getSessionsMentioning } from '../lib/backlinks'
 import { useDebounce } from '../lib/useDebounce'
+import { toast } from '../lib/toast'
 import RichTextEditor from './RichTextEditor'
 
 export default function EntityDetail({
@@ -49,6 +50,7 @@ export default function EntityDetail({
       })
       .catch((err) => {
         console.error('Failed to load entity:', err)
+        toast('Could not load that entity.')
         setLoading(false)
       })
     return () => { cancelled = true }
@@ -68,6 +70,7 @@ export default function EntityDetail({
       .catch((err) => {
         console.error('Save failed:', err)
         setSaveStatus('unsaved')
+        toast('Autosave failed — your latest changes are not saved yet.')
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedEntity])
@@ -85,6 +88,7 @@ export default function EntityDetail({
       onBack()
     } catch (err) {
       console.error('Delete failed:', err)
+      toast('Could not delete entity.')
     }
   }
 
@@ -99,6 +103,7 @@ export default function EntityDetail({
       setShowConnectPicker(false)
     } catch (err) {
       console.error('Connect failed:', err)
+      toast('Could not connect entities.')
     }
   }
 
@@ -111,6 +116,7 @@ export default function EntityDetail({
       setAllEntities(all)
     } catch (err) {
       console.error('Disconnect failed:', err)
+      toast('Could not disconnect entities.')
     }
   }
 

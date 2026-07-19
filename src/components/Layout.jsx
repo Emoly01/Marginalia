@@ -9,6 +9,7 @@ import {
 import { listSessions, getSession } from '../lib/sessions'
 import { listEntities } from '../lib/entities'
 import { applyTheme } from '../lib/themes'
+import { toast } from '../lib/toast'
 import CampaignForm from './CampaignForm'
 import CampaignList from './CampaignList'
 import CampaignDetail from './CampaignDetail'
@@ -71,7 +72,10 @@ export default function Layout({ user, onSignOut }) {
     }
     listEntities(user.uid, activeCampaignId)
       .then(setEntities)
-      .catch((err) => console.error('Failed to load entities:', err))
+      .catch((err) => {
+        console.error('Failed to load entities:', err)
+        toast('Could not load entities.')
+      })
   }, [activeCampaignId, entityRefreshKey, user.uid])
 
   // Load active session when sessionId changes
@@ -82,7 +86,10 @@ export default function Layout({ user, onSignOut }) {
     }
     getSession(user.uid, activeCampaignId, activeSessionId)
       .then(setActiveSession)
-      .catch((err) => console.error('Failed to load session:', err))
+      .catch((err) => {
+        console.error('Failed to load session:', err)
+        toast('Could not load that session.')
+      })
   }, [activeSessionId, activeCampaignId, user.uid])
 
   const refreshCampaigns = async () => {
@@ -92,6 +99,7 @@ export default function Layout({ user, onSignOut }) {
       setCampaigns(list)
     } catch (err) {
       console.error('Failed to load campaigns:', err)
+      toast('Could not load campaigns.')
     }
     setLoading(false)
   }
@@ -108,7 +116,7 @@ export default function Layout({ user, onSignOut }) {
       await refreshCampaigns()
     } catch (err) {
       console.error('Failed to save campaign:', err)
-      alert('Could not save campaign — check console.')
+      toast('Could not save campaign.')
     }
   }
 
@@ -124,6 +132,7 @@ export default function Layout({ user, onSignOut }) {
       await refreshCampaigns()
     } catch (err) {
       console.error('Failed to delete:', err)
+      toast('Could not delete campaign.')
     }
   }
 

@@ -5,6 +5,7 @@ import {
   ENTITY_TYPES,
   entityTypeInfo,
 } from '../lib/entities'
+import { toast } from '../lib/toast'
 
 export default function EntitiesView({ userId, campaignId, onOpenEntity, refreshTrigger }) {
   const [entities, setEntities] = useState([])
@@ -39,7 +40,7 @@ export default function EntitiesView({ userId, campaignId, onOpenEntity, refresh
       onOpenEntity(id)
     } catch (err) {
       console.error('Failed to create entity:', err)
-      alert('Could not create — check console.')
+      toast('Could not create entity.')
     }
   }
 
