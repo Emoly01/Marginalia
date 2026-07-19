@@ -113,7 +113,7 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const handleDeleteCampaign = async (campaignId) => {
-    if (!confirm('Delete this campaign? All sessions inside it will be orphaned. This cannot be undone.')) return
+    if (!confirm('Delete this campaign? All its sessions, entities, and margins will be deleted too. This cannot be undone.')) return
     try {
       await deleteCampaign(user.uid, campaignId)
       if (activeCampaignId === campaignId) {
