@@ -62,7 +62,7 @@ export default function SessionEditor({
   useEffect(() => {
     isDirty.current = true
     setSaveStatus('unsaved')
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [title, date, sessionNumber, content])
 
   // Reset dirty flag when session changes (loaded fresh)

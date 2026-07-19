@@ -23,7 +23,7 @@ export function formatRelative(value) {
   const diffDay = Math.round(diffHr / 24)
 
   if (diffSec < 30) return 'just now'
-  if (diffMin < 1) return `${diffSec}s ago`
+  if (diffSec < 60) return `${diffSec}s ago`
   if (diffMin < 60) return `${diffMin}m ago`
   if (diffHr < 24) return `${diffHr}h ago`
   if (diffDay === 1) return 'yesterday'

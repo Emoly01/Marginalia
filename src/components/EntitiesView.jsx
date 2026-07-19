@@ -210,7 +210,7 @@ export default function EntitiesView({ userId, campaignId, onOpenEntity, refresh
   )
 }
 
-function FilterChip({ active, onClick, color, children }) {
+function FilterChip({ active, onClick, children }) {
   return (
     <button
       onClick={onClick}
