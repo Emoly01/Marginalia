@@ -1,30 +1,53 @@
-import { useState } from 'react'
-import { THEME_LIST } from '../lib/themes'
+import { useState, useEffect } from 'react'
+import { PALETTE, paletteFor } from '../lib/palette'
 
-const COLORS = [
-  '#c9a961', // gold
-  '#8a9a7b', // sage
-  '#9b8aa4', // dusty purple
-  '#b88654', // sienna
-  '#7a8fa4', // dusty blue
-  '#a4787a', // dusty rose
-  '#6b8a7a', // forest
-]
+const SYSTEMS = ['D&D 5e', 'Pathfinder 2e', 'Blades', 'other']
 
-export default function CampaignForm({ onSubmit, onCancel, initial = {} }) {
+export default function CampaignForm({
+  onSubmit,
+  onCancel,
+  onDelete,
+  onPreviewPalette,
+  initial = {},
+  isEdit = false,
+}) {
   const [name, setName] = useState(initial.name || '')
+  const [system, setSystem] = useState(initial.system || SYSTEMS[0])
+  const [palette, setPalette] = useState(() => paletteFor(initial).id)
   const [shortName, setShortName] = useState(initial.shortName || '')
-  const [system, setSystem] = useState(initial.system || 'D&D 5e')
   const [dmName, setDmName] = useState(initial.dmName || '')
   const [characterName, setCharacterName] = useState(initial.characterName || '')
   const [characterClass, setCharacterClass] = useState(initial.characterClass || '')
-  const [color, setColor] = useState(initial.color || COLORS[0])
   const [status, setStatus] = useState(initial.status || 'active')
-  const [theme, setTheme] = useState(initial.theme || 'parchment')
+  // New campaigns ask for two things; the rest waits until you want it.
+  const [showMore, setShowMore] = useState(isEdit)
+
+  const picked = PALETTE.find((p) => p.id === palette) || PALETTE[0]
+
+  // Preview the palette live while the modal is open, so you can see what
+  // "tints every surface" actually means before committing.
+  useEffect(() => {
+    onPreviewPalette?.(picked)
+  }, [picked, onPreviewPalette])
+
+  const close = () => {
+    onPreviewPalette?.(null)
+    onCancel()
+  }
+
+  // Escape closes the modal.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') close()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!name.trim()) return
+    onPreviewPalette?.(null)
     onSubmit({
       name: name.trim(),
       shortName: shortName.trim() || name.trim(),
@@ -32,259 +55,172 @@ export default function CampaignForm({ onSubmit, onCancel, initial = {} }) {
       dmName: dmName.trim(),
       characterName: characterName.trim(),
       characterClass: characterClass.trim(),
-      color,
+      palette,
       status,
-      theme,
     })
   }
 
-  return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0, 0, 0, 0.6)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 100,
-    }}>
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          background: 'var(--bg-elevated)',
-          padding: 'var(--space-xl)',
-          borderRadius: 'var(--radius-lg)',
-          width: '100%',
-          maxWidth: '520px',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          border: '1px solid var(--border)',
-          boxShadow: 'var(--shadow)',
-        }}
-      >
-        <h2 style={{
-          fontSize: '1.5rem',
-          fontWeight: 'normal',
-          fontStyle: 'italic',
-          color: 'var(--accent)',
-          marginBottom: 'var(--space-lg)',
-        }}>
-          {initial.name ? 'Edit Campaign' : 'New Campaign'}
-        </h2>
+  const isCustomSystem = !SYSTEMS.includes(system)
 
-        <Field label="Campaign Name" required>
+  return (
+    <div className="modal-backdrop" onClick={close}>
+      <form className="modal" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
+        <div>
+          <h2 className="modal-title">{isEdit ? 'Campaign settings' : 'New campaign'}</h2>
+          <p className="modal-sub">
+            {isEdit ? 'change whatever has stopped being true.' : 'two things now, the rest whenever.'}
+          </p>
+        </div>
+
+        <div className="field">
+          <label className="field-label" htmlFor="campaign-name">Campaign name</label>
           <input
-            type="text"
+            id="campaign-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="League of Ambivalence"
             autoFocus
-            style={{ width: '100%' }}
           />
-        </Field>
-
-        <Field label="Short Name" hint="for tight UI spaces (defaults to full name)">
-          <input
-            type="text"
-            value={shortName}
-            onChange={(e) => setShortName(e.target.value)}
-            placeholder="League"
-            style={{ width: '100%' }}
-          />
-        </Field>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
-          <Field label="System">
-            <input
-              type="text"
-              value={system}
-              onChange={(e) => setSystem(e.target.value)}
-              placeholder="D&D 5e"
-              style={{ width: '100%' }}
-            />
-          </Field>
-          <Field label="GM">
-            <input
-              type="text"
-              value={dmName}
-              onChange={(e) => setDmName(e.target.value)}
-              placeholder="GM name"
-              style={{ width: '100%' }}
-            />
-          </Field>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
-          <Field label="Your Character">
-            <input
-              type="text"
-              value={characterName}
-              onChange={(e) => setCharacterName(e.target.value)}
-              placeholder="character name"
-              style={{ width: '100%' }}
-            />
-          </Field>
-          <Field label="Class / Concept">
-            <input
-              type="text"
-              value={characterClass}
-              onChange={(e) => setCharacterClass(e.target.value)}
-              placeholder="warlock, sorcerer, etc."
-              style={{ width: '100%' }}
-            />
-          </Field>
-        </div>
-
-        <Field label="Color">
-          <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
-            {COLORS.map((c) => (
+        <div className="field">
+          <span className="field-label">System</span>
+          <div className="pill-row">
+            {SYSTEMS.map((s) => (
               <button
-                key={c}
+                key={s}
                 type="button"
-                onClick={() => setColor(c)}
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  background: c,
-                  border: color === c ? '2px solid var(--ink)' : '2px solid transparent',
-                  cursor: 'pointer',
-                }}
-                aria-label={`Color ${c}`}
-              />
-            ))}
-          </div>
-        </Field>
-
-        <Field label="Theme" hint="visual palette while inside this campaign">
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-            gap: 'var(--space-sm)',
-          }}>
-            {THEME_LIST.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTheme(t.id)}
-                style={{
-                  background: theme === t.id ? 'var(--bg-input)' : 'transparent',
-                  border: theme === t.id ? '1px solid var(--accent)' : '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius)',
-                  padding: 'var(--space-sm)',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  fontFamily: 'var(--font-ui)',
-                  transition: 'border-color 0.15s',
-                }}
+                className={`choice${system === s || (s === 'other' && isCustomSystem) ? ' is-active' : ''}`}
+                onClick={() => setSystem(s === 'other' && !isCustomSystem ? '' : s)}
               >
-                <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
-                  {t.swatch.map((c, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '4px',
-                        background: c,
-                        border: '1px solid rgba(255,255,255,0.1)',
-                      }}
-                    />
-                  ))}
-                </div>
-                <div style={{
-                  color: 'var(--ink)',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                }}>
-                  {t.name}
-                </div>
-                <div style={{
-                  color: 'var(--ink-faint)',
-                  fontSize: '0.75rem',
-                  fontStyle: 'italic',
-                  marginTop: '2px',
-                }}>
-                  {t.description}
-                </div>
+                {s}
               </button>
             ))}
           </div>
-        </Field>
+          {(isCustomSystem || system === '') && (
+            <input
+              value={system}
+              onChange={(e) => setSystem(e.target.value)}
+              placeholder="Call of Cthulhu, Monster of the Week…"
+              style={{ marginTop: '2px' }}
+            />
+          )}
+        </div>
 
-        <Field label="Status">
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            style={{ width: '100%' }}
-          >
-            <option value="active">active</option>
-            <option value="hiatus">hiatus</option>
-            <option value="completed">completed</option>
-          </select>
-        </Field>
+        <div className="field">
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '9px' }}>
+            <span className="field-label">Palette</span>
+            <span style={{ fontSize: '13px', fontStyle: 'italic', color: 'var(--m-accent)' }}>
+              {picked.name}
+            </span>
+          </div>
+          <div className="swatch-grid">
+            {PALETTE.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className="swatch"
+                title={p.name}
+                aria-label={p.name}
+                aria-pressed={palette === p.id}
+                onClick={() => setPalette(p.id)}
+                style={{
+                  background: p.hex,
+                  boxShadow: palette === p.id
+                    ? `0 0 0 2px var(--m-card), 0 0 0 3px ${p.hex}`
+                    : 'none',
+                }}
+              />
+            ))}
+          </div>
+          <span className="field-hint">tints every surface while you're inside this campaign</span>
+        </div>
 
-        <div style={{
-          display: 'flex',
-          gap: 'var(--space-md)',
-          justifyContent: 'flex-end',
-          marginTop: 'var(--space-lg)',
-        }}>
+        {!showMore ? (
           <button
             type="button"
-            onClick={onCancel}
-            style={{
-              padding: 'var(--space-sm) var(--space-lg)',
-              color: 'var(--ink-muted)',
-              fontFamily: 'var(--font-ui)',
-            }}
+            className="link-action"
+            onClick={() => setShowMore(true)}
+            style={{ fontSize: '14px', fontStyle: 'italic', color: 'var(--m-text-4)', textAlign: 'left', padding: 0 }}
           >
-            cancel
+            + the rest of it
           </button>
-          <button
-            type="submit"
-            style={{
-              background: 'var(--accent)',
-              color: 'var(--bg)',
-              padding: 'var(--space-sm) var(--space-lg)',
-              borderRadius: 'var(--radius)',
-              fontWeight: 600,
-              fontFamily: 'var(--font-ui)',
-            }}
-          >
-            {initial.name ? 'Save' : 'Create'}
+        ) : (
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div className="field">
+                <label className="field-label" htmlFor="campaign-short">Short name</label>
+                <input
+                  id="campaign-short"
+                  value={shortName}
+                  onChange={(e) => setShortName(e.target.value)}
+                  placeholder="League"
+                />
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="campaign-gm">GM</label>
+                <input
+                  id="campaign-gm"
+                  value={dmName}
+                  onChange={(e) => setDmName(e.target.value)}
+                  placeholder="who runs it"
+                />
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="campaign-pc">Your character</label>
+                <input
+                  id="campaign-pc"
+                  value={characterName}
+                  onChange={(e) => setCharacterName(e.target.value)}
+                  placeholder="Tav"
+                />
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="campaign-class">Class / concept</label>
+                <input
+                  id="campaign-class"
+                  value={characterClass}
+                  onChange={(e) => setCharacterClass(e.target.value)}
+                  placeholder="warlock"
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <span className="field-label">Status</span>
+              <div className="pill-row">
+                {['active', 'hiatus', 'completed'].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className={`choice${status === s ? ' is-active' : ''}`}
+                    onClick={() => setStatus(s)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        <div className="modal-actions">
+          {onDelete && (
+            <button
+              type="button"
+              className="btn-danger"
+              onClick={onDelete}
+              style={{ marginRight: 'auto' }}
+            >
+              delete campaign
+            </button>
+          )}
+          <button type="button" className="link-action" onClick={close}>cancel</button>
+          <button type="submit" className="btn-primary" disabled={!name.trim()}>
+            {isEdit ? 'Save' : 'Create'}
           </button>
         </div>
       </form>
-    </div>
-  )
-}
-
-function Field({ label, hint, required, children }) {
-  return (
-    <div style={{ marginBottom: 'var(--space-md)' }}>
-      <label style={{
-        display: 'block',
-        fontSize: '0.75rem',
-        textTransform: 'uppercase',
-        letterSpacing: '0.1em',
-        color: 'var(--ink-faint)',
-        fontFamily: 'var(--font-ui)',
-        marginBottom: 'var(--space-xs)',
-      }}>
-        {label} {required && <span style={{ color: 'var(--accent)' }}>*</span>}
-      </label>
-      {children}
-      {hint && (
-        <div style={{
-          fontSize: '0.8rem',
-          color: 'var(--ink-faint)',
-          fontStyle: 'italic',
-          marginTop: 'var(--space-xs)',
-        }}>
-          {hint}
-        </div>
-      )}
     </div>
   )
 }

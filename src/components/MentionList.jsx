@@ -79,7 +79,7 @@ const MentionList = forwardRef((props, ref) => {
           }`}
           onClick={() => selectItem(props.items.length)}
         >
-          <span className="mention-type-dot" style={{ background: 'var(--accent)' }} />
+          <span className="mention-type-dot" style={{ background: 'var(--m-accent)' }} />
           <span className="mention-item-name">
             Create NPC: <strong>{props.query.trim()}</strong>
           </span>

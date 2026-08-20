@@ -38,9 +38,9 @@ export default function App() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
-        color: 'var(--ink-muted)',
-        fontStyle: 'italic'
+        height: '100dvh',
+        color: 'var(--m-text-4)',
+        fontStyle: 'italic',
       }}>
         opening the archive…
       </div>

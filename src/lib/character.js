@@ -23,6 +23,20 @@ export async function saveCharacter(userId, campaignId, data) {
   )
 }
 
+// The six ability scores shown on the character summary card.
+export const ABILITIES = [
+  { key: 'str', label: 'str' },
+  { key: 'dex', label: 'dex' },
+  { key: 'con', label: 'con' },
+  { key: 'int', label: 'int' },
+  { key: 'wis', label: 'wis' },
+  { key: 'cha', label: 'cha' },
+]
+
+export function emptyAbilities() {
+  return Object.fromEntries(ABILITIES.map((a) => [a.key, 10]))
+}
+
 // Default empty character shape
 export function emptyCharacter() {
   return {
@@ -33,6 +47,7 @@ export function emptyCharacter() {
     level: 1,
     background: '',
     status: 'alive',
+    abilities: emptyAbilities(),
     personality: '',
     backstory: '',
     knowledge: '',

@@ -19,6 +19,7 @@ export default function RichTextEditor({
   placeholder = 'Start writing…',
   mentionSuggestion = null,
   onMentionClick = null,
+  tall = false,
 }) {
   const extensions = useMemo(() => {
     const base = [
@@ -69,7 +70,7 @@ export default function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: 'marginalia-prose',
+        class: `marginalia-prose${tall ? ' marginalia-prose--tall' : ''}`,
       },
       handleClickOn: (view, pos, node) => {
         if (node.type.name === 'mention' && onMentionClick) {
@@ -168,26 +169,10 @@ export default function RichTextEditor({
 function ToolbarButton({ onClick, active, title, children }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       title={title}
-      style={{
-        background: active ? 'var(--accent)' : 'transparent',
-        color: active ? 'var(--bg)' : 'var(--ink)',
-        border: 'none',
-        padding: '6px 10px',
-        cursor: 'pointer',
-        fontSize: '0.9rem',
-        fontFamily: 'var(--font-ui)',
-        borderRadius: '3px',
-        transition: 'background 0.15s',
-        minWidth: '32px',
-      }}
-      onMouseEnter={(e) => {
-        if (!active) e.currentTarget.style.background = 'var(--bg-input)'
-      }}
-      onMouseLeave={(e) => {
-        if (!active) e.currentTarget.style.background = 'transparent'
-      }}
+      className={`bubble-btn${active ? ' is-active' : ''}`}
     >
       {children}
     </button>
@@ -195,11 +180,5 @@ function ToolbarButton({ onClick, active, title, children }) {
 }
 
 function Divider() {
-  return (
-    <div style={{
-      width: '1px',
-      background: 'var(--border)',
-      margin: '4px 2px',
-    }} />
-  )
+  return <div className="bubble-divider" />
 }

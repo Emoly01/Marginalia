@@ -121,14 +121,9 @@ export default function EntityDetail({
   }
 
   if (loading || !entity) {
-    return (
-      <div style={{ color: 'var(--ink-faint)', fontStyle: 'italic', textAlign: 'center', marginTop: '15vh' }}>
-        loading…
-      </div>
-    )
+    return <div className="view"><div className="view-body"><p className="hint">loading…</p></div></div>
   }
 
-  const typeInfo = entityTypeInfo(entity.type)
   const connectedEntities = (entity.connections || [])
     .map((id) => allEntities.find((e) => e.id === id))
     .filter(Boolean)
@@ -137,289 +132,150 @@ export default function EntityDetail({
   )
 
   return (
-    <div style={{ maxWidth: '720px', margin: '0 auto', paddingBottom: 'var(--space-xl)' }}>
-      {/* Top bar */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 'var(--space-lg)',
-      }}>
-        <button
-          onClick={onBack}
-          style={{ color: 'var(--ink-muted)', fontFamily: 'var(--font-ui)', fontSize: '0.85rem' }}
-        >
-          ← back
-        </button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
-          <SaveIndicator status={saveStatus} />
-          <button
-            onClick={handleDelete}
-            style={{ fontSize: '0.85rem', color: 'var(--danger)', fontFamily: 'var(--font-ui)' }}
-          >
-            delete
-          </button>
-        </div>
-      </div>
-
-      {/* Type selector */}
-      <div style={{ marginBottom: 'var(--space-sm)' }}>
-        <select
-          value={entity.type}
-          onChange={(e) => update({ type: e.target.value })}
-          style={{
-            background: 'transparent',
-            border: '1px solid var(--border-subtle)',
-            color: typeInfo.color,
-            fontFamily: 'var(--font-ui)',
-            fontSize: '0.8rem',
-            padding: '3px 8px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
+    <div className="view">
+      <header className="view-header" style={{ alignItems: 'center' }}>
+        <div className="pill-row">
           {ENTITY_TYPES.map((t) => (
-            <option key={t.value} value={t.value}>{t.label}</option>
+            <button
+              key={t.value}
+              className={`choice${entity.type === t.value ? ' is-active' : ''}`}
+              onClick={() => update({ type: t.value })}
+            >
+              {t.label}
+            </button>
           ))}
-        </select>
-      </div>
-
-      {/* Name */}
-      <input
-        type="text"
-        value={entity.name}
-        onChange={(e) => update({ name: e.target.value })}
-        placeholder="Name"
-        style={{
-          width: '100%',
-          fontSize: '2rem',
-          fontWeight: 'normal',
-          fontStyle: 'italic',
-          color: 'var(--accent)',
-          background: 'transparent',
-          border: 'none',
-          padding: 'var(--space-sm) 0',
-          marginBottom: 'var(--space-md)',
-          fontFamily: 'var(--font-body)',
-        }}
-      />
-
-      {/* Notes */}
-      <div style={{ marginBottom: 'var(--space-xl)' }}>
-        <SectionLabel>Notes</SectionLabel>
-        <div style={{
-          background: 'var(--bg-elevated)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--radius)',
-          padding: 'var(--space-md)',
-          minHeight: '100px',
-        }}>
-          <RichTextEditor
-            content={entity.notes}
-            onChange={(html) => update({ notes: html })}
-            placeholder="What do you know about them?"
-          />
         </div>
-      </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 'none' }}>
+          <SaveIndicator status={saveStatus} />
+          <button className="btn" onClick={onBack}>← back</button>
+          <button className="btn-danger" onClick={handleDelete}>delete</button>
+        </div>
+      </header>
 
-      {/* Connections */}
-      <div style={{
-        marginBottom: 'var(--space-xl)',
-        paddingBottom: 'var(--space-lg)',
-        borderBottom: '1px solid var(--border-subtle)',
-      }}>
-        <SectionLabel>Connections</SectionLabel>
-        {connectedEntities.length === 0 ? (
-          <p style={{ color: 'var(--ink-faint)', fontStyle: 'italic', fontSize: '0.9rem', marginBottom: 'var(--space-sm)' }}>
-            not connected to anything yet
-          </p>
-        ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-sm)', marginBottom: 'var(--space-sm)' }}>
-            {connectedEntities.map((e) => {
-              const info = entityTypeInfo(e.type)
-              return (
-                <div
-                  key={e.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    background: 'var(--bg-elevated)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '14px',
-                    padding: '4px 6px 4px 10px',
-                  }}
-                >
-                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: info.color }} />
-                  <button
-                    onClick={() => onOpenEntity(e.id)}
-                    style={{ color: 'var(--ink)', fontSize: '0.85rem', fontFamily: 'var(--font-ui)' }}
-                  >
-                    {e.name}
-                  </button>
-                  <button
-                    onClick={() => handleDisconnect(e.id)}
-                    title="Disconnect"
-                    style={{ color: 'var(--ink-faint)', fontSize: '0.9rem', padding: '0 4px' }}
-                  >
-                    ×
-                  </button>
-                </div>
-              )
-            })}
+      <div className="view-body">
+        <div className="column column--narrow" style={{ gap: '20px' }}>
+          <input
+            type="text"
+            value={entity.name}
+            onChange={(e) => update({ name: e.target.value })}
+            placeholder="Name"
+            aria-label="Entity name"
+            style={{
+              width: '100%',
+              fontSize: '32px',
+              fontStyle: 'italic',
+              color: 'var(--m-accent)',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: 0,
+              padding: '4px 0',
+              lineHeight: 1.15,
+            }}
+          />
+
+          <div className="dossier-section">
+            <span className="dossier-label">Notes</span>
+            <div className="dossier-surface">
+              <RichTextEditor
+                content={entity.notes}
+                onChange={(html) => update({ notes: html })}
+                placeholder="What do you know about them?"
+              />
+            </div>
           </div>
-        )}
 
-        {showConnectPicker ? (
-          <div style={{
-            background: 'var(--bg-elevated)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)',
-            padding: 'var(--space-sm)',
-            marginTop: 'var(--space-sm)',
-          }}>
-            {connectableEntities.length === 0 ? (
-              <p style={{ color: 'var(--ink-faint)', fontStyle: 'italic', fontSize: '0.85rem', padding: '4px' }}>
-                no other entities to connect
-              </p>
+          <div className="dossier-section">
+            <span className="dossier-label">Connections</span>
+            {connectedEntities.length === 0 ? (
+              <p className="hint">not connected to anything yet</p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', maxHeight: '200px', overflowY: 'auto' }}>
-                {connectableEntities.map((e) => {
-                  const info = entityTypeInfo(e.type)
-                  return (
+              <div className="pill-row">
+                {connectedEntities.map((e) => (
+                  <span
+                    key={e.id}
+                    className="pill"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '3px 6px 3px 10px' }}
+                  >
                     <button
-                      key={e.id}
-                      onClick={() => handleConnect(e.id)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '6px 8px',
-                        borderRadius: '4px',
-                        textAlign: 'left',
-                        color: 'var(--ink)',
-                        fontSize: '0.85rem',
-                        fontFamily: 'var(--font-ui)',
-                      }}
-                      onMouseEnter={(ev) => ev.currentTarget.style.background = 'var(--bg-input)'}
-                      onMouseLeave={(ev) => ev.currentTarget.style.background = 'transparent'}
+                      onClick={() => onOpenEntity(e.id)}
+                      style={{ color: 'var(--m-text-2)', fontSize: '14px', padding: 0 }}
                     >
-                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: info.color }} />
                       {e.name}
-                      <span style={{ color: 'var(--ink-faint)', fontSize: '0.7rem', textTransform: 'uppercase' }}>
-                        {info.label}
-                      </span>
                     </button>
-                  )
-                })}
+                    <button
+                      className="btn-icon"
+                      onClick={() => handleDisconnect(e.id)}
+                      title={`Disconnect ${e.name}`}
+                      style={{ padding: '0 3px' }}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
               </div>
             )}
-            <button
-              onClick={() => setShowConnectPicker(false)}
-              style={{ color: 'var(--ink-faint)', fontSize: '0.8rem', fontFamily: 'var(--font-ui)', marginTop: '4px', padding: '4px' }}
-            >
-              cancel
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setShowConnectPicker(true)}
-            style={{
-              background: 'var(--bg-input)',
-              color: 'var(--ink-muted)',
-              padding: 'var(--space-xs) var(--space-md)',
-              borderRadius: 'var(--radius)',
-              border: '1px dashed var(--border)',
-              fontFamily: 'var(--font-ui)',
-              fontSize: '0.85rem',
-            }}
-          >
-            + Connect entity
-          </button>
-        )}
-      </div>
 
-      {/* Backlinks — sessions mentioning this entity */}
-      <div>
-        <SectionLabel>Appears In</SectionLabel>
-        {backlinks.length === 0 ? (
-          <p style={{ color: 'var(--ink-faint)', fontStyle: 'italic', fontSize: '0.9rem' }}>
-            not mentioned in any session yet — type @{entity.name} while writing
-          </p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-            {backlinks.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => onOpenSession(s.id)}
-                style={{
-                  background: 'var(--bg-elevated)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius)',
-                  padding: 'var(--space-sm) var(--space-md)',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  transition: 'border-color 0.15s',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--accent)'}
-                onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
-              >
-                <span style={{
-                  color: 'var(--ink-faint)',
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: '0.8rem',
-                  marginRight: '8px',
-                }}>
-                  #{s.sessionNumber}
-                </span>
-                <span style={{ color: 'var(--ink)' }}>{s.title}</span>
-                <span style={{
-                  color: 'var(--ink-faint)',
-                  fontSize: '0.8rem',
-                  fontFamily: 'var(--font-ui)',
-                  marginLeft: '8px',
-                }}>
-                  {s.date}
-                </span>
-              </button>
-            ))}
+            {showConnectPicker ? (
+              <div className="panel" style={{ padding: '10px' }}>
+                {connectableEntities.length === 0 ? (
+                  <p className="hint" style={{ padding: '4px' }}>no other entities to connect</p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', maxHeight: '220px', overflowY: 'auto' }}>
+                    {connectableEntities.map((e) => (
+                      <button
+                        key={e.id}
+                        className="rail-row"
+                        onClick={() => handleConnect(e.id)}
+                      >
+                        <span className="rail-row-name">{e.name}</span>
+                        <span className="rail-row-meta">{entityTypeInfo(e.type).label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <button className="btn" onClick={() => setShowConnectPicker(false)} style={{ marginTop: '6px' }}>
+                  cancel
+                </button>
+              </div>
+            ) : (
+              <div>
+                <button className="btn-dashed" onClick={() => setShowConnectPicker(true)}>
+                  + connect entity
+                </button>
+              </div>
+            )}
           </div>
-        )}
+
+          <div className="dossier-section">
+            <span className="dossier-label">Appears in</span>
+            {backlinks.length === 0 ? (
+              <p className="hint">
+                not mentioned in any session yet — type @{entity.name} while writing
+              </p>
+            ) : (
+              backlinks.map((s) => (
+                <button key={s.id} className="session-card" onClick={() => onOpenSession(s.id)}>
+                  <div className="session-card-head">
+                    <span className="session-card-num">#{s.sessionNumber}</span>
+                    <span className="session-card-title" style={{ fontSize: '17px' }}>{s.title}</span>
+                    <span style={{ flex: 1 }} />
+                    <span className="session-card-date">{s.date}</span>
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
 }
 
-function SectionLabel({ children }) {
-  return (
-    <h3 style={{
-      fontSize: '0.8rem',
-      textTransform: 'uppercase',
-      letterSpacing: '0.12em',
-      color: 'var(--ink-faint)',
-      fontFamily: 'var(--font-ui)',
-      fontWeight: 600,
-      marginBottom: 'var(--space-sm)',
-    }}>
-      {children}
-    </h3>
-  )
-}
-
 function SaveIndicator({ status }) {
   const display = {
-    saved: { text: 'saved ✓', color: 'var(--ink-faint)' },
-    saving: { text: 'saving…', color: 'var(--accent)' },
-    unsaved: { text: 'unsaved', color: 'var(--danger)' },
+    saved: { text: 'saved', color: 'var(--m-text-4)' },
+    saving: { text: 'saving…', color: 'var(--m-accent)' },
+    unsaved: { text: 'unsaved', color: 'var(--m-danger)' },
   }[status]
-  return (
-    <span style={{
-      fontSize: '0.8rem',
-      color: display.color,
-      fontFamily: 'var(--font-ui)',
-      fontStyle: 'italic',
-    }}>
-      {display.text}
-    </span>
-  )
+  return <span className="save-indicator" style={{ color: display.color }}>{display.text}</span>
 }

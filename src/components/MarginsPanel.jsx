@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   listAllMargins,
   createMargin,
@@ -17,277 +17,166 @@ export default function MarginsPanel({ userId, campaignId }) {
   const [showArchived, setShowArchived] = useState(false)
   const inputRef = useRef(null)
 
-  // Load margins on mount / campaign change
-  useEffect(() => {
-    if (!campaignId) return
-    refresh()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [campaignId])
-
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     setLoading(true)
     setLoadError(null)
     try {
-      const all = await listAllMargins(userId, campaignId)
-      setMargins(all)
+      setMargins(await listAllMargins(userId, campaignId))
     } catch (err) {
       console.error('Failed to load margins:', err)
       setLoadError(err.message || 'Failed to load')
     }
     setLoading(false)
+  }, [userId, campaignId])
+
+  useEffect(() => {
+    if (campaignId) refresh()
+  }, [campaignId, refresh])
+
+  const save = async () => {
+    const text = input.trim()
+    if (!text) return
+    try {
+      await createMargin(userId, campaignId, text)
+      setInput('')
+      await refresh()
+      inputRef.current?.focus()
+    } catch (err) {
+      console.error('Failed to create margin:', err)
+      toast('Could not save that note.')
+    }
   }
 
-  const handleKeyDown = async (e) => {
-    // Enter to save, Shift+Enter for newline
+  // Enter saves, shift+enter breaks the line.
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      const text = input.trim()
-      if (!text) return
-      try {
-        await createMargin(userId, campaignId, text)
-        setInput('')
-        await refresh()
-        inputRef.current?.focus()
-      } catch (err) {
-        console.error('Failed to create margin:', err)
-        toast('Could not save that note.')
-      }
+      save()
     }
   }
 
-  const handleArchive = async (id) => {
+  const act = async (fn, failure) => {
     try {
-      await archiveMargin(userId, campaignId, id)
+      await fn()
       await refresh()
     } catch (err) {
-      console.error('Failed to archive:', err)
-      toast('Could not archive that note.')
+      console.error(failure, err)
+      toast(failure)
     }
   }
 
-  const handleRestore = async (id) => {
-    try {
-      await restoreMargin(userId, campaignId, id)
-      await refresh()
-    } catch (err) {
-      console.error('Failed to restore:', err)
-      toast('Could not restore that note.')
-    }
-  }
-
-  const handleDelete = async (id) => {
-    if (!confirm('Permanently delete this note? This cannot be undone.')) return
-    try {
-      await deleteMargin(userId, campaignId, id)
-      await refresh()
-    } catch (err) {
-      console.error('Failed to delete:', err)
-      toast('Could not delete that note.')
-    }
-  }
-
-  const activeMargins = margins.filter((m) => !m.archived)
-  const archivedMargins = margins.filter((m) => m.archived)
+  const active = margins.filter((m) => !m.archived)
+  const archived = margins.filter((m) => m.archived)
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-    }}>
-      {/* Header */}
-      <div style={{
-        marginBottom: 'var(--space-md)',
-      }}>
-        <label style={{
-          display: 'block',
-          fontSize: '0.75rem',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--ink-faint)',
-          fontFamily: 'var(--font-ui)',
-          marginBottom: 'var(--space-xs)',
-        }}>
-          Margins
-        </label>
-        <p style={{
-          fontSize: '0.8rem',
-          color: 'var(--ink-faint)',
-          fontStyle: 'italic',
-        }}>
-          dump it here, sort it later
-        </p>
+    <>
+      <div className="margins-head">
+        <span>Margins</span>
+        <span className="rail-count">{active.length}</span>
       </div>
 
-      {/* Active notes list */}
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        marginBottom: 'var(--space-md)',
-      }}>
-        {loading ? (
-          <p style={{ color: 'var(--ink-faint)', fontStyle: 'italic', fontSize: '0.85rem' }}>
-            loading…
-          </p>
-        ) : loadError ? (
-          <p style={{ color: 'var(--danger)', fontStyle: 'italic', fontSize: '0.8rem' }}>
-            error: {loadError}
-          </p>
-        ) : activeMargins.length === 0 ? (
-          <p style={{
-            color: 'var(--ink-faint)',
-            fontStyle: 'italic',
-            fontSize: '0.85rem',
-            padding: 'var(--space-sm) 0',
-          }}>
-            nothing yet
-          </p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-            {activeMargins.map((m) => (
-              <MarginCard
-                key={m.id}
-                margin={m}
-                onArchive={() => handleArchive(m.id)}
-              />
-            ))}
+      <div className="margins-composer">
+        <div className="margins-composer-inner">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="dump it here, sort it later…"
+            rows={3}
+          />
+          <div className="row-between">
+            <span style={{ fontSize: '12px', fontStyle: 'italic', color: 'var(--m-text-4)' }}>
+              enter to save · shift+enter for a line
+            </span>
+            <button className="btn-primary btn-primary--sm" onClick={save} disabled={!input.trim()}>
+              Save
+            </button>
           </div>
+        </div>
+      </div>
+
+      <div className="margins-list">
+        {loading ? (
+          <p className="hint">loading…</p>
+        ) : loadError ? (
+          <p className="hint" style={{ color: 'var(--m-danger)' }}>{loadError}</p>
+        ) : active.length === 0 ? (
+          <p className="hint">nothing in the margins yet</p>
+        ) : (
+          active.map((m) => (
+            <MarginNote
+              key={m.id}
+              margin={m}
+              actions={[
+                { label: '✓', title: 'Archive', run: () => act(() => archiveMargin(userId, campaignId, m.id), 'Could not archive that note.') },
+              ]}
+            />
+          ))
         )}
 
-        {/* Archived section */}
-        {archivedMargins.length > 0 && (
-          <div style={{ marginTop: 'var(--space-lg)' }}>
+        {archived.length > 0 && (
+          <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '9px' }}>
             <button
-              onClick={() => setShowArchived(!showArchived)}
+              onClick={() => setShowArchived((v) => !v)}
               style={{
-                fontSize: '0.75rem',
-                color: 'var(--ink-faint)',
-                fontFamily: 'var(--font-ui)',
+                fontSize: '11px',
+                letterSpacing: '0.16em',
                 textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                marginBottom: 'var(--space-sm)',
+                color: 'var(--m-text-4)',
+                textAlign: 'left',
                 padding: 0,
               }}
             >
-              {showArchived ? '▾' : '▸'} archived ({archivedMargins.length})
+              {showArchived ? '▾' : '▸'} archived ({archived.length})
             </button>
-            {showArchived && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-                {archivedMargins.map((m) => (
-                  <MarginCard
-                    key={m.id}
-                    margin={m}
-                    archived
-                    onRestore={() => handleRestore(m.id)}
-                    onDelete={() => handleDelete(m.id)}
-                  />
-                ))}
-              </div>
-            )}
+            {showArchived &&
+              archived.map((m) => (
+                <MarginNote
+                  key={m.id}
+                  margin={m}
+                  archived
+                  actions={[
+                    { label: '↺', title: 'Restore', run: () => act(() => restoreMargin(userId, campaignId, m.id), 'Could not restore that note.') },
+                    {
+                      label: '×',
+                      title: 'Delete permanently',
+                      danger: true,
+                      run: () => {
+                        if (!confirm('Permanently delete this note? This cannot be undone.')) return
+                        act(() => deleteMargin(userId, campaignId, m.id), 'Could not delete that note.')
+                      },
+                    },
+                  ]}
+                />
+              ))}
           </div>
         )}
       </div>
-
-      {/* Quick-add input */}
-      <div style={{
-        borderTop: '1px solid var(--border-subtle)',
-        paddingTop: 'var(--space-md)',
-      }}>
-        <textarea
-          ref={inputRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="capture something… (enter to save, shift+enter for newline)"
-          rows={3}
-          style={{
-            width: '100%',
-            background: 'var(--bg-input)',
-            border: '1px solid var(--border-subtle)',
-            color: 'var(--ink)',
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.9rem',
-            padding: 'var(--space-sm)',
-            resize: 'none',
-            borderRadius: 'var(--radius)',
-            lineHeight: 1.5,
-          }}
-        />
-      </div>
-    </div>
+    </>
   )
 }
 
-function MarginCard({ margin, archived, onArchive, onRestore, onDelete }) {
+function MarginNote({ margin, archived, actions }) {
   return (
-    <div style={{
-      background: 'var(--bg)',
-      border: '1px solid var(--border-subtle)',
-      borderRadius: 'var(--radius)',
-      padding: 'var(--space-sm)',
-      opacity: archived ? 0.6 : 1,
-    }}>
-      <div style={{
-        color: 'var(--ink)',
-        fontSize: '0.9rem',
-        lineHeight: 1.5,
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word',
-      }}>
-        {margin.text}
-      </div>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 'var(--space-xs)',
-      }}>
-        <span style={{
-          color: 'var(--ink-faint)',
-          fontSize: '0.7rem',
-          fontFamily: 'var(--font-ui)',
-          fontStyle: 'italic',
-        }}>
-          {formatRelative(margin.createdAt)}
-        </span>
-        <div style={{ display: 'flex', gap: 'var(--space-xs)' }}>
-          {archived ? (
-            <>
-              <button
-                onClick={onRestore}
-                title="Restore"
-                style={iconButtonStyle}
-              >
-                ↺
-              </button>
-              <button
-                onClick={onDelete}
-                title="Delete permanently"
-                style={{ ...iconButtonStyle, color: 'var(--danger)' }}
-              >
-                ×
-              </button>
-            </>
-          ) : (
+    <div className={`margin-note${archived ? ' is-archived' : ''}`}>
+      <div className="margin-note-text">{margin.text}</div>
+      <div className="margin-note-foot">
+        <span className="margin-note-when">{formatRelative(margin.createdAt)}</span>
+        <div className="margin-note-actions">
+          {actions.map((a) => (
             <button
-              onClick={onArchive}
-              title="Archive"
-              style={iconButtonStyle}
+              key={a.label}
+              className="btn-icon"
+              title={a.title}
+              onClick={a.run}
+              style={a.danger ? { color: 'var(--m-danger)' } : undefined}
             >
-              ✓
+              {a.label}
             </button>
-          )}
+          ))}
         </div>
       </div>
     </div>
   )
-}
-
-const iconButtonStyle = {
-  color: 'var(--ink-faint)',
-  fontSize: '0.85rem',
-  padding: '2px 6px',
-  fontFamily: 'var(--font-ui)',
-  borderRadius: '3px',
-  cursor: 'pointer',
 }

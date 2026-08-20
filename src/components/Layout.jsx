@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import {
   listCampaigns,
   createCampaign,
   updateCampaign,
   deleteCampaign,
+  getCampaignSummary,
 } from '../lib/campaigns'
 import { listSessions, getSession } from '../lib/sessions'
 import { listEntities } from '../lib/entities'
-import { applyTheme } from '../lib/themes'
+import { applyPalette, paletteFor } from '../lib/palette'
+import { initials } from '../lib/text'
 import { toast } from '../lib/toast'
 import CampaignForm from './CampaignForm'
 import CampaignList from './CampaignList'
@@ -17,21 +19,28 @@ import SessionEditor from './SessionEditor'
 import EntityDetail from './EntityDetail'
 import MarginsPanel from './MarginsPanel'
 
+const EMPTY_SUMMARY = { sessions: 0, entities: 0, excerpt: '' }
+
 export default function Layout({ user, onSignOut }) {
   // Navigation lives in the URL: /campaigns/:campaignId[/sessions/:sessionId | /entities/:entityId]
+  // with ?tab= and ?kind= carrying which slice of a campaign is on screen.
   const { campaignId: activeCampaignId, sessionId: activeSessionId, entityId: activeEntityId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const activeTab = searchParams.get('tab') || 'sessions'
+  const entityKind = searchParams.get('kind') || 'all'
 
-  // Mobile drawers (no-ops on desktop where both panels are always visible)
+  // Mobile drawers (no-ops on desktop where both rails are always visible)
   const [leftOpen, setLeftOpen] = useState(false)
   const [rightOpen, setRightOpen] = useState(false)
   useEffect(() => {
     setLeftOpen(false)
     setRightOpen(false)
-  }, [location.pathname])
+  }, [location.pathname, location.search])
 
   const [campaigns, setCampaigns] = useState([])
+  const [summaries, setSummaries] = useState({})
   const [activeSession, setActiveSession] = useState(null)
   const [entities, setEntities] = useState([])
   const [sidebarSessions, setSidebarSessions] = useState([])
@@ -43,12 +52,45 @@ export default function Layout({ user, onSignOut }) {
 
   const [sidebarSessionsError, setSidebarSessionsError] = useState(null)
 
+  const refreshCampaigns = useCallback(async () => {
+    setLoading(true)
+    try {
+      const list = await listCampaigns(user.uid)
+      setCampaigns(list)
+    } catch (err) {
+      console.error('Failed to load campaigns:', err)
+      toast('Could not load campaigns.')
+    }
+    setLoading(false)
+  }, [user.uid])
+
   // Load campaigns on mount
   useEffect(() => {
     refreshCampaigns()
-  }, [])
+  }, [refreshCampaigns])
 
-  // Load sidebar sessions whenever active campaign changes (or refresh triggered)
+  // Counts + excerpts for every campaign, for the home grid and the rail.
+  const campaignIdKey = campaigns.map((c) => c.id).join(',')
+  useEffect(() => {
+    if (campaigns.length === 0) {
+      setSummaries({})
+      return
+    }
+    let cancelled = false
+    Promise.all(
+      campaigns.map((c) =>
+        getCampaignSummary(user.uid, c.id)
+          .then((s) => [c.id, s])
+          .catch(() => [c.id, EMPTY_SUMMARY])
+      )
+    ).then((entries) => {
+      if (!cancelled) setSummaries(Object.fromEntries(entries))
+    })
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campaignIdKey, refreshKey, entityRefreshKey, user.uid])
+
+  // Sidebar session list follows the active campaign
   useEffect(() => {
     if (!activeCampaignId) {
       setSidebarSessions([])
@@ -64,7 +106,7 @@ export default function Layout({ user, onSignOut }) {
       })
   }, [activeCampaignId, refreshKey, user.uid])
 
-  // Load entities whenever active campaign changes (or entities refreshed)
+  // Entities follow the active campaign
   useEffect(() => {
     if (!activeCampaignId) {
       setEntities([])
@@ -92,24 +134,13 @@ export default function Layout({ user, onSignOut }) {
       })
   }, [activeSessionId, activeCampaignId, user.uid])
 
-  const refreshCampaigns = async () => {
-    setLoading(true)
-    try {
-      const list = await listCampaigns(user.uid)
-      setCampaigns(list)
-    } catch (err) {
-      console.error('Failed to load campaigns:', err)
-      toast('Could not load campaigns.')
-    }
-    setLoading(false)
-  }
-
   const handleCreateOrUpdateCampaign = async (data) => {
     try {
       if (editingCampaign) {
         await updateCampaign(user.uid, editingCampaign.id, data)
       } else {
-        await createCampaign(user.uid, data)
+        const id = await createCampaign(user.uid, data)
+        navigate(`/campaigns/${id}`)
       }
       setShowForm(false)
       setEditingCampaign(null)
@@ -141,8 +172,14 @@ export default function Layout({ user, onSignOut }) {
     setShowForm(true)
   }
 
-  const handleSelectCampaign = (id) => {
-    navigate(id ? `/campaigns/${id}` : '/')
+  const openCampaign = (id, tab) => {
+    navigate(id ? `/campaigns/${id}${tab ? `?tab=${tab}` : ''}` : '/')
+  }
+
+  const selectTab = (tab, kind) => {
+    const qs = new URLSearchParams({ tab })
+    if (kind) qs.set('kind', kind)
+    navigate(`/campaigns/${activeCampaignId}?${qs}`)
   }
 
   const handleOpenSession = (sessionId) => {
@@ -172,134 +209,131 @@ export default function Layout({ user, onSignOut }) {
   }
 
   const handleBackFromEntity = () => {
-    navigate(`/campaigns/${activeCampaignId}`)
+    navigate(`/campaigns/${activeCampaignId}?tab=entities`)
     setEntityRefreshKey((k) => k + 1)
   }
 
   const activeCampaign = campaigns.find((c) => c.id === activeCampaignId)
+  const activeSummary = summaries[activeCampaignId] || EMPTY_SUMMARY
 
-  // Apply theme based on active campaign
+  // The active campaign tints the entire app; home falls back to gold.
+  const [previewPalette, setPreviewPalette] = useState(null)
+  const livePalette = previewPalette || (activeCampaign ? paletteFor(activeCampaign) : null)
   useEffect(() => {
-    applyTheme(activeCampaign?.theme || 'parchment')
-    return () => applyTheme('parchment') // cleanup on unmount
-  }, [activeCampaign?.theme])
+    applyPalette(livePalette)
+  }, [livePalette])
+  useEffect(() => () => applyPalette(null), [])
+
+  const threadCount = useMemo(
+    () => entities.filter((e) => e.type === 'thread').length,
+    [entities]
+  )
 
   return (
     <div className="app-shell">
       {/* MOBILE TOP BAR */}
       <header className="app-topbar">
-        <button onClick={() => setLeftOpen(true)} title="Campaigns & sessions">☰</button>
-        <span className="app-topbar-title" onClick={() => navigate('/')}>Marginalia</span>
-        <button onClick={() => setRightOpen(true)} title="Margins">✎</button>
+        <button onClick={() => setLeftOpen(true)} aria-label="Campaigns and sessions">☰</button>
+        <button className="app-topbar-title" onClick={() => navigate('/')}>Marginalia</button>
+        <button onClick={() => setRightOpen(true)} aria-label="Margins">✎</button>
       </header>
 
-      {/* LEFT SIDEBAR */}
-      <aside className={`app-sidebar${leftOpen ? ' open' : ''}`}>
-        <div style={{ marginBottom: 'var(--space-lg)' }}>
-          <h1 style={{
-            fontSize: '1.5rem',
-            fontWeight: 'normal',
-            fontStyle: 'italic',
-            color: 'var(--accent)',
-            letterSpacing: '0.02em',
-            cursor: 'pointer',
-          }}
-            onClick={() => navigate('/')}
-          >
-            Marginalia
-          </h1>
-        </div>
+      {/* LEFT RAIL */}
+      <aside className={`app-sidebar${leftOpen ? ' is-open' : ''}`}>
+        <button className="sidebar-brand" onClick={() => navigate('/')}>
+          Marginalia
+        </button>
 
-        <div style={{ marginBottom: 'var(--space-lg)' }}>
-          <label style={sidebarLabelStyle}>Campaign</label>
-          <select
-            value={activeCampaignId || ''}
-            onChange={(e) => handleSelectCampaign(e.target.value || null)}
-            style={{ width: '100%' }}
-          >
-            <option value="">— home —</option>
-            {campaigns.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.shortName || c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {activeCampaign && (
-          <div style={{ marginBottom: 'var(--space-lg)', flex: 1 }}>
-            <label style={sidebarLabelStyle}>Sessions</label>
-            {sidebarSessionsError ? (
-              <p style={{ color: 'var(--danger)', fontSize: '0.8rem', fontStyle: 'italic' }}>
-                error: {sidebarSessionsError}
-              </p>
-            ) : sidebarSessions.length === 0 ? (
-              <p style={{ color: 'var(--ink-faint)', fontSize: '0.85rem', fontStyle: 'italic' }}>
-                no sessions yet
-              </p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                {sidebarSessions.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => handleOpenSession(s.id)}
-                    style={{
-                      textAlign: 'left',
-                      padding: '6px 8px',
-                      borderRadius: '4px',
-                      background: activeSessionId === s.id ? 'var(--bg-input)' : 'transparent',
-                      color: activeSessionId === s.id ? 'var(--ink)' : 'var(--ink-muted)',
-                      fontSize: '0.9rem',
-                      fontFamily: 'var(--font-ui)',
-                      transition: 'background 0.15s',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (activeSessionId !== s.id) e.currentTarget.style.background = 'var(--bg-input)'
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeSessionId !== s.id) e.currentTarget.style.background = 'transparent'
-                    }}
-                  >
-                    <span style={{ color: 'var(--ink-faint)', marginRight: '6px' }}>
-                      #{s.sessionNumber}
-                    </span>
-                    {s.title}
-                  </button>
-                ))}
-              </div>
+        <div className="sidebar-scroll">
+          <div className="sidebar-group">
+            <div className="rail-label">Campaigns</div>
+            {campaigns.length === 0 && !loading && (
+              <div className="rail-empty">none yet</div>
             )}
+            {campaigns.map((c) => {
+              const palette = paletteFor(c)
+              const count = summaries[c.id]?.sessions
+              return (
+                <button
+                  key={c.id}
+                  className={`rail-row${c.id === activeCampaignId ? ' is-active' : ''}`}
+                  onClick={() => openCampaign(c.id)}
+                >
+                  <span className="rail-row-bar" style={{ background: palette.hex }} />
+                  <span className="rail-row-name">{c.shortName || c.name}</span>
+                  <span className="rail-row-meta">{count || '—'}</span>
+                </button>
+              )
+            })}
           </div>
-        )}
 
-        {!activeCampaign && <div style={{ flex: 1 }} />}
+          {activeCampaign && (
+            <>
+              <div className="sidebar-group">
+                <div className="rail-label-row">
+                  <span>Sessions</span>
+                  <span className="rail-count">{sidebarSessions.length}</span>
+                </div>
+                {sidebarSessionsError ? (
+                  <div className="rail-empty" style={{ color: 'var(--m-danger)' }}>
+                    {sidebarSessionsError}
+                  </div>
+                ) : sidebarSessions.length === 0 ? (
+                  <div className="rail-empty">no sessions yet</div>
+                ) : (
+                  sidebarSessions.map((s) => (
+                    <button
+                      key={s.id}
+                      className={`rail-row rail-row--session${activeSessionId === s.id ? ' is-active' : ''}`}
+                      onClick={() => handleOpenSession(s.id)}
+                    >
+                      <span className="rail-row-num">#{s.sessionNumber}</span>
+                      <span className="rail-row-title">{s.title}</span>
+                    </button>
+                  ))
+                )}
+              </div>
 
-        <div style={{
-          paddingTop: 'var(--space-md)',
-          borderTop: '1px solid var(--border-subtle)',
-          fontSize: '0.85rem',
-          color: 'var(--ink-muted)',
-        }}>
-          <div style={{ marginBottom: 'var(--space-xs)' }}>{user.displayName}</div>
-          <button
-            onClick={onSignOut}
-            style={{ color: 'var(--ink-faint)', fontSize: '0.8rem', fontFamily: 'var(--font-ui)' }}
-          >
-            sign out
-          </button>
+              <div className="sidebar-group">
+                <div className="rail-label">Codex</div>
+                <CodexRow
+                  label="Entities"
+                  count={entities.length}
+                  active={!activeSessionId && !activeEntityId && activeTab === 'entities' && entityKind === 'all'}
+                  onClick={() => selectTab('entities')}
+                />
+                <CodexRow
+                  label="Character"
+                  count={activeCampaign.characterName || ''}
+                  active={!activeSessionId && !activeEntityId && activeTab === 'character'}
+                  onClick={() => selectTab('character')}
+                />
+                <CodexRow
+                  label="Threads"
+                  count={threadCount}
+                  active={!activeSessionId && !activeEntityId && activeTab === 'entities' && entityKind === 'thread'}
+                  onClick={() => selectTab('entities', 'thread')}
+                />
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="sidebar-footer">
+          <div style={{ minWidth: 0 }}>
+            <div className="sidebar-footer-name">{user.displayName || 'you'}</div>
+            <button className="sidebar-footer-signout" onClick={onSignOut}>
+              sign out
+            </button>
+          </div>
+          <div className="avatar" aria-hidden="true">{initials(user.displayName)}</div>
         </div>
       </aside>
 
-      {/* CENTER */}
+      {/* CENTRE */}
       <main className="app-main">
         {loading ? (
-          <div style={{
-            textAlign: 'center',
-            color: 'var(--ink-faint)',
-            fontStyle: 'italic',
-            marginTop: '20vh',
-          }}>
-            loading the archive…
-          </div>
+          <Waiting>loading the archive…</Waiting>
         ) : activeEntityId && activeCampaign ? (
           <EntityDetail
             userId={user.uid}
@@ -310,14 +344,7 @@ export default function Layout({ user, onSignOut }) {
             onOpenSession={handleOpenSession}
           />
         ) : activeSessionId && activeCampaign && (!activeSession || activeSession.id !== activeSessionId) ? (
-          <div style={{
-            textAlign: 'center',
-            color: 'var(--ink-faint)',
-            fontStyle: 'italic',
-            marginTop: '20vh',
-          }}>
-            loading…
-          </div>
+          <Waiting>loading…</Waiting>
         ) : activeSessionId && activeSession && activeCampaign ? (
           <SessionEditor
             userId={user.uid}
@@ -334,17 +361,24 @@ export default function Layout({ user, onSignOut }) {
           <CampaignDetail
             userId={user.uid}
             campaign={activeCampaign}
-            onEdit={() => handleEditCampaign(activeCampaign)}
-            onDelete={() => handleDeleteCampaign(activeCampaign.id)}
+            entities={entities}
+            summary={activeSummary}
+            activeTab={activeTab}
+            entityKind={entityKind}
+            onSelectTab={selectTab}
+            onEditCampaign={() => handleEditCampaign(activeCampaign)}
+            onGoHome={() => navigate('/')}
             onOpenSession={handleOpenSession}
             onOpenEntity={handleOpenEntity}
+            onEntityCreated={handleEntityRefresh}
+            onSessionsChanged={handleSessionUpdated}
             refreshTrigger={refreshKey + entityRefreshKey}
           />
         ) : (
           <CampaignList
             campaigns={campaigns}
-            onSelect={handleSelectCampaign}
-            onEdit={handleEditCampaign}
+            summaries={summaries}
+            onSelect={openCampaign}
             onCreate={() => {
               setEditingCampaign(null)
               setShowForm(true)
@@ -353,19 +387,18 @@ export default function Layout({ user, onSignOut }) {
         )}
       </main>
 
-      {/* RIGHT PANEL */}
-      <aside className={`app-margins${rightOpen ? ' open' : ''}`}>
+      {/* RIGHT RAIL */}
+      <aside className={`app-margins${rightOpen ? ' is-open' : ''}`}>
         {activeCampaign ? (
-          <MarginsPanel
-            userId={user.uid}
-            campaignId={activeCampaign.id}
-          />
+          <MarginsPanel userId={user.uid} campaignId={activeCampaign.id} />
         ) : (
           <>
-            <label style={sidebarLabelStyle}>Margins</label>
-            <p style={{ color: 'var(--ink-faint)', fontSize: '0.85rem', fontStyle: 'italic' }}>
-              open a campaign to capture loose thoughts
-            </p>
+            <div className="margins-head">
+              <span>Margins</span>
+            </div>
+            <div className="margins-list">
+              <p className="hint">open a campaign to capture loose thoughts</p>
+            </div>
           </>
         )}
       </aside>
@@ -385,10 +418,14 @@ export default function Layout({ user, onSignOut }) {
       {showForm && (
         <CampaignForm
           initial={editingCampaign || {}}
+          isEdit={Boolean(editingCampaign)}
           onSubmit={handleCreateOrUpdateCampaign}
+          onDelete={editingCampaign ? () => handleDeleteCampaign(editingCampaign.id) : null}
+          onPreviewPalette={setPreviewPalette}
           onCancel={() => {
             setShowForm(false)
             setEditingCampaign(null)
+            setPreviewPalette(null)
           }}
         />
       )}
@@ -396,12 +433,29 @@ export default function Layout({ user, onSignOut }) {
   )
 }
 
-const sidebarLabelStyle = {
-  display: 'block',
-  fontSize: '0.75rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
-  color: 'var(--ink-faint)',
-  fontFamily: 'var(--font-ui)',
-  marginBottom: 'var(--space-sm)',
+function CodexRow({ label, count, active, onClick }) {
+  return (
+    <button
+      className={`rail-row rail-row--codex${active ? ' is-active' : ''}`}
+      onClick={onClick}
+    >
+      <span className="rail-row-label">{label}</span>
+      <span className="rail-row-meta">{count}</span>
+    </button>
+  )
+}
+
+function Waiting({ children }) {
+  return (
+    <div style={{
+      flex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'var(--m-text-4)',
+      fontStyle: 'italic',
+    }}>
+      {children}
+    </div>
+  )
 }

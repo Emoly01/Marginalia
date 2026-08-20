@@ -71,9 +71,10 @@ A cross-campaign player journal for TTRPGs. Hybrid freeform-plus-structured jour
 - PC dossier per campaign — personality, relationships, knowledge, vibes
 
 **v0.5 — Polish**
-- Rich text formatting (bold/italic/lists)
+- Rich text formatting (bold/italic/lists) ✅
+- Per-campaign theming ✅ — ten accent palettes, each deriving the whole
+  surface ramp in OKLCH so the app takes on the colour of the campaign you're in
 - Search across entries
-- Per-campaign theming
 
 ## Data model
 
