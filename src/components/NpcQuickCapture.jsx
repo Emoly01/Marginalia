@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { createEntity, entityTypeInfo } from '../lib/entities'
+import { createEntity } from '../lib/entities'
 
 /**
  * NpcQuickCapture — a rapid-fire roster input for jotting down NPCs
@@ -100,60 +100,40 @@ export default function NpcQuickCapture({
     setInput(val)
   }
 
-  const npcColor = entityTypeInfo('npc').color
-
   return (
     <div
       style={{
-        border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--radius)',
-        background: 'var(--bg-elevated)',
-        padding: 'var(--space-sm) var(--space-md)',
-        marginBottom: 'var(--space-lg)',
+        border: '1px solid var(--m-line)',
+        borderRadius: 'var(--radius-lg)',
+        background: 'var(--m-card)',
+        padding: '10px 14px',
       }}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
+      <div className="row-between">
         <button
           onClick={() => setCollapsed((c) => !c)}
+          title={collapsed ? 'Expand roster' : 'Collapse roster'}
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 'var(--space-xs)',
-            fontSize: '0.75rem',
+            gap: '7px',
+            fontSize: '11px',
+            letterSpacing: '0.16em',
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--ink-faint)',
-            fontFamily: 'var(--font-ui)',
+            color: 'var(--m-text-4)',
             padding: 0,
           }}
-          title={collapsed ? 'Expand roster' : 'Collapse roster'}
         >
-          <span style={{ fontSize: '0.7rem' }}>{collapsed ? '▸' : '▾'}</span>
+          <span>{collapsed ? '▸' : '▾'}</span>
           Roster — quick-add NPCs
         </button>
         {recent.length > 0 && (
-          <span
-            style={{
-              fontSize: '0.7rem',
-              color: 'var(--ink-faint)',
-              fontFamily: 'var(--font-ui)',
-              fontStyle: 'italic',
-            }}
-          >
-            {recent.length} this session
-          </span>
+          <span className="rail-count">{recent.length} this session</span>
         )}
       </div>
 
       {!collapsed && (
-        <div style={{ marginTop: 'var(--space-sm)' }}>
+        <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '9px' }}>
           <input
             ref={inputRef}
             type="text"
@@ -161,88 +141,27 @@ export default function NpcQuickCapture({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             disabled={busy}
+            aria-label="Quick-add NPC"
             placeholder="Name — descriptor  ·  enter to add"
-            style={{
-              width: '100%',
-              background: 'var(--bg-input)',
-              border: '1px solid var(--border-subtle)',
-              color: 'var(--ink)',
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.95rem',
-              padding: 'var(--space-sm)',
-              borderRadius: 'var(--radius)',
-            }}
-            onFocus={(e) => (e.target.style.borderColor = 'var(--accent)')}
-            onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
+            style={{ width: '100%', fontSize: '15px', padding: '7px 10px' }}
           />
 
           {error && (
-            <p
-              style={{
-                color: 'var(--danger)',
-                fontSize: '0.78rem',
-                fontStyle: 'italic',
-                marginTop: 'var(--space-xs)',
-              }}
-            >
-              {error}
-            </p>
+            <p className="hint" style={{ color: 'var(--m-danger)' }}>{error}</p>
           )}
 
-          {/* Recently added chips */}
           {recent.length > 0 && (
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 'var(--space-xs)',
-                marginTop: 'var(--space-sm)',
-              }}
-            >
+            <div className="pill-row">
               {recent.map((npc, i) => (
                 <button
                   key={`${npc.id}-${i}`}
+                  className="pill"
                   onClick={() => onOpenEntity?.(npc.id)}
-                  title={
-                    npc.existing
-                      ? 'Already in this campaign — open'
-                      : 'Open NPC'
-                  }
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 'var(--space-xs)',
-                    background: 'var(--bg-input)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '999px',
-                    padding: '3px 10px',
-                    fontSize: '0.82rem',
-                    fontFamily: 'var(--font-ui)',
-                    color: 'var(--ink-muted)',
-                    opacity: npc.existing ? 0.65 : 1,
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.borderColor = 'var(--accent)')
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.borderColor = 'var(--border-subtle)')
-                  }
+                  title={npc.existing ? 'Already in this campaign — open' : 'Open NPC'}
+                  style={{ opacity: npc.existing ? 0.65 : 1, cursor: 'pointer', fontSize: '13px' }}
                 >
-                  <span
-                    style={{
-                      width: '7px',
-                      height: '7px',
-                      borderRadius: '50%',
-                      background: npcColor,
-                      flexShrink: 0,
-                    }}
-                  />
                   {npc.name}
-                  {npc.existing && (
-                    <span style={{ fontSize: '0.7rem', fontStyle: 'italic' }}>
-                      existing
-                    </span>
-                  )}
+                  {npc.existing && <span style={{ fontStyle: 'italic' }}> · existing</span>}
                 </button>
               ))}
             </div>

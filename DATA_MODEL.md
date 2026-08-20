@@ -17,7 +17,7 @@
   - characterClass    // optional flavor
   - createdAt
   - lastActiveAt
-  - color             // hex — for visual distinction in dropdown
+  - palette           // palette id — "gold", "sage", "plum"… see src/lib/palette.js
   - status            // "active", "hiatus", "completed"
 
 /users/{userId}/campaigns/{campaignId}/sessions/{sessionId}
@@ -44,10 +44,18 @@
   - name
   - class
   - level
+  - ancestry
+  - pronouns
   - background
+  - status            // "alive", "dead", "retired", "missing", "other"
+  - abilities         // { str, dex, con, int, wis, cha } — the summary-card grid
   - personality       // freeform internal-monologue space
-  - relationships     // freeform relationship tracker
-  - knowledge         // what my character knows (vs. what I know OOC)
+  - backstory
+  - goals
+  - relationships     // array of { id, name, type, status, notes }
+  - knowledge         // what my character knows (in-character)
+  - knowledgeOOC      // what I know that they haven't earned yet
+  - items             // things that matter narratively
   - vibes             // songs, aesthetic, mood notes
   - updatedAt
 ```
@@ -64,6 +72,12 @@
   (e.g. "this NPC is actually a location now").
 - **Character is a singleton doc** — one PC per campaign for v1. Can extend to multi-PC
   campaigns later if Emily ever runs a duo character.
+- **A campaign stores a palette, not a colour** — `palette` names one of ten accent
+  colours, and the whole surface ramp is derived from it in OKLCH at runtime
+  (`src/lib/palette.js`). Campaigns written before this carry a `theme` id and/or a
+  `color` hex instead; `paletteFor()` maps those onto the nearest palette on read, and
+  the campaign is rewritten with `palette` the next time it is saved. The legacy fields
+  are left in place rather than deleted — nothing reads them once `palette` exists.
 
 ## Future considerations
 

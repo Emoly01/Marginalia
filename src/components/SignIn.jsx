@@ -5,39 +5,31 @@ export default function SignIn({ onSignIn }) {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      height: '100vh',
-      padding: 'var(--space-xl)',
-      textAlign: 'center'
+      height: '100dvh',
+      padding: '40px',
+      textAlign: 'center',
+      background: 'var(--m-bg)',
     }}>
       <h1 style={{
-        fontSize: '3rem',
+        fontSize: 'clamp(44px, 9vw, 64px)',
         fontWeight: 'normal',
         fontStyle: 'italic',
-        color: 'var(--accent)',
-        marginBottom: 'var(--space-sm)',
-        letterSpacing: '0.02em'
+        color: 'var(--m-accent)',
+        letterSpacing: '0.01em',
+        lineHeight: 1.05,
       }}>
         Marginalia
       </h1>
       <p style={{
-        color: 'var(--ink-muted)',
-        marginBottom: 'var(--space-xl)',
-        maxWidth: '32rem',
-        fontStyle: 'italic'
+        color: 'var(--m-text-3)',
+        fontStyle: 'italic',
+        fontSize: '18px',
+        margin: '14px 0 38px',
+        maxWidth: '30rem',
       }}>
-        notes in the margins of someone else's story
+        notes in the margins of someone else&rsquo;s story
       </p>
-      <button
-        onClick={onSignIn}
-        style={{
-          background: 'var(--accent)',
-          color: 'var(--bg)',
-          padding: 'var(--space-sm) var(--space-lg)',
-          borderRadius: 'var(--radius)',
-          fontWeight: 600,
-          fontFamily: 'var(--font-ui)',
-        }}
-      >
+      <button className="btn-primary" onClick={onSignIn}>
         Sign in with Google
       </button>
     </div>

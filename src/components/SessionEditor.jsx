@@ -158,153 +158,85 @@ export default function SessionEditor({
   }
 
   return (
-    <div style={{ maxWidth: '720px', margin: '0 auto' }}>
-      {/* Top bar */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 'var(--space-lg)',
-      }}>
-        <button
-          onClick={handleBack}
-          style={{
-            color: 'var(--ink-muted)',
-            fontFamily: 'var(--font-ui)',
-            fontSize: '0.85rem',
-          }}
-        >
-          ← back
-        </button>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-md)',
-        }}>
-          <SaveIndicator status={saveStatus} />
-          <button
-            onClick={handleDelete}
-            style={{
-              fontSize: '0.85rem',
-              color: 'var(--danger)',
-              fontFamily: 'var(--font-ui)',
-            }}
-          >
-            delete
-          </button>
-        </div>
-      </div>
-
-      {/* Metadata row */}
-      <div style={{
-        display: 'flex',
-        gap: 'var(--space-md)',
-        marginBottom: 'var(--space-md)',
-        alignItems: 'center',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-xs)',
-        }}>
-          <span style={metaLabelStyle}>#</span>
+    <div className="view">
+      <header className="view-header" style={{ alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', flex: 1, minWidth: 0 }}>
+          <span style={{ fontSize: '13px', color: 'var(--m-text-4)' }}>#</span>
           <input
             type="number"
+            className="input-ghost"
+            aria-label="Session number"
             value={sessionNumber}
             onChange={(e) => setSessionNumber(e.target.value)}
-            style={{
-              width: '60px',
-              background: 'transparent',
-              border: '1px solid transparent',
-              padding: '4px 8px',
-              color: 'var(--ink-muted)',
-              fontFamily: 'var(--font-ui)',
-            }}
-            onFocus={(e) => e.target.style.borderColor = 'var(--border)'}
-            onBlur={(e) => e.target.style.borderColor = 'transparent'}
+            style={{ width: '64px', fontVariantNumeric: 'tabular-nums' }}
+          />
+          <input
+            type="date"
+            className="input-ghost"
+            aria-label="Session date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            style={{ width: 'auto', color: 'var(--m-text-3)', fontSize: '14px' }}
           />
         </div>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          style={{
-            background: 'transparent',
-            border: '1px solid transparent',
-            color: 'var(--ink-muted)',
-            fontFamily: 'var(--font-ui)',
-            padding: '4px 8px',
-          }}
-          onFocus={(e) => e.target.style.borderColor = 'var(--border)'}
-          onBlur={(e) => e.target.style.borderColor = 'transparent'}
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 'none' }}>
+          <SaveIndicator status={saveStatus} />
+          <button className="btn" onClick={handleBack}>← back</button>
+          <button className="btn-danger" onClick={handleDelete}>delete</button>
+        </div>
+      </header>
+
+      <div className="view-body">
+        <div className="column column--narrow" style={{ gap: '18px' }}>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Session title…"
+            aria-label="Session title"
+            style={{
+              width: '100%',
+              fontSize: '32px',
+              fontStyle: 'italic',
+              color: 'var(--m-accent)',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: 0,
+              padding: '4px 0',
+              lineHeight: 1.15,
+            }}
+          />
+
+          {/* Quick-add NPC roster — capture names fast without breaking flow */}
+          <NpcQuickCapture
+            userId={userId}
+            campaignId={campaignId}
+            entities={entities}
+            onEntityCreated={onEntityCreated}
+            onOpenEntity={onOpenEntity}
+          />
+
+          {/* Body — Tiptap rich text editor */}
+          <RichTextEditor
+            content={content}
+            onChange={setContent}
+            placeholder="What happened this session? Type @ to mention an NPC, place, or thread."
+            mentionSuggestion={mentionSuggestion}
+            onMentionClick={onOpenEntity}
+            tall
+          />
+        </div>
       </div>
-
-      {/* Title */}
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Session title…"
-        style={{
-          width: '100%',
-          fontSize: '2rem',
-          fontWeight: 'normal',
-          fontStyle: 'italic',
-          color: 'var(--accent)',
-          background: 'transparent',
-          border: 'none',
-          padding: 'var(--space-sm) 0',
-          marginBottom: 'var(--space-md)',
-          fontFamily: 'var(--font-body)',
-        }}
-      />
-
-      {/* Quick-add NPC roster — capture names fast without breaking flow */}
-      <NpcQuickCapture
-        userId={userId}
-        campaignId={campaignId}
-        entities={entities}
-        onEntityCreated={onEntityCreated}
-        onOpenEntity={onOpenEntity}
-      />
-
-      {/* Body — Tiptap rich text editor */}
-      <RichTextEditor
-        content={content}
-        onChange={setContent}
-        placeholder="What happened this session? Type @ to mention an NPC, place, or thread."
-        mentionSuggestion={mentionSuggestion}
-        onMentionClick={onOpenEntity}
-      />
     </div>
   )
 }
 
 function SaveIndicator({ status }) {
   const display = {
-    saved: { text: 'saved ✓', color: 'var(--ink-faint)' },
-    saving: { text: 'saving…', color: 'var(--accent)' },
-    unsaved: { text: 'unsaved', color: 'var(--danger)' },
+    saved: { text: 'saved', color: 'var(--m-text-4)' },
+    saving: { text: 'saving…', color: 'var(--m-accent)' },
+    unsaved: { text: 'unsaved', color: 'var(--m-danger)' },
   }[status]
 
-  return (
-    <span style={{
-      fontSize: '0.8rem',
-      color: display.color,
-      fontFamily: 'var(--font-ui)',
-      fontStyle: 'italic',
-      transition: 'color 0.2s',
-    }}>
-      {display.text}
-    </span>
-  )
-}
-
-const metaLabelStyle = {
-  fontSize: '0.75rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
-  color: 'var(--ink-faint)',
-  fontFamily: 'var(--font-ui)',
+  return <span className="save-indicator" style={{ color: display.color }}>{display.text}</span>
 }
