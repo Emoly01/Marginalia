@@ -4,6 +4,7 @@ import { createEntity } from '../lib/entities'
 import { useDebounce } from '../lib/useDebounce'
 import { buildMentionSuggestion } from '../lib/mentionSuggestion'
 import { toast } from '../lib/toast'
+import { sessionStatus } from '../lib/sessionStatus'
 import RichTextEditor from './RichTextEditor'
 import NpcQuickCapture from './NpcQuickCapture'
 
@@ -17,6 +18,7 @@ export default function SessionEditor({
   onBack,
   onDeleted,
   onUpdated,
+  onInk,
 }) {
   const [title, setTitle] = useState(session.title)
   const [date, setDate] = useState(session.date)
@@ -146,6 +148,13 @@ export default function SessionEditor({
     onBack()
   }
 
+  // Unsaved edits are written first. The write is queued before we leave,
+  // and Inking reads the session back through the same local cache.
+  const handleInk = () => {
+    if (saveStatus !== 'saved') persist({ title, date, sessionNumber, content })
+    onInk?.()
+  }
+
   const handleDelete = async () => {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return
     try {
@@ -206,6 +215,13 @@ export default function SessionEditor({
               lineHeight: 1.15,
             }}
           />
+
+          {sessionStatus(session) === 'ended' && onInk && (
+            <div className="ink-banner">
+              <span>This session hasn’t been inked yet — its log and your margins are waiting.</span>
+              <button className="btn-primary" onClick={handleInk}>Ink it</button>
+            </div>
+          )}
 
           {/* Quick-add NPC roster — capture names fast without breaking flow */}
           <NpcQuickCapture

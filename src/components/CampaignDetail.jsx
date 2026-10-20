@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { listSessions, createSession } from '../lib/sessions'
 import { excerptFrom } from '../lib/text'
 import { sessionBadge } from '../lib/sessionStatus'
@@ -26,6 +26,7 @@ export default function CampaignDetail({
   onSessionsChanged,
   refreshTrigger,
 }) {
+  const navigate = useNavigate()
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
@@ -157,6 +158,7 @@ export default function CampaignDetail({
             entityNames={entityNames}
             onNewSession={handleNewSession}
             onOpenSession={onOpenSession}
+            onInkSession={(id) => navigate(`/campaigns/${campaign.id}/sessions/${id}/ink`)}
           />
         )}
       </div>
@@ -164,7 +166,7 @@ export default function CampaignDetail({
   )
 }
 
-function SessionsView({ sessions, loading, loadError, entityNames, onNewSession, onOpenSession }) {
+function SessionsView({ sessions, loading, loadError, entityNames, onNewSession, onOpenSession, onInkSession }) {
   return (
     <div className="column column--narrow">
       <div className="row-between">
@@ -188,12 +190,14 @@ function SessionsView({ sessions, loading, loadError, entityNames, onNewSession,
             .map((id) => entityNames[id])
             .filter(Boolean)
             .slice(0, MAX_TAGS)
+          const badge = sessionBadge(s)
           return (
-            <button key={s.id} className="session-card" onClick={() => onOpenSession(s.id)}>
+            <div key={s.id} className="session-card-wrap">
+            <button className="session-card" onClick={() => onOpenSession(s.id)}>
               <div className="session-card-head">
                 <span className="session-card-num">#{s.sessionNumber}</span>
                 <span className="session-card-title">{s.title}</span>
-                {sessionBadge(s) && <span className="table-badge">{sessionBadge(s)}</span>}
+                {badge && <span className="table-badge">{badge}</span>}
                 <span style={{ flex: 1 }} />
                 <span className="session-card-date">{s.date}</span>
               </div>
@@ -210,6 +214,12 @@ function SessionsView({ sessions, loading, loadError, entityNames, onNewSession,
                 </div>
               )}
             </button>
+            {badge === 'to ink' && (
+              <button className="btn-quiet session-card-ink" onClick={() => onInkSession(s.id)}>
+                Ink this session
+              </button>
+            )}
+            </div>
           )
         })
       )}

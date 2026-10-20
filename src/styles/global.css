@@ -2370,6 +2370,121 @@ select:focus {
 }
 
 /* ============================================ */
+/* Inking (/campaigns/:id/sessions/:id/ink)      */
+/* ============================================ */
+
+.ink {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+  gap: 24px;
+  align-items: start;
+}
+
+.ink-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.ink-item,
+.ink-recall {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ink-item-meta {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.ink-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ink-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ink-action-row input {
+  flex: 1 1 160px;
+}
+
+.ink-action-row select {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+
+.ink-actions button,
+.ink-action-row input,
+.ink-action-row select {
+  min-height: 44px;
+}
+
+.ink-timeline {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ink-timeline-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--m-text-3);
+}
+
+.ink-recap-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ink-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border: 1px solid var(--m-accent);
+  border-radius: var(--radius-lg);
+  color: var(--m-text-2);
+  font-style: italic;
+}
+
+.session-card-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.session-card-ink {
+  align-self: flex-end;
+}
+
+@media (max-width: 760px) {
+  .ink {
+    grid-template-columns: 1fr;
+  }
+
+  .ink-timeline {
+    position: static;
+  }
+}
+
+/* ============================================ */
 /* Responsive — rails become drawers             */
 /* ============================================ */
 
