@@ -19,6 +19,7 @@ export default function CampaignForm({
   const [characterName, setCharacterName] = useState(initial.characterName || '')
   const [characterClass, setCharacterClass] = useState(initial.characterClass || '')
   const [status, setStatus] = useState(initial.status || 'active')
+  const [ddbUrl, setDdbUrl] = useState(initial.ddbUrl || '')
   // New campaigns ask for two things; the rest waits until you want it.
   const [showMore, setShowMore] = useState(isEdit)
 
@@ -57,6 +58,7 @@ export default function CampaignForm({
       characterClass: characterClass.trim(),
       palette,
       status,
+      ddbUrl: ddbUrl.trim(),
     })
   }
 
@@ -184,6 +186,18 @@ export default function CampaignForm({
                   placeholder="warlock"
                 />
               </div>
+            </div>
+
+            <div className="field">
+              <label className="field-label" htmlFor="campaign-ddb">D&amp;D Beyond character link</label>
+              <input
+                id="campaign-ddb"
+                type="url"
+                value={ddbUrl}
+                onChange={(e) => setDdbUrl(e.target.value)}
+                placeholder="https://www.dndbeyond.com/characters/…"
+              />
+              <span className="field-hint">for the rare lookup the imported sheet doesn’t cover</span>
             </div>
 
             <div className="field">

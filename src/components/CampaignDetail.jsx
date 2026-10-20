@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { listSessions, createSession } from '../lib/sessions'
 import { excerptFrom } from '../lib/text'
+import { sessionBadge } from '../lib/sessionStatus'
 import { paletteFor } from '../lib/palette'
 import { toast } from '../lib/toast'
 import CharacterDossier from './CharacterDossier'
 import EntitiesView from './EntitiesView'
+import SheetTab from './SheetTab'
 
 const MAX_TAGS = 3
 
@@ -73,6 +76,7 @@ export default function CampaignDetail({
     { key: 'sessions', label: 'Sessions', count: sessions.length },
     { key: 'entities', label: 'Entities', count: entities.length },
     { key: 'character', label: 'Character', count: '' },
+    { key: 'sheet', label: 'Sheet', count: '' },
   ]
 
   return (
@@ -100,6 +104,7 @@ export default function CampaignDetail({
           </div>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flex: 'none' }}>
             <button className="btn" onClick={onGoHome}>← all campaigns</button>
+            <Link className="btn-primary" to={`/campaigns/${campaign.id}/table`}>At the table</Link>
             <button className="btn btn-outline" onClick={onEditCampaign}>Settings</button>
           </div>
         </div>
@@ -119,7 +124,14 @@ export default function CampaignDetail({
       </header>
 
       <div className="view-body">
-        {activeTab === 'character' ? (
+        {activeTab === 'sheet' ? (
+          <SheetTab
+            userId={userId}
+            campaignId={campaign.id}
+            entities={entities}
+            onEntitiesChanged={onEntityCreated}
+          />
+        ) : activeTab === 'character' ? (
           <CharacterDossier
             userId={userId}
             campaignId={campaign.id}
@@ -181,6 +193,7 @@ function SessionsView({ sessions, loading, loadError, entityNames, onNewSession,
               <div className="session-card-head">
                 <span className="session-card-num">#{s.sessionNumber}</span>
                 <span className="session-card-title">{s.title}</span>
+                {sessionBadge(s) && <span className="table-badge">{sessionBadge(s)}</span>}
                 <span style={{ flex: 1 }} />
                 <span className="session-card-date">{s.date}</span>
               </div>

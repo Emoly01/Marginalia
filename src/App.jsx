@@ -5,6 +5,7 @@ import { auth, googleProvider } from './firebase'
 import Layout from './components/Layout'
 import SignIn from './components/SignIn'
 import Toasts from './components/Toasts'
+import TableView from './components/TableView'
 import { toast } from './lib/toast'
 
 export default function App() {
@@ -58,6 +59,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={layout} />
           <Route path="/campaigns/:campaignId" element={layout} />
+          <Route path="/campaigns/:campaignId/table" element={<TableView user={user} />} />
           <Route path="/campaigns/:campaignId/sessions/:sessionId" element={layout} />
           <Route path="/campaigns/:campaignId/entities/:entityId" element={layout} />
           <Route path="*" element={<Navigate to="/" replace />} />

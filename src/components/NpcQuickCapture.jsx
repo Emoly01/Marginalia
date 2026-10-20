@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { createEntity } from '../lib/entities'
+import { parseLine } from '../lib/npcLine'
 
 /**
  * NpcQuickCapture — a rapid-fire roster input for jotting down NPCs
@@ -170,23 +171,4 @@ export default function NpcQuickCapture({
       )}
     </div>
   )
-}
-
-/**
- * Parse "Name — descriptor" into { name, notes }.
- * Separators, in priority order: em dash, en dash, colon, spaced hyphen.
- */
-export function parseLine(line) {
-  const text = line.trim()
-  const separators = ['—', '–', ':', ' - ']
-  for (const sep of separators) {
-    const idx = text.indexOf(sep)
-    if (idx > 0) {
-      return {
-        name: text.slice(0, idx).trim(),
-        notes: text.slice(idx + sep.length).trim(),
-      }
-    }
-  }
-  return { name: text, notes: '' }
 }

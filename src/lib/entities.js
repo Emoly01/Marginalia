@@ -46,18 +46,32 @@ export async function getEntity(userId, campaignId, entityId) {
   return { id: snap.id, ...snap.data() }
 }
 
-export async function createEntity(userId, campaignId, data) {
+// The stored shape of a new entity. `source: 'sheet'` marks items created
+// by a character-sheet import.
+function entityFields(data) {
   const now = serverTimestamp()
-  const docRef = await addDoc(entitiesRef(userId, campaignId), {
+  return {
     name: (data.name || 'Unnamed').trim(),
     type: data.type || 'npc',
     notes: data.notes || '',
     aliases: data.aliases || [],
     connections: data.connections || [], // array of entity IDs
+    ...(data.source ? { source: data.source } : {}),
     createdAt: now,
     updatedAt: now,
-  })
+  }
+}
+
+export async function createEntity(userId, campaignId, data) {
+  const docRef = await addDoc(entitiesRef(userId, campaignId), entityFields(data))
   return docRef.id
+}
+
+/**
+ * A new entity's ref and data, for callers that write it in a batch.
+ */
+export function newEntity(userId, campaignId, data) {
+  return { ref: doc(entitiesRef(userId, campaignId)), data: entityFields(data) }
 }
 
 export async function updateEntity(userId, campaignId, entityId, data) {
