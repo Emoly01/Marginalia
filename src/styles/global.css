@@ -2600,6 +2600,33 @@ select:focus {
 }
 
 /* ============================================ */
+/* "New version" prompt (service worker)         */
+/* ============================================ */
+
+.update-prompt {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 32px);
+  padding: 10px 14px;
+  background: var(--m-panel);
+  border: 1px solid var(--m-accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--m-text-2);
+}
+
+.update-prompt button {
+  min-height: 40px;
+}
+
+/* ============================================ */
 /* Responsive — rails become drawers             */
 /* ============================================ */
 
