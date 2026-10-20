@@ -1,0 +1,5089 @@
+{
+ "source": "D&D Beyond character sheet PDF export (5 pages, US Letter, producer PDFsharp 6.1.1), exported 2026-10-20",
+ "extractedWith": "pdfjs-dist 6.4.299 page.getAnnotations() — Widget annotations, filled fields only",
+ "note": "The PDF has no /AcroForm in the catalog; pdf-lib getForm() and pypdf get_fields() return 0 fields. fieldName strings are kept verbatim (including stray spaces). rect = [x1,y1,x2,y2] in PDF points, origin bottom-left. PLAYER NAME values redacted.",
+ "fields": [
+  {
+   "page": 1,
+   "fieldName": "CharacterName",
+   "value": "Nenise",
+   "rect": [
+    47,
+    710,
+    221,
+    731
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "CLASS  LEVEL",
+   "value": "Bard 5",
+   "rect": [
+    271,
+    728,
+    467,
+    742
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "PLAYER NAME",
+   "value": "[redacted]",
+   "rect": [
+    470,
+    728,
+    568,
+    742
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "RACE",
+   "value": "Tiefling",
+   "rect": [
+    271,
+    702,
+    381,
+    716
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "BACKGROUND",
+   "value": "Cultist",
+   "rect": [
+    384,
+    702,
+    477,
+    716
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "EXPERIENCE POINTS",
+   "value": "(Milestone)",
+   "rect": [
+    480,
+    702,
+    568,
+    716
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "STR",
+   "value": "8",
+   "rect": [
+    37,
+    609,
+    78,
+    635
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "STRmod",
+   "value": "-1",
+   "rect": [
+    46,
+    589,
+    68,
+    602
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "DEX",
+   "value": "14",
+   "rect": [
+    37,
+    532,
+    78,
+    558
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "DEXmod ",
+   "value": "+2",
+   "rect": [
+    46,
+    512,
+    68,
+    525
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "CON",
+   "value": "15",
+   "rect": [
+    37,
+    456,
+    78,
+    482
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "CONmod",
+   "value": "+2",
+   "rect": [
+    46,
+    436,
+    68,
+    449
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "INT",
+   "value": "8",
+   "rect": [
+    37,
+    379,
+    78,
+    405
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "INTmod",
+   "value": "-1",
+   "rect": [
+    46,
+    359,
+    68,
+    372
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "WIS",
+   "value": "12",
+   "rect": [
+    37,
+    303,
+    78,
+    328
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "WISmod",
+   "value": "+1",
+   "rect": [
+    46,
+    283,
+    68,
+    296
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "CHA",
+   "value": "18",
+   "rect": [
+    37,
+    226,
+    78,
+    252
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "CHamod",
+   "value": "+4",
+   "rect": [
+    46,
+    207,
+    68,
+    219
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ST Strength",
+   "value": "-1",
+   "rect": [
+    113,
+    650,
+    127,
+    659
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "DexProf",
+   "value": "•",
+   "rect": [
+    100,
+    637,
+    109,
+    646
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ST Dexterity",
+   "value": "+5",
+   "rect": [
+    113,
+    637,
+    127,
+    645
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ST Constitution",
+   "value": "+2",
+   "rect": [
+    113,
+    623,
+    127,
+    632
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ST Intelligence",
+   "value": "-1",
+   "rect": [
+    113,
+    610,
+    127,
+    618
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ST Wisdom",
+   "value": "+1",
+   "rect": [
+    113,
+    596,
+    127,
+    605
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ChaProf",
+   "value": "•",
+   "rect": [
+    100,
+    583,
+    109,
+    592
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ST Charisma",
+   "value": "+7",
+   "rect": [
+    113,
+    583,
+    127,
+    591
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Defenses",
+   "value": "Resistances - Poison, Fire",
+   "rect": [
+    232,
+    549,
+    381,
+    582
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "AcrobaticsProf",
+   "value": "H",
+   "rect": [
+    100,
+    480,
+    109,
+    489
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Acrobatics",
+   "value": "+3",
+   "rect": [
+    112,
+    481,
+    126,
+    489
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "AcrobaticsMod",
+   "value": "DEX",
+   "rect": [
+    165,
+    480,
+    181,
+    489
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "AnimalHandlingProf",
+   "value": "H",
+   "rect": [
+    100,
+    467,
+    109,
+    475
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Animal",
+   "value": "+2",
+   "rect": [
+    112,
+    467,
+    126,
+    476
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "AnimalMod",
+   "value": "WIS",
+   "rect": [
+    184,
+    466,
+    200,
+    475
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ArcanaProf",
+   "value": "P",
+   "rect": [
+    100,
+    453,
+    109,
+    462
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Arcana",
+   "value": "+2",
+   "rect": [
+    112,
+    454,
+    126,
+    462
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ArcanaMod",
+   "value": "INT",
+   "rect": [
+    154,
+    453,
+    170,
+    462
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "AthleticsProf",
+   "value": "H",
+   "rect": [
+    100,
+    440,
+    109,
+    448
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Athletics",
+   "value": "+0",
+   "rect": [
+    112,
+    440,
+    126,
+    449
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "AthleticsMod",
+   "value": "STR",
+   "rect": [
+    160,
+    439,
+    176,
+    448
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "DeceptionProf",
+   "value": "P",
+   "rect": [
+    100,
+    426,
+    109,
+    435
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Deception",
+   "value": "+7",
+   "rect": [
+    112,
+    427,
+    126,
+    435
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "DeceptionMod",
+   "value": "CHA",
+   "rect": [
+    165,
+    426,
+    181,
+    435
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "HistoryProf",
+   "value": "H",
+   "rect": [
+    100,
+    413,
+    109,
+    421
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "History",
+   "value": "+0",
+   "rect": [
+    112,
+    413,
+    126,
+    422
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "HistoryMod",
+   "value": "INT",
+   "rect": [
+    156,
+    412,
+    172,
+    421
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "InsightProf",
+   "value": "P",
+   "rect": [
+    100,
+    399,
+    109,
+    408
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Insight",
+   "value": "+4",
+   "rect": [
+    112,
+    400,
+    126,
+    408
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "InsightMod",
+   "value": "WIS",
+   "rect": [
+    155,
+    399,
+    171,
+    408
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "IntimidationProf",
+   "value": "P",
+   "rect": [
+    100,
+    385,
+    109,
+    394
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Intimidation",
+   "value": "+7",
+   "rect": [
+    112,
+    386,
+    126,
+    395
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "IntimidationMod",
+   "value": "CHA",
+   "rect": [
+    170,
+    385,
+    186,
+    394
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "InvestigationProf",
+   "value": "H",
+   "rect": [
+    100,
+    372,
+    109,
+    381
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Investigation",
+   "value": "+0",
+   "rect": [
+    112,
+    373,
+    126,
+    381
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "InvestigationMod",
+   "value": "INT",
+   "rect": [
+    171,
+    372,
+    187,
+    381
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "MedicineProf",
+   "value": "H",
+   "rect": [
+    100,
+    358,
+    109,
+    367
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Medicine",
+   "value": "+2",
+   "rect": [
+    112,
+    359,
+    126,
+    368
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "MedicineMod",
+   "value": "WIS",
+   "rect": [
+    161,
+    358,
+    177,
+    367
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "NatureProf",
+   "value": "H",
+   "rect": [
+    100,
+    345,
+    109,
+    353
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Nature",
+   "value": "+0",
+   "rect": [
+    112,
+    346,
+    126,
+    354
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "NatureMod",
+   "value": "INT",
+   "rect": [
+    155,
+    345,
+    171,
+    354
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "PerceptionProf",
+   "value": "P",
+   "rect": [
+    100,
+    331,
+    109,
+    340
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Perception",
+   "value": "+4",
+   "rect": [
+    112,
+    332,
+    126,
+    341
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "PerceptionMod",
+   "value": "WIS",
+   "rect": [
+    165,
+    331,
+    181,
+    340
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "PerformanceProf",
+   "value": "E",
+   "rect": [
+    100,
+    318,
+    109,
+    326
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Performance",
+   "value": "+10",
+   "rect": [
+    112,
+    319,
+    126,
+    327
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "PerformanceMod",
+   "value": "CHA",
+   "rect": [
+    171,
+    318,
+    187,
+    327
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "PersuasionProf",
+   "value": "E",
+   "rect": [
+    100,
+    304,
+    109,
+    313
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Persuasion",
+   "value": "+10",
+   "rect": [
+    112,
+    305,
+    126,
+    314
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "PersuasionMod",
+   "value": "CHA",
+   "rect": [
+    167,
+    304,
+    183,
+    313
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ReligionProf",
+   "value": "H",
+   "rect": [
+    100,
+    291,
+    109,
+    299
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Religion",
+   "value": "+0",
+   "rect": [
+    112,
+    292,
+    126,
+    300
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "SleightOfHandProf",
+   "value": "P",
+   "rect": [
+    100,
+    277,
+    109,
+    286
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "SleightofHand",
+   "value": "+5",
+   "rect": [
+    112,
+    278,
+    126,
+    287
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "StealthProf",
+   "value": "H",
+   "rect": [
+    100,
+    264,
+    109,
+    272
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Stealth ",
+   "value": "+3",
+   "rect": [
+    112,
+    265,
+    126,
+    273
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "SurvivalProf",
+   "value": "H",
+   "rect": [
+    100,
+    250,
+    109,
+    259
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Survival",
+   "value": "+2",
+   "rect": [
+    112,
+    251,
+    126,
+    260
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Passive1",
+   "value": "14",
+   "rect": [
+    39,
+    149,
+    60,
+    166
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Passive2",
+   "value": "14",
+   "rect": [
+    39,
+    119,
+    60,
+    136
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Passive3",
+   "value": "10",
+   "rect": [
+    39,
+    88,
+    60,
+    105
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "AdditionalSenses",
+   "value": "Darkvision 60 ft.",
+   "rect": [
+    38,
+    38,
+    198,
+    79
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Init",
+   "value": "+2",
+   "rect": [
+    238,
+    614,
+    273,
+    646
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "AC",
+   "value": "15",
+   "rect": [
+    334,
+    609,
+    376,
+    643
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ProfBonus",
+   "value": "+3",
+   "rect": [
+    228,
+    465,
+    249,
+    482
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Speed",
+   "value": "30 ft. (Walking)",
+   "rect": [
+    236,
+    371,
+    377,
+    402
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "MaxHP",
+   "value": "38",
+   "rect": [
+    427,
+    613,
+    463,
+    641
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "TempHP",
+   "value": "--",
+   "rect": [
+    532,
+    613,
+    568,
+    641
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Total",
+   "value": "5d8",
+   "rect": [
+    438,
+    572,
+    486,
+    586
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ProficienciesLang",
+   "value": "=== ARMOR === \nLight Armor \n\n=== WEAPONS === \nSimple Weapons \n\n=== TOOLS === \nCalligrapher's Supplies, Flute, Harp, Lyre \n\n=== LANGUAGES === \nAbyssal, Common, Draconic, Elvish",
+   "rect": [
+    414,
+    360,
+    580,
+    513
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "ReligionMod",
+   "value": "INT",
+   "rect": [
+    158,
+    291,
+    174,
+    300
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "SleightofHandMod",
+   "value": "DEX",
+   "rect": [
+    180,
+    277,
+    196,
+    286
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "StealthMod",
+   "value": "DEX",
+   "rect": [
+    155,
+    264,
+    171,
+    273
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "SurvivalMod",
+   "value": "WIS",
+   "rect": [
+    158,
+    250,
+    174,
+    259
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Actions1",
+   "value": "=== ACTIONS === \nStandard Actions \n     Attack, Magic, Dash, Disengage, Dodge, Help, Hide, Ready, Search, Utilize, Opportunity Attack, Grapple, Shove, Improvise, Two-Weapon Fighting, Interact with an Object, Study, Influence \n\n=== BONUS ACTIONS === \nBardic Inspiration • 4 / Short Rest \n     As a Bonus Action, you can inspire another creature within 60 ft. that can see or hear you. That creature gains one of your Bardic Inspiration dice (1d6). Once within the next hour, when the creature fails a D20 Test, the creature can roll the Bardic Inspiration die and add the number rolled to the total, potentially turning the failure into a success.",
+   "rect": [
+    226,
+    198,
+    400,
+    329
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Actions2",
+   "value": "You can confer your Bardic Inspiration die 4 times per Long Rest. \n\n=== REACTIONS === \nFamiliar Distraction • 3 / Long Rest \n     When a creature within 5 ft. of your familiar makes an attack roll, you can take a Reaction to command your familiar to give the attack Disadvantage. You impose Disadvantage in this way up to 3 times per Long Rest. \n\n=== SPECIAL === \nPluck the Heartstrings: Defense \n     When a creature is reduced to 0 Hit Points and not killed outright, the creature can roll the Bardic",
+   "rect": [
+    405,
+    199,
+    578,
+    329
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn Name",
+   "value": "Dagger",
+   "rect": [
+    225,
+    147,
+    335,
+    161
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn1 AtkBonus",
+   "value": "+5",
+   "rect": [
+    342,
+    147,
+    372,
+    161
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn1 Damage",
+   "value": "1d4+2 Piercing",
+   "rect": [
+    378,
+    147,
+    439,
+    161
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn Notes 1",
+   "value": "Simple, Finesse, Light, Thrown, Nick, Range (20/60)",
+   "rect": [
+    444,
+    147,
+    578,
+    161
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn Name 2",
+   "value": "Eldritch Blast",
+   "rect": [
+    225,
+    127,
+    335,
+    141
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn2 AtkBonus ",
+   "value": "+7",
+   "rect": [
+    342,
+    127,
+    372,
+    141
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn2 Damage ",
+   "value": "1d10 Force",
+   "rect": [
+    378,
+    127,
+    439,
+    141
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn Notes 2",
+   "value": "Count: 2, V/S",
+   "rect": [
+    444,
+    126,
+    578,
+    140
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn Name 3",
+   "value": "Poison Spray",
+   "rect": [
+    225,
+    106,
+    335,
+    120
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn3 AtkBonus  ",
+   "value": "+7",
+   "rect": [
+    342,
+    106,
+    372,
+    120
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn3 Damage ",
+   "value": "2d12 Poison",
+   "rect": [
+    378,
+    106,
+    439,
+    120
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn Notes 3",
+   "value": "V/S",
+   "rect": [
+    444,
+    106,
+    578,
+    120
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn Name 4",
+   "value": "Unarmed Strike",
+   "rect": [
+    225,
+    85,
+    335,
+    99
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn4 AtkBonus",
+   "value": "+2",
+   "rect": [
+    342,
+    85,
+    372,
+    99
+   ]
+  },
+  {
+   "page": 1,
+   "fieldName": "Wpn4 Damage",
+   "value": "0 Bludgeoning",
+   "rect": [
+    378,
+    85,
+    439,
+    99
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "CharacterName2",
+   "value": "Nenise",
+   "rect": [
+    47,
+    711,
+    220,
+    732
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "CLASS  LEVEL2",
+   "value": "Bard 5",
+   "rect": [
+    271,
+    729,
+    467,
+    743
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "PLAYER NAME2",
+   "value": "[redacted]",
+   "rect": [
+    470,
+    729,
+    568,
+    743
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "RACE2",
+   "value": "Tiefling",
+   "rect": [
+    271,
+    703,
+    380,
+    717
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "BACKGROUND2",
+   "value": "Cultist",
+   "rect": [
+    383,
+    703,
+    477,
+    717
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "EXPERIENCE POINTS2",
+   "value": "(Milestone)",
+   "rect": [
+    480,
+    703,
+    568,
+    717
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "FeaturesTraits1",
+   "value": "=== BARD FEATURES === \n\n* Core Bard Traits • PHB-2024 59 \n\n* Bardic Inspiration • PHB-2024 59 \nAs a Bonus Action, you can inspire another creature within 60 ft. that can see or hear you. That creature gains one of your Bardic Inspiration dice (1d6). Once within the next hour, when the creature fails a D20 Test, the creature can roll the Bardic Inspiration die and add the number rolled to the total, potentially turning the failure into a success. \n\nYou can confer your Bardic Inspiration die 4 times per Long Rest. \n\n   | 4 / Short Rest • 1 Bonus Action \n\n* Spellcasting • PHB-2024 59 \nYou can cast spells through your bardic arts. Charisma is your spellcasting ability for your Bard spells (Spell DC 15, Spell Attack +7). You can use a Musical Instrument as a Spellcasting Focus for your Bard spells. \n\n* Expertise • PHB-2024 60 \nYou gain Expertise in two skill proficiencies of your choice. \n\n* Jack of All Trades • PHB-2024 60 \nYou can add half your Proficiency Bonus (1) to ability checks you make that uses a skill proficiency you lack and that doesn’t otherwise use your Proficiency Bonus. \n\n* Bard Subclass • PHB-2024 60 \n\n   | College of Requiems \n\n* Chilling Melody • GHPG 66 \nYou learn two Necromancy cantrips of your choice. These count as Bard spells for you but don’t count",
+   "rect": [
+    36,
+    315,
+    211,
+    656
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "FeaturesTraits2",
+   "value": "against the number of cantrips you know. \n\n* Pluck the Heartstrings • GHPG 66 \nA creature that has a Bardic Inspiration die from you can use it for one of the following effects. \n\nDefense. When a creature is reduced to 0 Hit Points and not killed outright, the creature can roll the Bardic Inspiration die to be reduced to a number of Hit Points rolled on the Bardic Inspiration die instead. \n\nOffense. Immediately after the creature hits a target with an attack roll, the creature can roll the Bardic Inspiration die and add the number rolled as extra Necrotic damage against the target. \n\n   | Pluck the Heartstrings: Defense: Special \n\n   | Pluck the Heartstrings: Offense: Special \n\n* Ability Score Improvement • PHB-2024 61 \n\n* Font of Inspiration • PHB-2024 61 \nYou now regain all expended uses of Bardic Inspiration when you finish a Short or Long Rest. \n\nIn addition, you can expend a spell slot (no action required) to regain one expended use of Bardic Inspiration. \n\n   | Regain Bardic Inspiration: Special \n\n\n=== TIEFLING SPECIES TRAITS === \n\n* Creature Type • PHB-2024 197 \nYou are a Humanoid. \n\n* Size • PHB-2024 \nYou are Medium or Small, chosen when you select this species.",
+   "rect": [
+    219,
+    316,
+    393,
+    656
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "FeaturesTraits3",
+   "value": "* Speed • PHB-2024 197 \nYou have a Speed of 30 ft. \n\n* Darkvision • PHB-2024 197 \nYou have Darkvision with a range of 60 ft. \n\n* Fiendish Legacy • PHB-2024 197 \nChoose a legacy from the Fiendish Legacies table. You gain the level 1 benefit of that legacy. \n\n   | Abyssal Legacy •  \nYou have resistance to Poison damage and you gain the spells outlined in the Fiendish Legacies table. \n\n* Fiendish Legacy Spells • PHB-2024 197 \n\n   | Charisma •  \n\n* Otherworldly Presence • PHB-2024 197 \n\n   | Charisma •  \nYou know the Thaumaturgy cantrip. When you cast it with this trait, the spell uses Charisma. \n\n* Languages • PHB-2024 37 \nYour character knows at least three languages: Common plus two languages you roll or choose from the Standard Languages table. Knowledge of a language means your character can communicate in it, read it, and write it. \n\n\n=== FEATS === \n\n* Familiar Keeper • VSSPP2 \nYou gain the following benefits. \n\nAbility Score Increase. Increase your Int., Wis., or Cha. by 1, to a max of 20.",
+   "rect": [
+    400,
+    316,
+    574,
+    656
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "CP",
+   "value": "0",
+   "rect": [
+    38,
+    250,
+    91,
+    268
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "SP",
+   "value": "0",
+   "rect": [
+    38,
+    221,
+    92,
+    239
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "EP",
+   "value": "0",
+   "rect": [
+    38,
+    192,
+    92,
+    210
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "GP",
+   "value": "263",
+   "rect": [
+    38,
+    164,
+    91,
+    181
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "PP",
+   "value": "0",
+   "rect": [
+    38,
+    135,
+    91,
+    153
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Weight Carried",
+   "value": "63 lb.",
+   "rect": [
+    37,
+    101,
+    94,
+    115
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Encumbered",
+   "value": "120 lb.",
+   "rect": [
+    37,
+    73,
+    94,
+    87
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "PushDragLift",
+   "value": "240 lb.",
+   "rect": [
+    37,
+    44,
+    94,
+    58
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name0",
+   "value": "Glamoured Studded Leather",
+   "rect": [
+    112,
+    253,
+    268,
+    267
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty0",
+   "value": "1",
+   "rect": [
+    272,
+    253,
+    302,
+    267
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight0",
+   "value": "13 lb.",
+   "rect": [
+    306,
+    253,
+    336,
+    267
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name1",
+   "value": "Instrument of Illusions",
+   "rect": [
+    112,
+    238,
+    268,
+    252
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty1",
+   "value": "1",
+   "rect": [
+    272,
+    238,
+    302,
+    252
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight1",
+   "value": "--",
+   "rect": [
+    306,
+    238,
+    336,
+    252
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name2",
+   "value": "Leather",
+   "rect": [
+    112,
+    223,
+    268,
+    237
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty2",
+   "value": "1",
+   "rect": [
+    272,
+    223,
+    302,
+    237
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight2",
+   "value": "10 lb.",
+   "rect": [
+    306,
+    223,
+    336,
+    237
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name3",
+   "value": "Dagger",
+   "rect": [
+    112,
+    208,
+    268,
+    222
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty3",
+   "value": "1",
+   "rect": [
+    272,
+    208,
+    302,
+    222
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight3",
+   "value": "1 lb.",
+   "rect": [
+    306,
+    208,
+    336,
+    222
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name4",
+   "value": "Dagger",
+   "rect": [
+    112,
+    193,
+    268,
+    207
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty4",
+   "value": "1",
+   "rect": [
+    272,
+    193,
+    302,
+    207
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight4",
+   "value": "1 lb.",
+   "rect": [
+    306,
+    193,
+    336,
+    207
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name5",
+   "value": "Sickle",
+   "rect": [
+    112,
+    178,
+    268,
+    193
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty5",
+   "value": "1",
+   "rect": [
+    272,
+    178,
+    302,
+    193
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight5",
+   "value": "2 lb.",
+   "rect": [
+    306,
+    178,
+    336,
+    193
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name6",
+   "value": "Clothes, Costume",
+   "rect": [
+    112,
+    164,
+    268,
+    178
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty6",
+   "value": "1",
+   "rect": [
+    272,
+    164,
+    302,
+    178
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight6",
+   "value": "4 lb.",
+   "rect": [
+    306,
+    164,
+    336,
+    178
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name7",
+   "value": "Backpack",
+   "rect": [
+    112,
+    149,
+    268,
+    163
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty7",
+   "value": "1",
+   "rect": [
+    272,
+    149,
+    302,
+    163
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight7",
+   "value": "5 lb.",
+   "rect": [
+    306,
+    149,
+    336,
+    163
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name8",
+   "value": "Book",
+   "rect": [
+    112,
+    134,
+    268,
+    148
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty8",
+   "value": "1",
+   "rect": [
+    272,
+    134,
+    302,
+    148
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight8",
+   "value": "5 lb.",
+   "rect": [
+    306,
+    134,
+    336,
+    148
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name9",
+   "value": "Lute",
+   "rect": [
+    112,
+    119,
+    268,
+    133
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty9",
+   "value": "1",
+   "rect": [
+    272,
+    119,
+    302,
+    133
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight9",
+   "value": "2 lb.",
+   "rect": [
+    306,
+    119,
+    336,
+    133
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name10",
+   "value": "Orb",
+   "rect": [
+    112,
+    104,
+    268,
+    118
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty10",
+   "value": "1",
+   "rect": [
+    272,
+    104,
+    302,
+    118
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight10",
+   "value": "3 lb.",
+   "rect": [
+    306,
+    104,
+    336,
+    118
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name11",
+   "value": "Oil",
+   "rect": [
+    112,
+    89,
+    268,
+    103
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty11",
+   "value": "10",
+   "rect": [
+    272,
+    89,
+    302,
+    103
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight11",
+   "value": "10 lb.",
+   "rect": [
+    306,
+    89,
+    336,
+    103
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name12",
+   "value": "Parchment",
+   "rect": [
+    112,
+    74,
+    268,
+    88
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty12",
+   "value": "10",
+   "rect": [
+    272,
+    74,
+    302,
+    88
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight12",
+   "value": "--",
+   "rect": [
+    306,
+    74,
+    336,
+    88
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name13",
+   "value": "Tinderbox",
+   "rect": [
+    112,
+    59,
+    268,
+    74
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty13",
+   "value": "1",
+   "rect": [
+    272,
+    59,
+    302,
+    74
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight13",
+   "value": "1 lb.",
+   "rect": [
+    306,
+    59,
+    336,
+    74
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name14",
+   "value": "Book",
+   "rect": [
+    112,
+    45,
+    268,
+    59
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty14",
+   "value": "1",
+   "rect": [
+    272,
+    45,
+    302,
+    59
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight14",
+   "value": "5 lb.",
+   "rect": [
+    306,
+    45,
+    336,
+    59
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name15",
+   "value": "Lamp",
+   "rect": [
+    349,
+    253,
+    506,
+    267
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty15",
+   "value": "1",
+   "rect": [
+    509,
+    253,
+    539,
+    267
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight15",
+   "value": "1 lb.",
+   "rect": [
+    544,
+    253,
+    573,
+    267
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name16",
+   "value": "Ink Pen",
+   "rect": [
+    349,
+    238,
+    506,
+    252
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty16",
+   "value": "1",
+   "rect": [
+    509,
+    238,
+    539,
+    252
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight16",
+   "value": "--",
+   "rect": [
+    544,
+    238,
+    573,
+    252
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Name17",
+   "value": "Ink",
+   "rect": [
+    349,
+    223,
+    506,
+    237
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Qty17",
+   "value": "1",
+   "rect": [
+    509,
+    223,
+    539,
+    237
+   ]
+  },
+  {
+   "page": 2,
+   "fieldName": "Eq Weight17",
+   "value": "--",
+   "rect": [
+    544,
+    223,
+    573,
+    237
+   ]
+  },
+  {
+   "page": 3,
+   "fieldName": "CharacterName3",
+   "value": "Nenise",
+   "rect": [
+    47,
+    711,
+    220,
+    732
+   ]
+  },
+  {
+   "page": 3,
+   "fieldName": "CLASS  LEVEL3",
+   "value": "Bard 5",
+   "rect": [
+    271,
+    729,
+    467,
+    743
+   ]
+  },
+  {
+   "page": 3,
+   "fieldName": "PLAYER NAME3",
+   "value": "[redacted]",
+   "rect": [
+    470,
+    729,
+    568,
+    743
+   ]
+  },
+  {
+   "page": 3,
+   "fieldName": "RACE3",
+   "value": "Tiefling",
+   "rect": [
+    271,
+    703,
+    380,
+    717
+   ]
+  },
+  {
+   "page": 3,
+   "fieldName": "BACKGROUND3",
+   "value": "Cultist",
+   "rect": [
+    383,
+    703,
+    477,
+    717
+   ]
+  },
+  {
+   "page": 3,
+   "fieldName": "EXPERIENCE POINTS3",
+   "value": "(Milestone)",
+   "rect": [
+    480,
+    703,
+    568,
+    717
+   ]
+  },
+  {
+   "page": 3,
+   "fieldName": "FeaturesTraits4",
+   "value": "Find Familiar. You always have the Find Familiar spell prepared. Additionally, once per Long Rest, you can cast it as a Magic action without expending a spell slot or Material components. Int., Wis., or Cha. is your spellcasting ability for this spell (chosen when you select this feat). \n\nExpanded Options. When you cast Find Familiar, you can choose one of the normal forms for your familiar or one of the following special forms: Imp, Pseudodragon, Quasit, Sphinx of Wonder, or Sprite. \n\nFamiliar Distraction. When a creature within 5 ft. of your familiar makes an attack roll, you can take a Reaction to command your familiar to give the attack Disadvantage. You impose Disadvantage in this way up to 3 times per Long Rest. \n\n   | Charisma • VSSPP2 \n\n   | Familiar Distraction: 3 / Long Rest • 1 Reaction \n\n* Skilled • PHB-2024 201 \nYou gain proficiency in any combination of three skills or tools of your choice. \n\nRepeatable. You can take this feat more than once. \n\n* Cult Initiate • TCMP1 112 \nYou gain the following benefits. \n\nTwo Cantrips. You learn two cantrips of your choice from the Warlock spell list. Int., Wis., or Cha. is your spellcasting ability for this feat's spells (chosen when you select this feat) . \n\nLevel 1 Spell. Choose a level 1 spell from the Warlock spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Short or Long Rest. You can also cast the spell using any spell",
+   "rect": [
+    36,
+    315,
+    211,
+    656
+   ]
+  },
+  {
+   "page": 3,
+   "fieldName": "FeaturesTraits5",
+   "value": "slots you have. \n\nSpell Change. Whenever you gain a new level, you can replace one of the spells you chose for this feat with a different spell of the same level from the Warlock spell list. \n\n   | Charisma • TCMP1 112 \n\n* The Crooked Moon Ability Score Improvements • TCMP1 \n\n   | Increase two scores (+2 / +1) • TCMP1 \n\n* Infernal Pact • DDBD \nYou gain the following benefits. \n\n • You have Resistance to Fire damage or Poison damage. \n • You gain Darkvision with a range of 30 ft., which is unimpeded by magical Darkness. \n • You gain proficiency in the Deception skill.",
+   "rect": [
+    219,
+    316,
+    393,
+    656
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "CharacterName4",
+   "value": "Nenise",
+   "rect": [
+    49,
+    711,
+    222,
+    732
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "AGE",
+   "value": "28",
+   "rect": [
+    339,
+    729,
+    396,
+    748
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "SIZE",
+   "value": "Medium",
+   "rect": [
+    399,
+    729,
+    456,
+    748
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "HEIGHT",
+   "value": "1,80",
+   "rect": [
+    458,
+    729,
+    518,
+    748
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "ALIGNMENT",
+   "value": "Chaotic Good",
+   "rect": [
+    266,
+    703,
+    334,
+    721
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "FAITH",
+   "value": "Graz'zt",
+   "rect": [
+    337,
+    703,
+    396,
+    721
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "SKIN",
+   "value": "Dunkles braun fast schwarz",
+   "rect": [
+    399,
+    703,
+    456,
+    721
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "EYES",
+   "value": "Goldenes Braun",
+   "rect": [
+    458,
+    703,
+    518,
+    721
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "HAIR",
+   "value": "Golden",
+   "rect": [
+    520,
+    703,
+    573,
+    721
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "PersonalityTraits ",
+   "value": "Ich bin ein hoffungloser Flirt und ich lenke gerne von mir selber ab und fokkusiere mich auf mein gegenüber.",
+   "rect": [
+    419,
+    613,
+    571,
+    662
+   ]
+  },
+  {
+   "page": 4,
+   "fieldName": "Ideals",
+   "value": "Die Kunst steht über allem selbst über mein Leben.",
+   "rect": [
+    419,
+    558,
+    571,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingAbility0",
+   "value": "CHA",
+   "rect": [
+    284,
+    711,
+    349,
+    736
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveDC0",
+   "value": "15",
+   "rect": [
+    384,
+    711,
+    449,
+    736
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellAtkBonus0",
+   "value": "+7",
+   "rect": [
+    488,
+    711,
+    553,
+    736
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingClass0",
+   "value": "Bard",
+   "rect": [
+    48,
+    706,
+    256,
+    727
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellHeader0",
+   "value": "=== CANTRIPS ===",
+   "rect": [
+    42,
+    629,
+    148,
+    640
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSlotHeader0",
+   "value": "(At Will)",
+   "rect": [
+    149,
+    629,
+    231,
+    640
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared0",
+   "value": "O",
+   "rect": [
+    29,
+    618,
+    40,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName0",
+   "value": "Vicious Mockery",
+   "rect": [
+    42,
+    618,
+    148,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource0",
+   "value": "Bard",
+   "rect": [
+    149,
+    618,
+    231,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit0",
+   "value": "WIS 15",
+   "rect": [
+    232,
+    618,
+    257,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime0",
+   "value": "1A",
+   "rect": [
+    258,
+    618,
+    277,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange0",
+   "value": "60 ft.",
+   "rect": [
+    278,
+    618,
+    319,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents0",
+   "value": "V",
+   "rect": [
+    320,
+    618,
+    342,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration0",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    618,
+    388,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage0",
+   "value": "PHB-2024 337",
+   "rect": [
+    389,
+    618,
+    422,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes0",
+   "value": "V",
+   "rect": [
+    423,
+    617,
+    579,
+    628
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared1",
+   "value": "O",
+   "rect": [
+    29,
+    606,
+    40,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName1",
+   "value": "Message",
+   "rect": [
+    42,
+    606,
+    148,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource1",
+   "value": "Bard",
+   "rect": [
+    149,
+    606,
+    231,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit1",
+   "value": "--",
+   "rect": [
+    232,
+    606,
+    257,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime1",
+   "value": "1A",
+   "rect": [
+    258,
+    606,
+    277,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange1",
+   "value": "120 ft.",
+   "rect": [
+    278,
+    606,
+    319,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents1",
+   "value": "S,M",
+   "rect": [
+    320,
+    606,
+    342,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration1",
+   "value": "1 round",
+   "rect": [
+    343,
+    606,
+    388,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage1",
+   "value": "PHB-2024 298",
+   "rect": [
+    389,
+    606,
+    422,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes1",
+   "value": "D: 1Rnd, S/M",
+   "rect": [
+    423,
+    606,
+    579,
+    617
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared2",
+   "value": "O",
+   "rect": [
+    29,
+    594,
+    40,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName2",
+   "value": "Mage Hand",
+   "rect": [
+    42,
+    594,
+    148,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource2",
+   "value": "Bard",
+   "rect": [
+    149,
+    594,
+    231,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit2",
+   "value": "--",
+   "rect": [
+    232,
+    594,
+    257,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime2",
+   "value": "1A",
+   "rect": [
+    258,
+    594,
+    277,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange2",
+   "value": "30 ft.",
+   "rect": [
+    278,
+    594,
+    319,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents2",
+   "value": "V,S",
+   "rect": [
+    320,
+    594,
+    342,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration2",
+   "value": "1 minute",
+   "rect": [
+    343,
+    594,
+    388,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage2",
+   "value": "PHB-2024 293",
+   "rect": [
+    389,
+    594,
+    422,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes2",
+   "value": "D: 1m, V/S",
+   "rect": [
+    423,
+    594,
+    579,
+    605
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared3",
+   "value": "O",
+   "rect": [
+    29,
+    582,
+    40,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName3",
+   "value": "Eldritch Blast",
+   "rect": [
+    42,
+    582,
+    148,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource3",
+   "value": "Cult Initiate",
+   "rect": [
+    149,
+    582,
+    231,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit3",
+   "value": "+7",
+   "rect": [
+    232,
+    582,
+    257,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime3",
+   "value": "1A",
+   "rect": [
+    258,
+    582,
+    277,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange3",
+   "value": "120 ft.",
+   "rect": [
+    278,
+    582,
+    319,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents3",
+   "value": "V,S",
+   "rect": [
+    320,
+    582,
+    342,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration3",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    582,
+    388,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage3",
+   "value": "PHB-2024 267",
+   "rect": [
+    389,
+    582,
+    422,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes3",
+   "value": "Count: 2, V/S",
+   "rect": [
+    423,
+    582,
+    579,
+    593
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared4",
+   "value": "O",
+   "rect": [
+    29,
+    570,
+    40,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName4",
+   "value": "Prestidigitation",
+   "rect": [
+    42,
+    570,
+    148,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource4",
+   "value": "Cult Initiate",
+   "rect": [
+    149,
+    570,
+    231,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit4",
+   "value": "--",
+   "rect": [
+    232,
+    570,
+    257,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime4",
+   "value": "1A",
+   "rect": [
+    258,
+    570,
+    277,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange4",
+   "value": "10 ft.",
+   "rect": [
+    278,
+    570,
+    319,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents4",
+   "value": "V,S",
+   "rect": [
+    320,
+    570,
+    342,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration4",
+   "value": "1 hour",
+   "rect": [
+    343,
+    570,
+    388,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage4",
+   "value": "PHB-2024 307",
+   "rect": [
+    389,
+    570,
+    422,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes4",
+   "value": "D: 1h, V/S",
+   "rect": [
+    423,
+    570,
+    579,
+    581
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared5",
+   "value": "O",
+   "rect": [
+    29,
+    559,
+    40,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName5",
+   "value": "Poison Spray",
+   "rect": [
+    42,
+    559,
+    148,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource5",
+   "value": "Fiendish Legacy Spells",
+   "rect": [
+    149,
+    559,
+    231,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit5",
+   "value": "+7",
+   "rect": [
+    232,
+    559,
+    257,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime5",
+   "value": "1A",
+   "rect": [
+    258,
+    559,
+    277,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange5",
+   "value": "30 ft.",
+   "rect": [
+    278,
+    559,
+    319,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents5",
+   "value": "V,S",
+   "rect": [
+    320,
+    559,
+    342,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration5",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    559,
+    388,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage5",
+   "value": "PHB-2024 306",
+   "rect": [
+    389,
+    559,
+    422,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes5",
+   "value": "V/S",
+   "rect": [
+    423,
+    559,
+    579,
+    570
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared6",
+   "value": "O",
+   "rect": [
+    29,
+    547,
+    40,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName6",
+   "value": "Thaumaturgy",
+   "rect": [
+    42,
+    547,
+    148,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource6",
+   "value": "Otherworldly Presence",
+   "rect": [
+    149,
+    547,
+    231,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit6",
+   "value": "--",
+   "rect": [
+    232,
+    547,
+    257,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime6",
+   "value": "1A",
+   "rect": [
+    258,
+    547,
+    277,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange6",
+   "value": "30 ft.",
+   "rect": [
+    278,
+    547,
+    319,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents6",
+   "value": "V",
+   "rect": [
+    320,
+    547,
+    342,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration6",
+   "value": "1 minute",
+   "rect": [
+    343,
+    547,
+    388,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage6",
+   "value": "PHB-2024 333",
+   "rect": [
+    389,
+    547,
+    422,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes6",
+   "value": "D: 1m, V",
+   "rect": [
+    423,
+    547,
+    579,
+    558
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared7",
+   "value": "O",
+   "rect": [
+    29,
+    535,
+    40,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName7",
+   "value": "Spare the Dying",
+   "rect": [
+    42,
+    535,
+    148,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource7",
+   "value": "Chilling Melody",
+   "rect": [
+    149,
+    535,
+    231,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit7",
+   "value": "--",
+   "rect": [
+    232,
+    535,
+    257,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime7",
+   "value": "1A",
+   "rect": [
+    258,
+    535,
+    277,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange7",
+   "value": "15 ft.",
+   "rect": [
+    278,
+    535,
+    319,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents7",
+   "value": "V,S",
+   "rect": [
+    320,
+    535,
+    342,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration7",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    535,
+    388,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage7",
+   "value": "PHB-2024 318",
+   "rect": [
+    389,
+    535,
+    422,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes7",
+   "value": "V/S",
+   "rect": [
+    423,
+    535,
+    579,
+    546
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared8",
+   "value": "O",
+   "rect": [
+    29,
+    523,
+    40,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName8",
+   "value": "Toll the Dead",
+   "rect": [
+    42,
+    523,
+    148,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource8",
+   "value": "Chilling Melody",
+   "rect": [
+    149,
+    523,
+    231,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit8",
+   "value": "WIS 15",
+   "rect": [
+    232,
+    523,
+    257,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime8",
+   "value": "1A",
+   "rect": [
+    258,
+    523,
+    277,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange8",
+   "value": "60 ft.",
+   "rect": [
+    278,
+    523,
+    319,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents8",
+   "value": "V,S",
+   "rect": [
+    320,
+    523,
+    342,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration8",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    523,
+    388,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage8",
+   "value": "PHB-2024 334",
+   "rect": [
+    389,
+    523,
+    422,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes8",
+   "value": "V/S",
+   "rect": [
+    423,
+    523,
+    579,
+    534
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellHeader1",
+   "value": "=== 1st LEVEL ===",
+   "rect": [
+    42,
+    500,
+    148,
+    511
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSlotHeader1",
+   "value": "4 Slots OOOO",
+   "rect": [
+    149,
+    500,
+    231,
+    511
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared9",
+   "value": "O",
+   "rect": [
+    29,
+    488,
+    40,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName9",
+   "value": "Command",
+   "rect": [
+    42,
+    488,
+    148,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource9",
+   "value": "Bard",
+   "rect": [
+    149,
+    488,
+    231,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit9",
+   "value": "WIS 15",
+   "rect": [
+    232,
+    488,
+    257,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime9",
+   "value": "1A",
+   "rect": [
+    258,
+    488,
+    277,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange9",
+   "value": "60 ft.",
+   "rect": [
+    278,
+    488,
+    319,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents9",
+   "value": "V",
+   "rect": [
+    320,
+    488,
+    342,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration9",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    488,
+    388,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage9",
+   "value": "PHB-2024 251",
+   "rect": [
+    389,
+    488,
+    422,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes9",
+   "value": "V",
+   "rect": [
+    423,
+    488,
+    579,
+    499
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared10",
+   "value": "O",
+   "rect": [
+    29,
+    476,
+    40,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName10",
+   "value": "Disguise Self",
+   "rect": [
+    42,
+    476,
+    148,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource10",
+   "value": "Bard",
+   "rect": [
+    149,
+    476,
+    231,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit10",
+   "value": "--",
+   "rect": [
+    232,
+    476,
+    257,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime10",
+   "value": "1A",
+   "rect": [
+    258,
+    476,
+    277,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange10",
+   "value": "Self",
+   "rect": [
+    278,
+    476,
+    319,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents10",
+   "value": "V,S",
+   "rect": [
+    320,
+    476,
+    342,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration10",
+   "value": "1 hour",
+   "rect": [
+    343,
+    476,
+    388,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage10",
+   "value": "PHB-2024 262",
+   "rect": [
+    389,
+    476,
+    422,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes10",
+   "value": "D: 1h, V/S",
+   "rect": [
+    423,
+    477,
+    579,
+    487
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared11",
+   "value": "O",
+   "rect": [
+    29,
+    465,
+    40,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName11",
+   "value": "Tasha's Hideous Laughter",
+   "rect": [
+    42,
+    465,
+    148,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource11",
+   "value": "Bard",
+   "rect": [
+    149,
+    465,
+    231,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit11",
+   "value": "WIS 15",
+   "rect": [
+    232,
+    465,
+    257,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime11",
+   "value": "1A",
+   "rect": [
+    258,
+    465,
+    277,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange11",
+   "value": "30 ft.",
+   "rect": [
+    278,
+    465,
+    319,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents11",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    465,
+    342,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration11",
+   "value": "Concentration, up to 1 minute",
+   "rect": [
+    343,
+    465,
+    388,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage11",
+   "value": "PHB-2024 331",
+   "rect": [
+    389,
+    465,
+    422,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes11",
+   "value": "D: 1m, V/S/M",
+   "rect": [
+    423,
+    465,
+    579,
+    476
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared12",
+   "value": "P",
+   "rect": [
+    29,
+    453,
+    40,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName12",
+   "value": "Find Familiar",
+   "rect": [
+    42,
+    453,
+    148,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource12",
+   "value": "Familiar Keeper (Always Prepared)",
+   "rect": [
+    149,
+    453,
+    231,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit12",
+   "value": "--",
+   "rect": [
+    232,
+    453,
+    257,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime12",
+   "value": "1h",
+   "rect": [
+    258,
+    453,
+    277,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange12",
+   "value": "10 ft.",
+   "rect": [
+    278,
+    453,
+    319,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents12",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    453,
+    342,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration12",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    453,
+    388,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage12",
+   "value": "PHB-2024 272",
+   "rect": [
+    389,
+    453,
+    422,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes12",
+   "value": "1/LR, V/S/M",
+   "rect": [
+    423,
+    453,
+    579,
+    464
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared13",
+   "value": "P",
+   "rect": [
+    29,
+    441,
+    40,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName13",
+   "value": "Find Familiar",
+   "rect": [
+    42,
+    441,
+    148,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource13",
+   "value": "Familiar Keeper (Always Prepared)",
+   "rect": [
+    149,
+    441,
+    231,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit13",
+   "value": "--",
+   "rect": [
+    232,
+    441,
+    257,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime13",
+   "value": "1h",
+   "rect": [
+    258,
+    441,
+    277,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange13",
+   "value": "10 ft.",
+   "rect": [
+    278,
+    441,
+    319,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents13",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    441,
+    342,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration13",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    441,
+    388,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage13",
+   "value": "PHB-2024 272",
+   "rect": [
+    389,
+    441,
+    422,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes13",
+   "value": "V/S/M",
+   "rect": [
+    423,
+    441,
+    579,
+    452
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared14",
+   "value": "P",
+   "rect": [
+    29,
+    429,
+    40,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName14",
+   "value": "Speak with Animals",
+   "rect": [
+    42,
+    429,
+    148,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource14",
+   "value": "Cult Initiate (Always Prepared)",
+   "rect": [
+    149,
+    429,
+    231,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit14",
+   "value": "--",
+   "rect": [
+    232,
+    429,
+    257,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime14",
+   "value": "1A",
+   "rect": [
+    258,
+    429,
+    277,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange14",
+   "value": "Self",
+   "rect": [
+    278,
+    429,
+    319,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents14",
+   "value": "V,S",
+   "rect": [
+    320,
+    429,
+    342,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration14",
+   "value": "10 minutes",
+   "rect": [
+    343,
+    429,
+    388,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage14",
+   "value": "PHB-2024 318",
+   "rect": [
+    389,
+    429,
+    422,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes14",
+   "value": "1/SR, D: 10m, V/S",
+   "rect": [
+    423,
+    429,
+    579,
+    440
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared15",
+   "value": "O",
+   "rect": [
+    29,
+    418,
+    40,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName15",
+   "value": "Ray of Sickness",
+   "rect": [
+    42,
+    418,
+    148,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource15",
+   "value": "Fiendish Legacy Spells",
+   "rect": [
+    149,
+    418,
+    231,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit15",
+   "value": "+7",
+   "rect": [
+    232,
+    418,
+    257,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime15",
+   "value": "1A",
+   "rect": [
+    258,
+    418,
+    277,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange15",
+   "value": "60 ft.",
+   "rect": [
+    278,
+    418,
+    319,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents15",
+   "value": "V,S",
+   "rect": [
+    320,
+    418,
+    342,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration15",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    418,
+    388,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage15",
+   "value": "PHB-2024 311",
+   "rect": [
+    389,
+    418,
+    422,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes15",
+   "value": "1/LR, V/S",
+   "rect": [
+    423,
+    418,
+    579,
+    429
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared16",
+   "value": "O",
+   "rect": [
+    29,
+    406,
+    40,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName16",
+   "value": "Ray of Sickness",
+   "rect": [
+    42,
+    406,
+    148,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource16",
+   "value": "Fiendish Legacy Spells",
+   "rect": [
+    149,
+    406,
+    231,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit16",
+   "value": "+7",
+   "rect": [
+    232,
+    406,
+    257,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime16",
+   "value": "1A",
+   "rect": [
+    258,
+    406,
+    277,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange16",
+   "value": "60 ft.",
+   "rect": [
+    278,
+    406,
+    319,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents16",
+   "value": "V,S",
+   "rect": [
+    320,
+    406,
+    342,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration16",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    406,
+    388,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage16",
+   "value": "PHB-2024 311",
+   "rect": [
+    389,
+    406,
+    422,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes16",
+   "value": "V/S",
+   "rect": [
+    423,
+    406,
+    579,
+    417
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellHeader2",
+   "value": "=== 2nd LEVEL ===",
+   "rect": [
+    42,
+    382,
+    148,
+    393
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSlotHeader2",
+   "value": "3 Slots OOO",
+   "rect": [
+    149,
+    382,
+    231,
+    393
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared17",
+   "value": "O",
+   "rect": [
+    29,
+    371,
+    40,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName17",
+   "value": "Chorus of the Lost",
+   "rect": [
+    42,
+    371,
+    148,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource17",
+   "value": "Bard",
+   "rect": [
+    149,
+    371,
+    231,
+    381
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit17",
+   "value": "WIS 15",
+   "rect": [
+    232,
+    371,
+    257,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime17",
+   "value": "1A",
+   "rect": [
+    258,
+    371,
+    277,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange17",
+   "value": "60 ft./15 ft. Sphere",
+   "rect": [
+    278,
+    371,
+    319,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents17",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    371,
+    342,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration17",
+   "value": "Concentration, up to 1 minute",
+   "rect": [
+    343,
+    371,
+    388,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage17",
+   "value": "TCMP1 126",
+   "rect": [
+    389,
+    371,
+    422,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes17",
+   "value": "D: 1m, 15 ft. Sphere, V/S/M",
+   "rect": [
+    423,
+    371,
+    579,
+    382
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared18",
+   "value": "O",
+   "rect": [
+    29,
+    359,
+    40,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName18",
+   "value": "Gift of Gab",
+   "rect": [
+    42,
+    359,
+    148,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource18",
+   "value": "Bard",
+   "rect": [
+    149,
+    359,
+    231,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit18",
+   "value": "--",
+   "rect": [
+    232,
+    359,
+    257,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime18",
+   "value": "1R",
+   "rect": [
+    258,
+    359,
+    277,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange18",
+   "value": "Self",
+   "rect": [
+    278,
+    359,
+    319,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents18",
+   "value": "V,S,M,R",
+   "rect": [
+    320,
+    359,
+    342,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration18",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    359,
+    388,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage18",
+   "value": "AI 76",
+   "rect": [
+    389,
+    359,
+    422,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes18",
+   "value": "V/S/M/R",
+   "rect": [
+    423,
+    359,
+    579,
+    370
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared19",
+   "value": "O",
+   "rect": [
+    29,
+    347,
+    40,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName19",
+   "value": "Suggestion",
+   "rect": [
+    42,
+    347,
+    148,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource19",
+   "value": "Bard",
+   "rect": [
+    149,
+    347,
+    231,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit19",
+   "value": "WIS 15",
+   "rect": [
+    232,
+    347,
+    257,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime19",
+   "value": "1A",
+   "rect": [
+    258,
+    347,
+    277,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange19",
+   "value": "30 ft.",
+   "rect": [
+    278,
+    347,
+    319,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents19",
+   "value": "V,M",
+   "rect": [
+    320,
+    347,
+    342,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration19",
+   "value": "Concentration, up to 8 hours",
+   "rect": [
+    343,
+    347,
+    388,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage19",
+   "value": "PHB-2024 320",
+   "rect": [
+    389,
+    347,
+    422,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes19",
+   "value": "D: 8h, V/M",
+   "rect": [
+    423,
+    347,
+    579,
+    358
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared20",
+   "value": "O",
+   "rect": [
+    29,
+    335,
+    40,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName20",
+   "value": "Invisibility",
+   "rect": [
+    42,
+    335,
+    148,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource20",
+   "value": "Bard",
+   "rect": [
+    149,
+    335,
+    231,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit20",
+   "value": "--",
+   "rect": [
+    232,
+    335,
+    257,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime20",
+   "value": "1A",
+   "rect": [
+    258,
+    335,
+    277,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange20",
+   "value": "Touch",
+   "rect": [
+    278,
+    335,
+    319,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents20",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    335,
+    342,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration20",
+   "value": "Concentration, up to 1 hour",
+   "rect": [
+    343,
+    335,
+    388,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage20",
+   "value": "PHB-2024 289",
+   "rect": [
+    389,
+    335,
+    422,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes20",
+   "value": "D: 1h, V/S/M",
+   "rect": [
+    423,
+    335,
+    579,
+    346
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared21",
+   "value": "O",
+   "rect": [
+    29,
+    324,
+    40,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName21",
+   "value": "Hold Person",
+   "rect": [
+    42,
+    324,
+    148,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource21",
+   "value": "Fiendish Legacy Spells",
+   "rect": [
+    149,
+    324,
+    231,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit21",
+   "value": "WIS 15",
+   "rect": [
+    232,
+    324,
+    257,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime21",
+   "value": "1A",
+   "rect": [
+    258,
+    324,
+    277,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange21",
+   "value": "60 ft.",
+   "rect": [
+    278,
+    324,
+    319,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents21",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    324,
+    342,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration21",
+   "value": "Concentration, up to 1 minute",
+   "rect": [
+    343,
+    324,
+    388,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage21",
+   "value": "PHB-2024 286",
+   "rect": [
+    389,
+    324,
+    422,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes21",
+   "value": "1/LR, D: 1m, V/S/M",
+   "rect": [
+    423,
+    324,
+    579,
+    335
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared22",
+   "value": "O",
+   "rect": [
+    29,
+    312,
+    40,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName22",
+   "value": "Hold Person",
+   "rect": [
+    42,
+    312,
+    148,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource22",
+   "value": "Fiendish Legacy Spells",
+   "rect": [
+    149,
+    312,
+    231,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit22",
+   "value": "WIS 15",
+   "rect": [
+    232,
+    312,
+    257,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime22",
+   "value": "1A",
+   "rect": [
+    258,
+    312,
+    277,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange22",
+   "value": "60 ft.",
+   "rect": [
+    278,
+    312,
+    319,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents22",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    312,
+    342,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration22",
+   "value": "Concentration, up to 1 minute",
+   "rect": [
+    343,
+    312,
+    388,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage22",
+   "value": "PHB-2024 286",
+   "rect": [
+    389,
+    312,
+    422,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes22",
+   "value": "D: 1m, V/S/M",
+   "rect": [
+    423,
+    312,
+    579,
+    323
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellHeader3",
+   "value": "=== 3rd LEVEL ===",
+   "rect": [
+    42,
+    288,
+    148,
+    299
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSlotHeader3",
+   "value": "2 Slots OO",
+   "rect": [
+    149,
+    288,
+    231,
+    299
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared23",
+   "value": "O",
+   "rect": [
+    29,
+    277,
+    40,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName23",
+   "value": "Sending",
+   "rect": [
+    42,
+    277,
+    148,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource23",
+   "value": "Bard",
+   "rect": [
+    149,
+    277,
+    231,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit23",
+   "value": "--",
+   "rect": [
+    232,
+    277,
+    257,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime23",
+   "value": "1A",
+   "rect": [
+    258,
+    277,
+    277,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange23",
+   "value": "Unlimited",
+   "rect": [
+    278,
+    277,
+    319,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents23",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    277,
+    342,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration23",
+   "value": "Instantaneous",
+   "rect": [
+    343,
+    277,
+    388,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage23",
+   "value": "PHB-2024 314",
+   "rect": [
+    389,
+    277,
+    422,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes23",
+   "value": "V/S/M",
+   "rect": [
+    423,
+    277,
+    579,
+    288
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPrepared24",
+   "value": "O",
+   "rect": [
+    29,
+    265,
+    40,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellName24",
+   "value": "Séance",
+   "rect": [
+    42,
+    265,
+    148,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSource24",
+   "value": "Bard",
+   "rect": [
+    149,
+    265,
+    231,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellSaveHit24",
+   "value": "--",
+   "rect": [
+    232,
+    265,
+    257,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellCastingTime24",
+   "value": "10m",
+   "rect": [
+    258,
+    265,
+    277,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellRange24",
+   "value": "Self",
+   "rect": [
+    278,
+    265,
+    319,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellComponents24",
+   "value": "V,S,M",
+   "rect": [
+    320,
+    265,
+    342,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellDuration24",
+   "value": "1 minute",
+   "rect": [
+    343,
+    265,
+    388,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellPage24",
+   "value": "VSSPP2",
+   "rect": [
+    389,
+    265,
+    422,
+    276
+   ]
+  },
+  {
+   "page": 5,
+   "fieldName": "spellNotes24",
+   "value": "D: 1m, V/S/M",
+   "rect": [
+    423,
+    265,
+    579,
+    276
+   ]
+  }
+ ]
+}
