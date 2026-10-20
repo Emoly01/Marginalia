@@ -12,6 +12,7 @@ import { listEntities } from '../lib/entities'
 import { applyPalette, paletteFor } from '../lib/palette'
 import { initials } from '../lib/text'
 import { toast } from '../lib/toast'
+import { openSearch } from '../lib/searchBus'
 import CampaignForm from './CampaignForm'
 import CampaignList from './CampaignList'
 import CampaignDetail from './CampaignDetail'
@@ -21,6 +22,7 @@ import InkingView from './InkingView'
 import MarginsPanel from './MarginsPanel'
 
 const EMPTY_SUMMARY = { sessions: 0, entities: 0, excerpt: '' }
+const SEARCH_SHORTCUT = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? '⌘K' : 'Ctrl K'
 
 export default function Layout({ user, onSignOut }) {
   // Navigation lives in the URL: /campaigns/:campaignId[/sessions/:sessionId | /entities/:entityId]
@@ -240,6 +242,7 @@ export default function Layout({ user, onSignOut }) {
       <header className="app-topbar">
         <button onClick={() => setLeftOpen(true)} aria-label="Campaigns and sessions">☰</button>
         <button className="app-topbar-title" onClick={() => navigate('/')}>Marginalia</button>
+        <button onClick={openSearch}>Search</button>
         <button onClick={() => setRightOpen(true)} aria-label="Margins">✎</button>
       </header>
 
@@ -247,6 +250,10 @@ export default function Layout({ user, onSignOut }) {
       <aside className={`app-sidebar${leftOpen ? ' is-open' : ''}`}>
         <button className="sidebar-brand" onClick={() => navigate('/')}>
           Marginalia
+        </button>
+        <button className="sidebar-search" onClick={openSearch}>
+          <span>Search</span>
+          <kbd className="sidebar-search-kbd">{SEARCH_SHORTCUT}</kbd>
         </button>
 
         <div className="sidebar-scroll">

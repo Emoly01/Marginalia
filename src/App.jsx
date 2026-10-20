@@ -6,6 +6,7 @@ import Layout from './components/Layout'
 import SignIn from './components/SignIn'
 import Toasts from './components/Toasts'
 import TableView from './components/TableView'
+import SearchPalette from './components/SearchPalette'
 import { toast } from './lib/toast'
 
 export default function App() {
@@ -53,6 +54,7 @@ export default function App() {
   return (
     <>
       <Toasts />
+      {user && <SearchPalette userId={user.uid} />}
       {!user ? (
         <SignIn onSignIn={handleSignIn} />
       ) : (
