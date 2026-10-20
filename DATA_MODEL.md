@@ -108,7 +108,7 @@
   - clientAt          // Date.now() when written — survives offline queueing
   - createdAt         // serverTimestamp()
   - inked             // false until handled in Inking
-  - inkedAs           // null, or what Inking did with it
+  - inkedAs           // null, or { action: "recap" | "entity" | "link" | "toss", entityId }
 ```
 
 Entities created by a sheet import carry `source: "sheet"`. One is created per
@@ -130,6 +130,12 @@ distinct item name, and only when no entity of any type already has that name
   survive a level-up, and so do spell notes. The dossier (`character/main`) is only ever
   filled where it is empty. All of it sits in the `character` subcollection, so the
   campaign delete cascade already covers it.
+- **Inking writes as it goes** — each queue item is applied immediately (recap appended,
+  entity created or its notes appended, log entry marked `inked`, margin archived), so a
+  half-finished triage loses nothing and the rest stays queued. Appended HTML is escaped
+  text in `<p>`, `<blockquote>`, `<h3>` and mention spans shaped exactly like the editor's,
+  and `mentionIds` is re-derived on every write. A margin used or tossed in Inking is
+  archived, not deleted.
 - **One live session per campaign** — `startSession` returns the existing live session
   instead of making a second. Creating and ending sessions return as soon as the write is
   queued, so the table works without wifi.

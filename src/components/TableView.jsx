@@ -105,7 +105,7 @@ export default function TableView({ user }) {
       console.error('Could not end session:', err)
       toast('Could not end the session.')
     })
-    navigate(`/campaigns/${campaignId}/sessions/${live.id}`)
+    navigate(`/campaigns/${campaignId}/sessions/${live.id}/ink`)
   }
 
   const openEntity = (id) => navigate(`/campaigns/${campaignId}/entities/${id}`)

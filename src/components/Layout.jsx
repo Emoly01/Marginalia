@@ -17,6 +17,7 @@ import CampaignList from './CampaignList'
 import CampaignDetail from './CampaignDetail'
 import SessionEditor from './SessionEditor'
 import EntityDetail from './EntityDetail'
+import InkingView from './InkingView'
 import MarginsPanel from './MarginsPanel'
 
 const EMPTY_SUMMARY = { sessions: 0, entities: 0, excerpt: '' }
@@ -29,6 +30,7 @@ export default function Layout({ user, onSignOut }) {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const activeTab = searchParams.get('tab') || 'sessions'
+  const inking = Boolean(activeSessionId) && location.pathname.endsWith('/ink')
   const entityKind = searchParams.get('kind') || 'all'
 
   // Mobile drawers (no-ops on desktop where both rails are always visible)
@@ -49,6 +51,9 @@ export default function Layout({ user, onSignOut }) {
   const [editingCampaign, setEditingCampaign] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
   const [entityRefreshKey, setEntityRefreshKey] = useState(0)
+  // Bumped when a session is rewritten outside its editor (Inking), so it is
+  // re-read and the editor remounts with the new content.
+  const [sessionVersion, setSessionVersion] = useState(0)
 
   const [sidebarSessionsError, setSidebarSessionsError] = useState(null)
 
@@ -132,7 +137,7 @@ export default function Layout({ user, onSignOut }) {
         console.error('Failed to load session:', err)
         toast('Could not load that session.')
       })
-  }, [activeSessionId, activeCampaignId, user.uid])
+  }, [activeSessionId, activeCampaignId, user.uid, sessionVersion])
 
   const handleCreateOrUpdateCampaign = async (data) => {
     try {
@@ -351,8 +356,27 @@ export default function Layout({ user, onSignOut }) {
           />
         ) : activeSessionId && activeCampaign && (!activeSession || activeSession.id !== activeSessionId) ? (
           <Waiting>loading…</Waiting>
+        ) : inking && activeSession && activeCampaign ? (
+          <InkingView
+            userId={user.uid}
+            campaignId={activeCampaign.id}
+            session={activeSession}
+            entities={entities}
+            characterName={activeCampaign.characterName}
+            onEntitiesChanged={handleEntityRefresh}
+            onBack={() => handleOpenSession(activeSession.id)}
+            onDone={() => {
+              // Drop the stale copy first: the editor must not mount with the
+              // pre-inking content, or its autosave would write it back.
+              setActiveSession(null)
+              setSessionVersion((v) => v + 1)
+              setRefreshKey((k) => k + 1)
+              handleOpenSession(activeSession.id)
+            }}
+          />
         ) : activeSessionId && activeSession && activeCampaign ? (
           <SessionEditor
+            key={`${activeSession.id}:${sessionVersion}`}
             userId={user.uid}
             campaignId={activeCampaign.id}
             session={activeSession}
@@ -362,6 +386,7 @@ export default function Layout({ user, onSignOut }) {
             onBack={handleBackToCampaign}
             onDeleted={handleSessionDeleted}
             onUpdated={handleSessionUpdated}
+            onInk={() => navigate(`/campaigns/${activeCampaignId}/sessions/${activeSession.id}/ink`)}
           />
         ) : activeCampaign ? (
           <CampaignDetail
@@ -396,7 +421,8 @@ export default function Layout({ user, onSignOut }) {
       {/* RIGHT RAIL */}
       <aside className={`app-margins${rightOpen ? ' is-open' : ''}`}>
         {activeCampaign ? (
-          <MarginsPanel userId={user.uid} campaignId={activeCampaign.id} />
+          // Remounted after Inking, which archives the margins it used.
+          <MarginsPanel key={sessionVersion} userId={user.uid} campaignId={activeCampaign.id} />
         ) : (
           <>
             <div className="margins-head">

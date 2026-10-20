@@ -61,6 +61,7 @@ export default function App() {
           <Route path="/campaigns/:campaignId" element={layout} />
           <Route path="/campaigns/:campaignId/table" element={<TableView user={user} />} />
           <Route path="/campaigns/:campaignId/sessions/:sessionId" element={layout} />
+          <Route path="/campaigns/:campaignId/sessions/:sessionId/ink" element={layout} />
           <Route path="/campaigns/:campaignId/entities/:entityId" element={layout} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
