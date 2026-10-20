@@ -5,3 +5,9 @@ export { parseDdbSheet, PARSER_VERSION, SKILLS, ABILITY_KEYS, PROFICIENCY_MARKS 
 export { detectResources } from './resources'
 export { diffSheets, summarizeDiff } from './diff'
 export { normalizeFieldName, buildFieldMap, spellKey } from './normalize'
+export {
+  buildImportPlan,
+  cleanResources,
+  sheetData,
+  SHEET_DOC_BUDGET,
+} from './importPlan'

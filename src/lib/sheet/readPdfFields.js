@@ -51,7 +51,8 @@ function loadPdfjs() {
 export async function readPdfFields(file) {
   const pdfjs = await loadPdfjs()
   const data = file instanceof ArrayBuffer ? file : await file.arrayBuffer()
-  const pdf = await pdfjs.getDocument({ data: new Uint8Array(data) }).promise
+  const task = pdfjs.getDocument({ data: new Uint8Array(data) })
+  const pdf = await task.promise
   try {
     const fields = []
     for (let n = 1; n <= pdf.numPages; n++) {
@@ -60,6 +61,6 @@ export async function readPdfFields(file) {
     }
     return { fields, map: buildFieldMap(fields), pageCount: pdf.numPages }
   } finally {
-    pdf.destroy()
+    task.destroy()
   }
 }

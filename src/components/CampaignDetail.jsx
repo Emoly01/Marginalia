@@ -5,6 +5,7 @@ import { paletteFor } from '../lib/palette'
 import { toast } from '../lib/toast'
 import CharacterDossier from './CharacterDossier'
 import EntitiesView from './EntitiesView'
+import SheetTab from './SheetTab'
 
 const MAX_TAGS = 3
 
@@ -73,6 +74,7 @@ export default function CampaignDetail({
     { key: 'sessions', label: 'Sessions', count: sessions.length },
     { key: 'entities', label: 'Entities', count: entities.length },
     { key: 'character', label: 'Character', count: '' },
+    { key: 'sheet', label: 'Sheet', count: '' },
   ]
 
   return (
@@ -119,7 +121,14 @@ export default function CampaignDetail({
       </header>
 
       <div className="view-body">
-        {activeTab === 'character' ? (
+        {activeTab === 'sheet' ? (
+          <SheetTab
+            userId={userId}
+            campaignId={campaign.id}
+            entities={entities}
+            onEntitiesChanged={onEntityCreated}
+          />
+        ) : activeTab === 'character' ? (
           <CharacterDossier
             userId={userId}
             campaignId={campaign.id}

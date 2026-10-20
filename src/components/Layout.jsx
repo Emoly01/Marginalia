@@ -309,6 +309,12 @@ export default function Layout({ user, onSignOut }) {
                   onClick={() => selectTab('character')}
                 />
                 <CodexRow
+                  label="Sheet"
+                  count=""
+                  active={!activeSessionId && !activeEntityId && activeTab === 'sheet'}
+                  onClick={() => selectTab('sheet')}
+                />
+                <CodexRow
                   label="Threads"
                   count={threadCount}
                   active={!activeSessionId && !activeEntityId && activeTab === 'entities' && entityKind === 'thread'}

@@ -1483,6 +1483,270 @@ select:focus {
 }
 
 /* ============================================ */
+/* Character sheet (import + Sheet tab)          */
+/* Functional layout only; the manuscript        */
+/* redesign replaces the look.                   */
+/* ============================================ */
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.sheet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sheet-name {
+  font-size: 26px;
+  font-style: italic;
+  font-weight: normal;
+  color: var(--m-accent);
+  line-height: 1.1;
+}
+
+.sheet-sub {
+  font-size: 15px;
+  color: var(--m-text-3);
+}
+
+.sheet-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px 18px;
+}
+
+.sheet-facts--prose {
+  grid-template-columns: 1fr;
+}
+
+.sheet-fact dt {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-text-4);
+}
+
+.sheet-fact dd {
+  color: var(--m-text-2);
+  white-space: pre-line;
+}
+
+.sheet-stat-mod {
+  font-size: 15px;
+  color: var(--m-text-2);
+}
+
+.sheet-stat-save {
+  font-size: 12px;
+  color: var(--m-text-4);
+}
+
+.sheet-skills {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 2px 18px;
+}
+
+.sheet-skill {
+  display: grid;
+  grid-template-columns: 18px 1fr auto 36px;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 15px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--m-line);
+}
+
+.sheet-skill-mark {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--m-accent);
+  text-align: center;
+}
+
+.sheet-skill-mark abbr,
+.sheet abbr {
+  text-decoration: none;
+}
+
+.sheet-skill-name {
+  color: var(--m-text-2);
+}
+
+.sheet-skill-ability {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--m-text-4);
+}
+
+.sheet-skill-bonus {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--m-text);
+}
+
+.sheet-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.sheet-table th {
+  text-align: left;
+  font-weight: normal;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--m-text-4);
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid var(--m-line-2);
+}
+
+.sheet-table td {
+  padding: 5px 8px 5px 0;
+  border-bottom: 1px solid var(--m-line);
+  color: var(--m-text-2);
+  vertical-align: top;
+}
+
+.sheet-details > summary {
+  cursor: pointer;
+  padding: 6px 0;
+  color: var(--m-text-2);
+}
+
+.sheet-details[open] > summary {
+  margin-bottom: 6px;
+}
+
+.sheet-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet-group-title {
+  font-size: 15px;
+  font-weight: normal;
+  font-style: italic;
+  color: var(--m-text-3);
+  margin: 8px 0 2px;
+}
+
+.sheet-tag {
+  font-size: 12px;
+  color: var(--m-text-4);
+  margin-left: 8px;
+  font-style: italic;
+}
+
+.sheet-text {
+  white-space: pre-line;
+  font-size: 15px;
+  color: var(--m-text-2);
+  padding-bottom: 8px;
+}
+
+.sheet-notes {
+  list-style: none;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--m-text-3);
+  padding-bottom: 6px;
+}
+
+.sheet-dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 160px;
+  justify-content: center;
+  text-align: center;
+  padding: 30px 20px;
+  border: 1px dashed var(--m-line-3);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+}
+
+.sheet-dropzone.is-dragging,
+.sheet-dropzone:focus-within {
+  border-color: var(--m-accent);
+  background: var(--m-card);
+}
+
+/* Visually hidden but still focusable and clickable through the label. */
+.sheet-dropzone-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.sheet-step {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sheet-resources {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sheet-resource {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 10px;
+  border-left: 2px solid var(--m-line-2);
+}
+
+.sheet-resource.has-conflict {
+  border-left-color: var(--m-danger);
+}
+
+.sheet-resource-fields {
+  display: grid;
+  grid-template-columns: minmax(140px, 2fr) 90px minmax(150px, 1fr) 48px;
+  gap: 10px;
+  align-items: end;
+}
+
+.sheet-resource-fields input,
+.sheet-resource-fields select {
+  min-height: 44px;
+}
+
+.sheet-resource-remove {
+  min-height: 44px;
+  font-size: 18px;
+}
+
+.sheet-conflict {
+  color: var(--m-danger);
+}
+
+.sheet-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.sheet-actions button {
+  min-height: 44px;
+}
+
+/* ============================================ */
 /* Responsive — rails become drawers             */
 /* ============================================ */
 
@@ -1571,6 +1835,10 @@ select:focus {
 }
 
 @media (max-width: 560px) {
+  .sheet-resource-fields {
+    grid-template-columns: 1fr 90px;
+  }
+
   .stat-grid {
     grid-template-columns: repeat(3, 1fr);
   }

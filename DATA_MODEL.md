@@ -58,7 +58,55 @@
   - items             // things that matter narratively
   - vibes             // songs, aesthetic, mood notes
   - updatedAt
+
+/users/{userId}/campaigns/{campaignId}/character/sheet
+  // The last D&D Beyond PDF import. The PDF itself is never stored.
+  - parserVersion     // PARSER_VERSION in src/lib/sheet/parseDdbSheet.js
+  - importedAt
+  - sourceFileName
+  - data              // parsed sheet: identity, abilities, skills, combat, proficiencies,
+                      // actions, attacks, features, inventory, personality,
+                      // spellcasting, slots { "1": 4, … }, spells [{ key, name, level, … }]
+  - raw               // [{ page, fieldName, value, rect }] — every filled PDF field,
+                      // with position, so a newer parser can re-parse without the PDF
+
+/users/{userId}/campaigns/{campaignId}/character/play
+  // Live play state. Separate from the sheet so re-imports never touch it.
+  // Stores only what is used; maxima come from character/sheet.
+  - hpCurrent         // null / missing = full
+  - hpTemp
+  - slotsUsed         // { "1": 0, "2": 1, … }
+  - resources         // [{ id, name, max, reset: "short" | "long" }] — confirmed at import
+  - resourcesUsed     // { [resourceId]: n }
+  - hitDiceUsed
+  - conditions        // ["Poisoned", …]
+  - concentration     // spell name or null
+  - deathSaves        // { successes, failures }
+  - updatedAt
+
+/users/{userId}/campaigns/{campaignId}/character/notes
+  - spells            // { [spellKey]: "my note" } — spellKey("Tasha's Hideous Laughter")
+                      // = "tashas-hideous-laughter"; survives re-imports
+  - updatedAt
+
+/users/{userId}/campaigns/{campaignId}/log/{entryId}
+  // Live session log, one collection per campaign. Query by sessionId only
+  // and sort by clientAt client-side — no composite index.
+  - sessionId
+  - text
+  - mark              // "note" | "important" | "quote" | "npc" | "mystery" | "loot"
+                      // | "auto" (tracker taps) | "milestone" (level-up on re-import)
+  - auto              // null, or { type, payload } for tracker entries
+  - entityId          // entity created from or linked to this line, or null
+  - clientAt          // Date.now() when written — survives offline queueing
+  - createdAt         // serverTimestamp()
+  - inked             // false until handled in Inking
+  - inkedAs           // null, or what Inking did with it
 ```
+
+Entities created by a sheet import carry `source: "sheet"`. One is created per
+distinct item name, and only when no entity of any type already has that name
+(case-insensitive), so re-imports never duplicate them.
 
 ## Why this shape
 
@@ -70,6 +118,14 @@
 - **Entities are flat per campaign** — no subcollections by type. Filter by `type` field.
   Easier to query "all things in this campaign" and easier to convert types later
   (e.g. "this NPC is actually a location now").
+- **Sheet, play and notes are separate docs** — a re-import replaces `character/sheet`
+  wholesale but only touches `play.resources` (the confirmed list), so HP and spent slots
+  survive a level-up, and so do spell notes. The dossier (`character/main`) is only ever
+  filled where it is empty. All of it sits in the `character` subcollection, so the
+  campaign delete cascade already covers it.
+- **The log is campaign-level, not per session** — one single-field query per session,
+  and deleting a session deletes its entries (`deleteSession`); `log` is in the campaign
+  delete cascade too.
 - **Character is a singleton doc** — one PC per campaign for v1. Can extend to multi-PC
   campaigns later if Emily ever runs a duo character.
 - **A campaign stores a palette, not a colour** — `palette` names one of ten accent
@@ -85,5 +141,5 @@
   read access via a public URL. Don't build until needed.
 - **Search**: Firestore full-text search is bad. If search becomes important, either use
   Algolia or do client-side fuzzy search (small enough dataset, should work fine).
-- **Offline**: Firestore has built-in offline persistence — enable it once writing-during-session
-  becomes a real use case.
+- **Offline**: enabled (`persistentLocalCache` in `src/firebase.js`). Table-view writes are
+  fired without awaiting, so they queue offline instead of blocking.
