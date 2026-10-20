@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { listSessions, createSession } from '../lib/sessions'
 import { excerptFrom } from '../lib/text'
+import { sessionBadge } from '../lib/sessionStatus'
 import { paletteFor } from '../lib/palette'
 import { toast } from '../lib/toast'
 import CharacterDossier from './CharacterDossier'
@@ -102,6 +104,7 @@ export default function CampaignDetail({
           </div>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flex: 'none' }}>
             <button className="btn" onClick={onGoHome}>← all campaigns</button>
+            <Link className="btn-primary" to={`/campaigns/${campaign.id}/table`}>At the table</Link>
             <button className="btn btn-outline" onClick={onEditCampaign}>Settings</button>
           </div>
         </div>
@@ -190,6 +193,7 @@ function SessionsView({ sessions, loading, loadError, entityNames, onNewSession,
               <div className="session-card-head">
                 <span className="session-card-num">#{s.sessionNumber}</span>
                 <span className="session-card-title">{s.title}</span>
+                {sessionBadge(s) && <span className="table-badge">{sessionBadge(s)}</span>}
                 <span style={{ flex: 1 }} />
                 <span className="session-card-date">{s.date}</span>
               </div>

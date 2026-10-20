@@ -19,6 +19,7 @@
   - lastActiveAt
   - palette           // palette id — "gold", "sage", "plum"… see src/lib/palette.js
   - status            // "active", "hiatus", "completed"
+  - ddbUrl            // optional D&D Beyond character link, opened from table view
 
 /users/{userId}/campaigns/{campaignId}/sessions/{sessionId}
   - title             // "Session 47 — The Bridge"
@@ -28,6 +29,12 @@
   - mentionIds        // array of entity IDs mentioned in content (auto-derived on save)
   - createdAt
   - updatedAt
+  - // Lifecycle — optional; sessions without `status` are legacy and count as inked:
+  - status            // "live" (at the table) | "ended" (to ink) | "inked"
+  - startedAt
+  - endedAt
+  - inkedAt
+  - intention         // one line set before play: what my character wants tonight
 
 /users/{userId}/campaigns/{campaignId}/entities/{entityId}
   - type              // "npc" | "pc" | "location" | "thread" | "item"
@@ -123,6 +130,9 @@ distinct item name, and only when no entity of any type already has that name
   survive a level-up, and so do spell notes. The dossier (`character/main`) is only ever
   filled where it is empty. All of it sits in the `character` subcollection, so the
   campaign delete cascade already covers it.
+- **One live session per campaign** — `startSession` returns the existing live session
+  instead of making a second. Creating and ending sessions return as soon as the write is
+  queued, so the table works without wifi.
 - **The log is campaign-level, not per session** — one single-field query per session,
   and deleting a session deletes its entries (`deleteSession`); `log` is in the campaign
   delete cascade too.
