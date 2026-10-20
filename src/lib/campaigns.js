@@ -52,7 +52,7 @@ export async function updateCampaign(userId, campaignId, data) {
 
 // Firestore doesn't cascade-delete subcollections, so gather every doc
 // under the campaign and delete them along with the campaign itself.
-const SUBCOLLECTIONS = ['sessions', 'entities', 'margins', 'character']
+const SUBCOLLECTIONS = ['sessions', 'entities', 'margins', 'character', 'log']
 
 export async function deleteCampaign(userId, campaignId) {
   const campaignDoc = doc(db, 'users', userId, 'campaigns', campaignId)

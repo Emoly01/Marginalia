@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import { extractMentionIds } from './mentions'
+import { deleteSessionLog } from './log'
 
 const sessionsRef = (userId, campaignId) =>
   collection(db, 'users', userId, 'campaigns', campaignId, 'sessions')
@@ -81,5 +82,7 @@ export async function updateSession(userId, campaignId, sessionId, data) {
 
 export async function deleteSession(userId, campaignId, sessionId) {
   const ref = doc(db, 'users', userId, 'campaigns', campaignId, 'sessions', sessionId)
+  // Log entries first: if this fails the session is still there to retry.
+  await deleteSessionLog(userId, campaignId, sessionId)
   await deleteDoc(ref)
 }
