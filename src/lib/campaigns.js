@@ -10,6 +10,7 @@ import {
   serverTimestamp,
   writeBatch,
   getCountFromServer,
+  getDoc,
   limit,
 } from 'firebase/firestore'
 import { db } from '../firebase'
@@ -25,6 +26,11 @@ export async function listCampaigns(userId) {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
 }
 
+export async function getCampaign(userId, campaignId) {
+  const snap = await getDoc(doc(db, 'users', userId, 'campaigns', campaignId))
+  return snap.exists() ? { id: snap.id, ...snap.data() } : null
+}
+
 export async function createCampaign(userId, data) {
   const now = serverTimestamp()
   const docRef = await addDoc(campaignsRef(userId), {
@@ -36,6 +42,7 @@ export async function createCampaign(userId, data) {
     characterClass: data.characterClass || '',
     palette: data.palette || DEFAULT_PALETTE_ID,
     status: data.status || 'active',
+    ddbUrl: data.ddbUrl || '',
     createdAt: now,
     lastActiveAt: now,
   })

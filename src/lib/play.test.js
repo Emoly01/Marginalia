@@ -158,3 +158,32 @@ describe('applyPatch', () => {
     expect(play.applyPatch(null, { 'resourcesUsed.x': 2 })).toEqual({ resourcesUsed: { x: 2 } })
   })
 })
+
+describe('castSpell', () => {
+  const withFree = [...resources, { id: 'hold-person-free-cast', name: 'Hold Person (free cast)', max: 1, reset: 'long' }]
+  const d = (p = {}) => play.derivePlayState(sheet, { resources: withFree, ...p })
+
+  it('casts a cantrip for free', () => {
+    const r = play.castSpell(d(), { name: 'Toll the Dead', level: 0 })
+    expect(r.patch).toEqual({})
+    expect(play.describeLog(r.log)).toBe('cast Toll the Dead')
+  })
+
+  it('spends a slot, upcast if asked, and sets concentration', () => {
+    const r = play.castSpell(d({ concentration: 'Suggestion' }), { name: 'Hold Person', level: 2, slotLevel: 3, concentration: true })
+    expect(r.patch).toEqual({ 'slotsUsed.3': 1, concentration: 'Hold Person' })
+    expect(play.describeLog(r.log)).toBe('cast Hold Person (3rd-level slot, 1/2 left) · concentrating, dropped Suggestion')
+  })
+
+  it('uses a free cast instead of a slot', () => {
+    const r = play.castSpell(d(), { name: 'Hold Person', level: 2, resourceId: 'hold-person-free-cast', concentration: true })
+    expect(r.patch).toEqual({ 'resourcesUsed.hold-person-free-cast': 1, concentration: 'Hold Person' })
+    expect(play.describeLog(r.log)).toBe('cast Hold Person (free cast) · concentrating')
+  })
+
+  it('refuses what cannot be paid for', () => {
+    expect(play.castSpell(d({ slotsUsed: { 3: 2 } }), { name: 'Sending', level: 3 })).toBeNull()
+    expect(play.castSpell(d(), { name: 'Sending', level: 3, slotLevel: 1 })).toBeNull()
+    expect(play.castSpell(d({ resourcesUsed: { 'hold-person-free-cast': 1 } }), { name: 'Hold Person', level: 2, resourceId: 'hold-person-free-cast' })).toBeNull()
+  })
+})

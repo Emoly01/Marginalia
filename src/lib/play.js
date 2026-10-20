@@ -151,6 +151,31 @@ export function restoreResource(state, id) {
 }
 
 /**
+ * Cast a spell: one log line ("cast Hold Person (2nd-level slot)") and,
+ * in the same write, whatever it costs — a slot of `slotLevel`, or a use of
+ * the free-cast resource `resourceId` — plus concentration when the spell
+ * needs it. Cantrips cost nothing. Null when the cost can't be paid.
+ */
+export function castSpell(state, { name, level = 0, slotLevel = level, resourceId = null, concentration = false }) {
+  const patch = {}
+  let paidWith = null
+  if (resourceId) {
+    const r = state.resources.find((x) => x.id === resourceId)
+    if (!r || r.left <= 0) return null
+    patch[`resourcesUsed.${r.id}`] = r.used + 1
+    paidWith = { kind: 'free', name: r.name }
+  } else if (level > 0) {
+    const s = state.slots.find((x) => x.level === Number(slotLevel))
+    if (!s || s.left <= 0 || s.level < level) return null
+    patch[`slotsUsed.${s.level}`] = s.used + 1
+    paidWith = { kind: 'slot', level: s.level, left: s.left - 1, max: s.max }
+  }
+  const dropped = concentration && state.concentration && state.concentration !== name ? state.concentration : null
+  if (concentration) patch.concentration = name
+  return { patch, log: { type: 'cast', payload: { name, paidWith, concentration: Boolean(concentration), dropped } } }
+}
+
+/**
  * Short rest: short-rest resources come back; optionally spend hit dice.
  * The dice are rolled at the table, so the caller passes the total healed
  * (rolls + CON) rather than this rolling anything.
@@ -263,6 +288,13 @@ export function describeLog({ type, payload: p }) {
       if (p.regained.length) parts.push(`regained ${p.regained.join(', ')}`)
       if (p.hitDiceSpent) parts.push(`spent ${p.hitDiceSpent} hit ${p.hitDiceSpent === 1 ? 'die' : 'dice'} · ${p.from} → ${p.to}`)
       return parts.join(' · ')
+    }
+    case 'cast': {
+      let line = `cast ${p.name}`
+      if (p.paidWith?.kind === 'slot') line += ` (${ordinal(p.paidWith.level)}-level slot, ${p.paidWith.left}/${p.paidWith.max} left)`
+      if (p.paidWith?.kind === 'free') line += ' (free cast)'
+      if (p.concentration) line += p.dropped ? ` · concentrating, dropped ${p.dropped}` : ' · concentrating'
+      return line
     }
     case 'longRest':
       return 'long rest · HP, slots, resources and hit dice restored'

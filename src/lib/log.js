@@ -7,7 +7,9 @@ import {
   doc,
   setDoc,
   updateDoc,
+  deleteDoc,
   getDocs,
+  onSnapshot,
   query,
   where,
   writeBatch,
@@ -55,9 +57,21 @@ export function updateLogEntry(userId, campaignId, entryId, patch) {
   return updateDoc(doc(logRef(userId, campaignId), entryId), patch)
 }
 
+export function deleteLogEntry(userId, campaignId, entryId) {
+  return deleteDoc(doc(logRef(userId, campaignId), entryId))
+}
+
+const byClientAt = (a, b) => (a.clientAt ?? 0) - (b.clientAt ?? 0)
+
+/** onSnapshot on one session's entries, oldest first. Returns the unsubscribe. */
+export function subscribeSessionLog(userId, campaignId, sessionId, cb, onError) {
+  const q = query(logRef(userId, campaignId), where('sessionId', '==', sessionId))
+  return onSnapshot(q, (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort(byClientAt)), onError)
+}
+
 export async function listSessionLog(userId, campaignId, sessionId) {
   const snap = await getDocs(query(logRef(userId, campaignId), where('sessionId', '==', sessionId)))
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.clientAt ?? 0) - (b.clientAt ?? 0))
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort(byClientAt)
 }
 
 export async function deleteSessionLog(userId, campaignId, sessionId) {

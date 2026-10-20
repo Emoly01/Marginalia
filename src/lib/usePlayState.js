@@ -108,6 +108,7 @@ export function usePlayState(userId, campaignId, { liveSessionId = null } = {}) 
       longRest: () => run(play.longRest),
       toggleCondition: (name) => run(play.toggleCondition, name),
       setConcentration: (spellName) => run(play.setConcentration, spellName),
+      castSpell: (cast) => run(play.castSpell, cast),
       deathSave: (kind) => run(play.deathSave, kind),
       // A typed log line between taps ends an HP burst.
       breakLogBurst: () => logger?.reset(),
