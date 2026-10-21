@@ -34,6 +34,10 @@ describe('parseCapture', () => {
   it('falls back to note for an unknown or app-only mark', () => {
     expect(parseCapture('x', 'auto').mark).toBe('note')
   })
+
+  it('lets me tag a typed line as a milestone', () => {
+    expect(parseCapture('Fifth level at last', 'milestone')).toEqual({ mark: 'milestone', text: 'Fifth level at last', npc: null })
+  })
 })
 
 describe('findEntityByName / markLabel', () => {

@@ -6,6 +6,7 @@
 // spans in exactly the shape RichTextEditor renders, so Tiptap reloads it
 // unchanged and extractMentionIds() picks the mentions up for backlinks.
 import { parseLine } from './npcLine'
+import { stripAt, mentionedEntities, splitMentions } from './mentionText'
 
 export const ENTITY_TYPES_FOR_INKING = ['npc', 'location', 'thread', 'item', 'faction']
 
@@ -35,13 +36,24 @@ export function appendHtml(content, fragment) {
   return (isEmptyHtml(content) ? '' : content) + fragment
 }
 
+/**
+ * One line of plain text → inline HTML: escaped, newlines as <br>, and
+ * every @Name that matches an entity as a real mention (unknown @Names lose
+ * the @ and stay plain text).
+ */
+export function inlineHtml(text, entities = []) {
+  return splitMentions(String(text ?? ''), entities)
+    .map((p) => (p.entity ? mentionHtml(p.entity) : escapeHtml(p.text).replace(/\n/g, '<br>')))
+    .join('')
+}
+
 // Plain text → paragraphs; single newlines become <br>.
-function paragraphs(text) {
+function paragraphs(text, entities) {
   return String(text ?? '')
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean)
-    .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br>')}</p>`)
+    .map((p) => `<p>${inlineHtml(p, entities)}</p>`)
     .join('')
 }
 
@@ -91,19 +103,27 @@ function withoutLeadingName(text, entity) {
  *   'recap'  → the line as a paragraph (a quote as a blockquote)
  *   'entity' / 'link' → "@Name — the line"
  */
-export function recapFragment(text, { action, mark, entity }) {
+export function recapFragment(text, { action, mark, entity, entities = [] }) {
   if (action === 'recap') {
-    return mark === 'quote' ? `<blockquote>${paragraphs(text)}</blockquote>` : paragraphs(text)
+    return mark === 'quote' ? `<blockquote>${paragraphs(text, entities)}</blockquote>` : paragraphs(text, entities)
   }
-  let rest = withoutLeadingName(text, entity).trim()
+  let rest = withoutLeadingName(stripLeadingAt(text, entity), entity).trim()
   if (rest.toLowerCase() === String(entity.name).trim().toLowerCase()) rest = ''
-  return `<p>${mentionHtml(entity)}${rest ? ` — ${escapeHtml(rest).replace(/\n/g, '<br>')}` : ''}</p>`
+  const others = entities.filter((e) => e.id !== entity.id)
+  return `<p>${mentionHtml(entity)}${rest ? ` — ${inlineHtml(rest, others)}` : ''}</p>`
+}
+
+// "@Gnarl lied about the bell" next to the @Gnarl mention → "lied about the bell".
+function stripLeadingAt(text, entity) {
+  const s = String(text ?? '').trim()
+  const at = `@${String(entity.name).trim()}`
+  return s.toLowerCase().startsWith(at.toLowerCase()) ? s.slice(at.length).replace(/^[\s—–:-]+/, '') : s
 }
 
 /** What "Link to existing entity" adds to that entity's notes. */
-export function entityNotesFragment(text, session) {
+export function entityNotesFragment(text, session, entities = []) {
   const from = session?.title ? ` <em>(${escapeHtml(session.title)})</em>` : ''
-  return `<p>${escapeHtml(String(text ?? '').trim()).replace(/\n/g, '<br>')}${from}</p>`
+  return `<p>${inlineHtml(String(text ?? '').trim(), entities)}${from}</p>`
 }
 
 export function recallPrompts(characterName) {
@@ -114,6 +134,60 @@ export function recallPrompts(characterName) {
     'Loot or losses?',
     'Where did it end?',
   ]
+}
+
+// One line under each prompt, in the handoff's words.
+export const RECALL_HINTS = [
+  'Names first. The codex will catch them.',
+  'Facts, rumours, and things you only suspect.',
+  'In their words, not yours.',
+  'What changed hands, and what it cost.',
+  'One line. Next session starts here.',
+]
+
+const typed = (entries) =>
+  (entries ?? []).filter((e) => !e.auto && e.mark !== 'auto').sort((a, b) => (a.clientAt ?? 0) - (b.clientAt ?? 0))
+
+/**
+ * "From tonight's log, tap to borrow": a few lines of the session's own log
+ * that might answer a recall prompt. Nothing is invented — every chip is a
+ * name or a line I wrote at the table (or tonight's intention).
+ */
+export function recallChips(promptIndex, { entries = [], session = null, entities = [] } = {}, limit = 3) {
+  const lines = typed(entries)
+  const uniq = (xs) => [...new Set(xs.map((x) => String(x ?? '').trim()).filter(Boolean))].slice(0, limit)
+  switch (promptIndex) {
+    case 0: {
+      const byId = Object.fromEntries(entities.map((e) => [e.id, e]))
+      return uniq(
+        lines
+          .filter((e) => e.mark === 'npc' || (e.entityId && byId[e.entityId]?.type === 'npc'))
+          .map((e) => byId[e.entityId]?.name ?? parseLine(stripAt(e.text)).name)
+      )
+    }
+    case 1:
+      return uniq(lines.filter((e) => e.mark === 'mystery' || e.mark === 'important').map((e) => stripAt(e.text)))
+    case 2:
+      return uniq([session?.intention])
+    case 3:
+      return uniq(lines.filter((e) => e.mark === 'loot').map((e) => stripAt(e.text)))
+    case 4:
+      return uniq(lines.slice(-1).map((e) => stripAt(e.text)))
+    default:
+      return []
+  }
+}
+
+/**
+ * "Link to an existing page" suggestions for a queue item: the entity the
+ * line was captured against, then entities the line names.
+ */
+export function suggestLinks(item, entities = [], limit = 4) {
+  const out = []
+  const own = entities.find((e) => e.id === item.entityId)
+  if (own) out.push(own)
+  for (const e of mentionedEntities(item.text, entities, limit + 1)) if (!out.includes(e)) out.push(e)
+  return out.slice(0, limit)
 }
 
 /** Recall answers → "<h3>Prompt</h3><p>answer</p>…", skipping blank ones. */

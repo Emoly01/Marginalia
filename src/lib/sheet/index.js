@@ -8,6 +8,7 @@ export { normalizeFieldName, buildFieldMap, spellKey } from './normalize'
 export {
   buildImportPlan,
   cleanResources,
+  selectDossierFill,
   sheetData,
   SHEET_DOC_BUDGET,
 } from './importPlan'

@@ -187,3 +187,37 @@ describe('castSpell', () => {
     expect(play.castSpell(d({ resourcesUsed: { 'hold-person-free-cast': 1 } }), { name: 'Hold Person', level: 2, resourceId: 'hold-person-free-cast' })).toBeNull()
   })
 })
+
+describe('exhaustion and the conditions overlay', () => {
+  it('counts exhaustion from 0 to 6', () => {
+    let p = step({}, play.setExhaustion, 2)
+    expect(derive(p).exhaustion).toBe(2)
+    expect(play.describeLog(play.setExhaustion(derive(p), 3).log)).toBe('exhaustion 3')
+    expect(play.setExhaustion(derive(p), 2)).toBeNull()
+    expect(step(p, play.setExhaustion, 9).exhaustion).toBe(6)
+    expect(play.describeLog(play.setExhaustion(derive(p), 0).log)).toBe('no longer exhausted')
+  })
+
+  it('reads an old "Exhaustion" toggle as level 1, not a condition', () => {
+    const s = derive({ conditions: ['Poisoned', 'Exhaustion'] })
+    expect(s.exhaustion).toBe(1)
+    expect(s.conditions).toEqual(['Poisoned'])
+    expect(play.CONDITIONS).not.toContain('Exhaustion')
+  })
+
+  it('long rest lowers exhaustion by one and ends concentration', () => {
+    const r = play.longRest(derive({ exhaustion: 2, concentration: 'Hold Person' }))
+    expect(r.patch).toMatchObject({ exhaustion: 1, concentration: null })
+    expect(play.describeLog(r.log)).toBe(
+      'long rest · HP, slots, resources and hit dice restored · exhaustion 1 · dropped concentration on Hold Person'
+    )
+    expect(play.longRest(derive()).patch).not.toHaveProperty('exhaustion')
+  })
+
+  it('clears every condition and all exhaustion at once', () => {
+    const r = play.clearConditions(derive({ conditions: ['Poisoned', 'Prone'], exhaustion: 2 }))
+    expect(r.patch).toEqual({ conditions: [], exhaustion: 0 })
+    expect(play.describeLog(r.log)).toBe('conditions cleared')
+    expect(play.clearConditions(derive())).toBeNull()
+  })
+})

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { stripHtml, excerptFrom, initials } from './text'
+import { stripHtml, excerptFrom, initials, firstLetter } from './text'
 
 describe('stripHtml', () => {
   it('drops tags and collapses whitespace', () => {
@@ -49,5 +49,15 @@ describe('initials', () => {
     expect(initials('')).toBe('·')
     expect(initials(null)).toBe('·')
     expect(initials('   ')).toBe('·')
+  })
+})
+
+describe('firstLetter', () => {
+  it('splits a title for an illuminated initial', () => {
+    expect(firstLetter('The Drowned Bells')).toEqual({ letter: 'T', lead: '', rest: 'he Drowned Bells' })
+    expect(firstLetter('“Run.”')).toEqual({ letter: 'R', lead: '“', rest: 'un.”' })
+    expect(firstLetter('séance')).toEqual({ letter: 'S', lead: '', rest: 'éance' })
+    expect(firstLetter('  ')).toEqual({ letter: '', rest: '' })
+    expect(firstLetter(null)).toEqual({ letter: '', rest: '' })
   })
 })

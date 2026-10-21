@@ -15,7 +15,6 @@ export const CONDITIONS = [
   'Blinded',
   'Charmed',
   'Deafened',
-  'Exhaustion',
   'Frightened',
   'Grappled',
   'Incapacitated',
@@ -29,6 +28,8 @@ export const CONDITIONS = [
   'Unconscious',
 ]
 
+export const MAX_EXHAUSTION = 6
+
 export function emptyPlay() {
   return {
     hpCurrent: null, // null = full
@@ -38,6 +39,7 @@ export function emptyPlay() {
     resources: [],
     hitDiceUsed: 0,
     conditions: [],
+    exhaustion: 0, // 0–6; a counter, not a condition toggle
     concentration: null,
     deathSaves: { successes: 0, failures: 0 },
   }
@@ -76,7 +78,13 @@ export function derivePlayState(sheet, play) {
     slots,
     resources,
     hitDice: { max: hitDiceMax, used: hitDiceUsed, left: hitDiceMax - hitDiceUsed, dice },
-    conditions: p.conditions ?? [],
+    // "Exhaustion" was a condition toggle before it became a counter.
+    conditions: (p.conditions ?? []).filter((c) => c !== 'Exhaustion'),
+    exhaustion: clamp(
+      whole(p.exhaustion) || ((p.conditions ?? []).includes('Exhaustion') ? 1 : 0),
+      0,
+      MAX_EXHAUSTION
+    ),
     concentration: p.concentration ?? null,
     deathSaves: {
       successes: clamp(whole(p.deathSaves?.successes), 0, 3),
@@ -207,19 +215,54 @@ export function shortRest(state, { hitDiceSpent = 0, healed = 0 } = {}) {
 
 /**
  * Long rest, 2024 rules: full HP, every slot, every resource, every hit
- * die. Temporary HP and death saves reset too.
+ * die, and one level of exhaustion off. Temporary HP, death saves and
+ * concentration end too.
  */
 export function longRest(state) {
+  const patch = {
+    hpCurrent: null,
+    hpTemp: 0,
+    slotsUsed: {},
+    resourcesUsed: {},
+    hitDiceUsed: 0,
+    deathSaves: { successes: 0, failures: 0 },
+    concentration: null,
+  }
+  if (state.exhaustion > 0) {
+    patch.exhaustion = state.exhaustion - 1
+    // An old "Exhaustion" toggle becomes the counter from here on.
+    patch.conditions = state.conditions
+  }
   return {
-    patch: {
-      hpCurrent: null,
-      hpTemp: 0,
-      slotsUsed: {},
-      resourcesUsed: {},
-      hitDiceUsed: 0,
-      deathSaves: { successes: 0, failures: 0 },
+    patch,
+    log: {
+      type: 'longRest',
+      payload: {
+        from: state.hp.current,
+        to: state.hp.max,
+        droppedConcentration: state.concentration,
+        exhaustion: patch.exhaustion ?? null,
+      },
     },
-    log: { type: 'longRest', payload: { from: state.hp.current, to: state.hp.max } },
+  }
+}
+
+/** Exhaustion level, 0–6. Only the level is shown — never rules text. */
+export function setExhaustion(state, level) {
+  const to = clamp(whole(level), 0, MAX_EXHAUSTION)
+  if (to === state.exhaustion) return null
+  return {
+    patch: { exhaustion: to, conditions: state.conditions },
+    log: { type: 'exhaustion', payload: { from: state.exhaustion, to } },
+  }
+}
+
+/** The conditions overlay's "Clear all": every condition and all exhaustion. */
+export function clearConditions(state) {
+  if (!state.conditions.length && !state.exhaustion) return null
+  return {
+    patch: { conditions: [], exhaustion: 0 },
+    log: { type: 'conditionsCleared', payload: { conditions: state.conditions, exhaustion: state.exhaustion } },
   }
 }
 
@@ -296,8 +339,16 @@ export function describeLog({ type, payload: p }) {
       if (p.concentration) line += p.dropped ? ` · concentrating, dropped ${p.dropped}` : ' · concentrating'
       return line
     }
-    case 'longRest':
-      return 'long rest · HP, slots, resources and hit dice restored'
+    case 'longRest': {
+      let line = 'long rest · HP, slots, resources and hit dice restored'
+      if (p.exhaustion != null) line += p.exhaustion ? ` · exhaustion ${p.exhaustion}` : ' · no longer exhausted'
+      if (p.droppedConcentration) line += ` · dropped concentration on ${p.droppedConcentration}`
+      return line
+    }
+    case 'exhaustion':
+      return p.to ? `exhaustion ${p.to}` : 'no longer exhausted'
+    case 'conditionsCleared':
+      return 'conditions cleared'
     case 'condition':
       return p.on ? `now ${p.name}` : `no longer ${p.name}`
     case 'concentration':

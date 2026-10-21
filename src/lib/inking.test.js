@@ -11,6 +11,8 @@ import {
   entityNotesFragment,
   recallPrompts,
   recallFragment,
+  recallChips,
+  suggestLinks,
   recapBlocks,
 } from './inking'
 import { extractMentionIds } from './mentions'
@@ -114,5 +116,50 @@ describe('recapBlocks', () => {
       { kind: 'heading', text: 'Where did it end?' },
       { kind: 'text', text: 'crypt\nat night' },
     ])
+  })
+})
+
+describe('recallChips', () => {
+  const entries = [
+    { id: '1', text: 'Gnarl — grumpy bartender', mark: 'npc', clientAt: 1 },
+    { id: '2', text: 'Why does the choir sing at low tide?', mark: 'mystery', clientAt: 2 },
+    { id: '3', text: 'took 7 damage', mark: 'auto', auto: { type: 'hp' }, clientAt: 3 },
+    { id: '4', text: 'met @Brother Anselm', mark: 'note', entityId: 'e9', clientAt: 4 },
+    { id: '5', text: 'Silver tuning fork from the reliquary', mark: 'loot', clientAt: 5 },
+    { id: '6', text: 'Kneeling under the altar', mark: 'important', clientAt: 6 },
+  ]
+  const ctx = { entries, session: { intention: 'Find out who sold my name.' }, entities: [{ id: 'e9', name: 'Brother Anselm', type: 'npc' }] }
+
+  it('borrows only what was written at the table', () => {
+    expect(recallChips(0, ctx)).toEqual(['Gnarl', 'Brother Anselm'])
+    expect(recallChips(1, ctx)).toEqual(['Why does the choir sing at low tide?', 'Kneeling under the altar'])
+    expect(recallChips(2, ctx)).toEqual(['Find out who sold my name.'])
+    expect(recallChips(3, ctx)).toEqual(['Silver tuning fork from the reliquary'])
+    expect(recallChips(4, ctx)).toEqual(['Kneeling under the altar'])
+    expect(recallChips(2, { entries })).toEqual([])
+  })
+})
+
+describe('suggestLinks', () => {
+  const anselm = { id: 'e1', name: 'Brother Anselm', aliases: ['Anselm'] }
+  const vell = { id: 'e2', name: 'Vell' }
+  it('puts the captured entity first, then what the line names', () => {
+    expect(suggestLinks({ text: 'Anselm: “The bells of @Vell”', entityId: null }, [anselm, vell])).toEqual([vell, anselm])
+    expect(suggestLinks({ text: 'the bells of Vell', entityId: 'e1' }, [anselm, vell])).toEqual([anselm, vell])
+  })
+})
+
+describe('mentions inside appended lines', () => {
+  const vell = { id: 'e2', name: 'Vell' }
+  it('turns @Names that match an entity into editor mentions', () => {
+    const html = recapFragment('The bells of @Vell ring for @Nobody', { action: 'recap', mark: 'note', entities: [vell] })
+    expect(html).toBe(`<p>The bells of ${mentionHtml(vell)} ring for Nobody</p>`)
+    expect(extractMentionIds(html)).toEqual(['e2'])
+  })
+
+  it('does not repeat an @-mentioned name after its own mention', () => {
+    expect(recapFragment('@Gnarl lied about the bell', { action: 'link', entity: gnarl, entities: [gnarl] })).toBe(
+      `<p>${mentionHtml(gnarl)} — lied about the bell</p>`
+    )
   })
 })

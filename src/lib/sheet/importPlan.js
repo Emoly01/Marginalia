@@ -84,6 +84,16 @@ export function planDossierFill(parsed, character) {
   return { patch, filled, kept }
 }
 
+/** Keep only the dossier fills I left ticked. */
+export function selectDossierFill(dossier, keys) {
+  const keep = new Set(keys)
+  return {
+    ...dossier,
+    patch: Object.fromEntries(Object.entries(dossier.patch).filter(([k]) => keep.has(k))),
+    filled: dossier.filled.filter((f) => keep.has(f.key)),
+  }
+}
+
 /**
  * Sheet items that should become Item entities: one per distinct name, and
  * none for names any entity already uses (case-insensitive, any type).
