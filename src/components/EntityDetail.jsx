@@ -13,6 +13,7 @@ import { getSessionsMentioning } from '../lib/backlinks'
 import { useDebounce } from '../lib/useDebounce'
 import { toast } from '../lib/toast'
 import RichTextEditor from './RichTextEditor'
+import { IlluminatedTitle } from './ornament'
 
 export default function EntityDetail({
   userId,
@@ -121,7 +122,7 @@ export default function EntityDetail({
   }
 
   if (loading || !entity) {
-    return <div className="view"><div className="view-body"><p className="hint">loading…</p></div></div>
+    return <div className="waiting">opening the page…</div>
   }
 
   const connectedEntities = (entity.connections || [])
@@ -132,150 +133,107 @@ export default function EntityDetail({
   )
 
   return (
-    <div className="view">
-      <header className="view-header" style={{ alignItems: 'center' }}>
-        <div className="pill-row">
-          {ENTITY_TYPES.map((t) => (
-            <button
-              key={t.value}
-              className={`choice${entity.type === t.value ? ' is-active' : ''}`}
-              onClick={() => update({ type: t.value })}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 'none' }}>
-          <SaveIndicator status={saveStatus} />
-          <button className="btn" onClick={onBack}>← back</button>
-          <button className="btn-danger" onClick={handleDelete}>delete</button>
-        </div>
-      </header>
-
-      <div className="view-body">
-        <div className="column column--narrow" style={{ gap: '20px' }}>
-          <input
-            type="text"
-            value={entity.name}
-            onChange={(e) => update({ name: e.target.value })}
-            placeholder="Name"
-            aria-label="Entity name"
-            style={{
-              width: '100%',
-              fontSize: '32px',
-              fontStyle: 'italic',
-              color: 'var(--m-accent)',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 0,
-              padding: '4px 0',
-              lineHeight: 1.15,
-            }}
-          />
-
-          <div className="dossier-section">
-            <span className="dossier-label">Notes</span>
-            <div className="dossier-surface">
-              <RichTextEditor
-                content={entity.notes}
-                onChange={(html) => update({ notes: html })}
-                placeholder="What do you know about them?"
-              />
+    <>
+      <div className="toolbar">
+        <button className="btn" onClick={onBack}>‹ Codex</button>
+        <span className="rubric">{entityTypeInfo(entity.type).label}</span>
+        <span className="toolbar-spacer" />
+        <SaveIndicator status={saveStatus} />
+        <button className="btn-danger" onClick={handleDelete}>Delete page</button>
+      </div>
+      <div className="page">
+        <div className="page-narrow entity">
+          <IlluminatedTitle text={entity.name || 'Unnamed'} as="h1" size={60} variant="gilt" className="entity-title" />
+          <label className="field">
+            <span className="field-label">Name</span>
+            <input className="input-ghost entity-name-input" value={entity.name} onChange={(e) => update({ name: e.target.value })} placeholder="Name" />
+          </label>
+          <div className="field">
+            <span className="field-label" id="entity-kind">Kind</span>
+            <div className="toggle-row" role="group" aria-labelledby="entity-kind">
+              {ENTITY_TYPES.map((t) => (
+                <button key={t.value} className="toggle" aria-pressed={entity.type === t.value} onClick={() => update({ type: t.value })}>
+                  {t.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="dossier-section">
-            <span className="dossier-label">Connections</span>
-            {connectedEntities.length === 0 ? (
-              <p className="hint">not connected to anything yet</p>
-            ) : (
-              <div className="pill-row">
-                {connectedEntities.map((e) => (
-                  <span
-                    key={e.id}
-                    className="pill"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '3px 6px 3px 10px' }}
-                  >
-                    <button
-                      onClick={() => onOpenEntity(e.id)}
-                      style={{ color: 'var(--m-text-2)', fontSize: '14px', padding: 0 }}
-                    >
-                      {e.name}
-                    </button>
-                    <button
-                      className="btn-icon"
-                      onClick={() => handleDisconnect(e.id)}
-                      title={`Disconnect ${e.name}`}
-                      style={{ padding: '0 3px' }}
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
+          <section className="dossier-section">
+            <h2 className="rubric">Notes</h2>
+            <div className="card dossier-surface">
+              <RichTextEditor content={entity.notes} onChange={(html) => update({ notes: html })} placeholder="What do you know about them?" />
+            </div>
+          </section>
 
+          <section className="dossier-section">
+            <h2 className="rubric">Connections</h2>
+            {connectedEntities.length === 0 ? (
+              <p className="hint">Not connected to anything yet.</p>
+            ) : (
+              <ul className="entity-links">
+                {connectedEntities.map((e) => (
+                  <li key={e.id} className="entity-link">
+                    <button className="entity-link-name" onClick={() => onOpenEntity(e.id)}>
+                      {e.name} <span className="codex-row-type">{entityTypeInfo(e.type).label}</span>
+                    </button>
+                    <button className="btn-icon btn-icon--bare" onClick={() => handleDisconnect(e.id)} aria-label={`Disconnect ${e.name}`}>×</button>
+                  </li>
+                ))}
+              </ul>
+            )}
             {showConnectPicker ? (
-              <div className="panel" style={{ padding: '10px' }}>
+              <div className="card entity-picker">
                 {connectableEntities.length === 0 ? (
-                  <p className="hint" style={{ padding: '4px' }}>no other entities to connect</p>
+                  <p className="hint">No other pages to connect.</p>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', maxHeight: '220px', overflowY: 'auto' }}>
+                  <ul className="entity-picker-list">
                     {connectableEntities.map((e) => (
-                      <button
-                        key={e.id}
-                        className="rail-row"
-                        onClick={() => handleConnect(e.id)}
-                      >
-                        <span className="rail-row-name">{e.name}</span>
-                        <span className="rail-row-meta">{entityTypeInfo(e.type).label}</span>
-                      </button>
+                      <li key={e.id}>
+                        <button className="drawer-row" onClick={() => handleConnect(e.id)}>
+                          <span className="drawer-row-name">{e.name}</span>
+                          <span className="codex-row-type">{entityTypeInfo(e.type).label}</span>
+                        </button>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 )}
-                <button className="btn" onClick={() => setShowConnectPicker(false)} style={{ marginTop: '6px' }}>
-                  cancel
-                </button>
+                <button className="btn btn--sm" onClick={() => setShowConnectPicker(false)}>Cancel</button>
               </div>
             ) : (
               <div>
-                <button className="btn-dashed" onClick={() => setShowConnectPicker(true)}>
-                  + connect entity
-                </button>
+                <button className="btn-gilt" onClick={() => setShowConnectPicker(true)}>+ Connect a page</button>
               </div>
             )}
-          </div>
+          </section>
 
-          <div className="dossier-section">
-            <span className="dossier-label">Appears in</span>
+          <section className="dossier-section">
+            <h2 className="rubric">Appears in</h2>
             {backlinks.length === 0 ? (
-              <p className="hint">
-                not mentioned in any session yet — type @{entity.name} while writing
-              </p>
+              <p className="hint">Not mentioned in any session yet — type @{entity.name} while writing.</p>
             ) : (
-              backlinks.map((s) => (
-                <button key={s.id} className="session-card" onClick={() => onOpenSession(s.id)}>
-                  <div className="session-card-head">
-                    <span className="session-card-num">#{s.sessionNumber}</span>
-                    <span className="session-card-title" style={{ fontSize: '17px' }}>{s.title}</span>
-                    <span style={{ flex: 1 }} />
-                    <span className="session-card-date">{s.date}</span>
-                  </div>
-                </button>
-              ))
+              <ol className="session-rows">
+                {backlinks.map((sn) => (
+                  <li key={sn.id} className="session-row">
+                    <button className="session-row-main" onClick={() => onOpenSession(sn.id)}>
+                      <span className="session-row-num numeral">{sn.sessionNumber}</span>
+                      <span className="session-row-text">
+                        <span className="session-row-title">{sn.title}</span>
+                        <span className="session-row-when">{sn.date}</span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
             )}
-          </div>
+          </section>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
 function SaveIndicator({ status }) {
-  const display = {
-    saved: { text: 'saved', color: 'var(--m-text-4)' },
-    saving: { text: 'saving…', color: 'var(--m-accent)' },
-    unsaved: { text: 'unsaved', color: 'var(--m-danger)' },
-  }[status]
-  return <span className="save-indicator" style={{ color: display.color }}>{display.text}</span>
+  const text = { saved: 'saved', saving: 'saving…', unsaved: 'unsaved' }[status]
+  return <span className={`save-state${status === 'unsaved' ? ' save-state--unsaved' : ''}`} aria-live="polite">{text}</span>
 }

@@ -1,0 +1,75 @@
+/* Marginalia — tokens.
+   The ink model (src/lib/palette.js) writes every colour onto :root at
+   runtime from the campaign's accent and the chosen ground. The values here
+   are night vellum in gold ink, so the first paint already looks right. */
+
+:root {
+  --m-bg: oklch(0.165 0.012 80.1);
+  --m-panel: oklch(0.195 0.014 80.1);
+  --m-card: oklch(0.228 0.016 80.1);
+  --m-card-hi: oklch(0.255 0.018 80.1);
+  --m-line: oklch(0.36 0.022 80.1);
+  --m-line-2: oklch(0.27 0.016 80.1);
+  --m-text: oklch(0.93 0.018 85);
+  --m-text-2: oklch(0.83 0.02 80);
+  --m-text-3: oklch(0.71 0.02 78);
+  --m-text-4: oklch(0.63 0.018 75);
+  --m-accent: oklch(0.76 0.086 86.2);
+  --m-accent-strong: oklch(0.85 0.08 86.2);
+  --m-accent-wash: oklch(0.25 0.04 86.2);
+  --m-on-accent: oklch(0.17 0.02 86.2);
+  --m-ink-on-gold: oklch(0.34 0.103 86.2);
+  --m-danger: oklch(0.72 0.13 28);
+  --gold: #d8bc7e;
+  --gold-hi: #f3e3b4;
+  --gold-lo: #9a7838;
+  --gold-line: oklch(0.64 0.075 85);
+  --bg-image: radial-gradient(ellipse at 18% 8%, oklch(1 0 0 / 0.04), transparent 60%),
+    radial-gradient(ellipse at 88% 95%, oklch(0 0 0 / 0.28), transparent 55%);
+  /* phase-1 aliases */
+  --m-line-3: var(--m-line);
+  --m-input: var(--m-bg);
+  --m-accent-ink: var(--m-on-accent);
+
+  /* The gilded frame and its rules — "ornament lives in the frame". */
+  --leaf: radial-gradient(circle at 34% 30%, var(--gold-hi), var(--gold) 48%, var(--gold-lo));
+  --frame-pad: 8px;
+  --frame-bg: linear-gradient(135deg, var(--gold-lo), var(--gold) 18%, var(--gold-hi) 34%, var(--gold) 52%, var(--gold-lo) 78%, var(--gold));
+  --frame-inner: inset 0 0 0 1px var(--m-ink-on-gold), inset 0 0 0 4px var(--m-bg), inset 0 0 0 5px var(--gold-line);
+  --panel-shadow: inset 0 0 0 3px var(--m-panel), inset 0 0 0 4px var(--gold-line);
+  --heading-rule: 2px solid var(--gold-line);
+  --ruling: 3px double var(--m-accent);
+  --shadow-lift: 0 24px 60px oklch(0 0 0 / 0.55);
+
+  /* Type. EB Garamond for everything readable; blackletter for display
+     only, never for data. Numerals everywhere are lining and tabular. */
+  --font-body: 'EB Garamond Variable', 'EB Garamond', Georgia, 'Iowan Old Style', serif;
+  --font-title: 'UnifrakturMaguntia', 'EB Garamond Variable', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  --t-micro: 12.5px; /* rubric labels, uppercase */
+  --t-small: 14px;
+  --t-meta: 15px;
+  --t-body: 17px;
+  --t-hand: 18px; /* the margin hand: log lines, inputs */
+  --t-prose: 20px; /* the writing page */
+  --t-stat: 23px;
+  --t-stat-lg: 27px;
+  --t-num-xl: 44px; /* HP, AC */
+
+  --space-1: 4px;
+  --space-2: 6px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 14px;
+  --space-6: 18px;
+  --space-7: 24px;
+  --radius: 2px;
+  --target: 48px; /* touch targets */
+  --bar-h: 56px;
+}
+
+/* Day vellum gets a warmer sheen in the frame shadow. */
+:root[data-ground='day'] {
+  --shadow-lift: 0 24px 60px oklch(0.3 0.04 60 / 0.28);
+}

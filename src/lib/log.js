@@ -69,6 +69,11 @@ export function subscribeSessionLog(userId, campaignId, sessionId, cb, onError) 
   return onSnapshot(q, (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort(byClientAt)), onError)
 }
 
+/** onSnapshot on a whole campaign's log (for counts on the campaign home). */
+export function subscribeCampaignLog(userId, campaignId, cb, onError) {
+  return onSnapshot(logRef(userId, campaignId), (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }))), onError)
+}
+
 export async function listSessionLog(userId, campaignId, sessionId) {
   const snap = await getDocs(query(logRef(userId, campaignId), where('sessionId', '==', sessionId)))
   return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort(byClientAt)

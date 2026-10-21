@@ -65,152 +65,96 @@ export default function CampaignForm({
   const isCustomSystem = !SYSTEMS.includes(system)
 
   return (
-    <div className="modal-backdrop" onClick={close}>
-      <form className="modal" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
+    <>
+      <div className="overlay" onClick={close} />
+      <form className="dialog dialog--center campaign-form" onSubmit={handleSubmit} role="dialog" aria-modal="true" aria-labelledby="campaign-form-title">
         <div>
-          <h2 className="modal-title">{isEdit ? 'Campaign settings' : 'New campaign'}</h2>
-          <p className="modal-sub">
-            {isEdit ? 'change whatever has stopped being true.' : 'two things now, the rest whenever.'}
-          </p>
+          <h2 className="dialog-title" id="campaign-form-title">{isEdit ? 'Campaign settings' : 'A new campaign'}</h2>
+          <p className="hint">{isEdit ? 'Change whatever has stopped being true.' : 'Two things now, the rest whenever.'}</p>
         </div>
 
-        <div className="field">
-          <label className="field-label" htmlFor="campaign-name">Campaign name</label>
-          <input
-            id="campaign-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="League of Ambivalence"
-            autoFocus
-          />
-        </div>
+        <label className="field">
+          <span className="field-label">Campaign name</span>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="The Choir Beneath Vell" autoFocus />
+        </label>
 
         <div className="field">
-          <span className="field-label">System</span>
-          <div className="pill-row">
-            {SYSTEMS.map((s) => (
+          <span className="field-label" id="system-label">System</span>
+          <div className="toggle-row" role="group" aria-labelledby="system-label">
+            {SYSTEMS.map((sys) => (
               <button
-                key={s}
+                key={sys}
                 type="button"
-                className={`choice${system === s || (s === 'other' && isCustomSystem) ? ' is-active' : ''}`}
-                onClick={() => setSystem(s === 'other' && !isCustomSystem ? '' : s)}
+                className="toggle"
+                aria-pressed={system === sys || (sys === 'other' && isCustomSystem)}
+                onClick={() => setSystem(sys === 'other' && !isCustomSystem ? '' : sys)}
               >
-                {s}
+                {sys}
               </button>
             ))}
           </div>
           {(isCustomSystem || system === '') && (
-            <input
-              value={system}
-              onChange={(e) => setSystem(e.target.value)}
-              placeholder="Call of Cthulhu, Monster of the Week…"
-              style={{ marginTop: '2px' }}
-            />
+            <input value={system} onChange={(e) => setSystem(e.target.value)} placeholder="Call of Cthulhu, Monster of the Week…" aria-label="System name" />
           )}
         </div>
 
         <div className="field">
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '9px' }}>
-            <span className="field-label">Palette</span>
-            <span style={{ fontSize: '13px', fontStyle: 'italic', color: 'var(--m-accent)' }}>
-              {picked.name}
-            </span>
-          </div>
-          <div className="swatch-grid">
+          <span className="field-label" id="ink-label">
+            Ink <span className="codex-row-type">{picked.name}</span>
+          </span>
+          <div className="swatches" role="radiogroup" aria-labelledby="ink-label">
             {PALETTE.map((p) => (
               <button
                 key={p.id}
                 type="button"
+                role="radio"
                 className="swatch"
                 title={p.name}
                 aria-label={p.name}
-                aria-pressed={palette === p.id}
+                aria-checked={palette === p.id}
                 onClick={() => setPalette(p.id)}
-                style={{
-                  background: p.hex,
-                  boxShadow: palette === p.id
-                    ? `0 0 0 2px var(--m-card), 0 0 0 3px ${p.hex}`
-                    : 'none',
-                }}
+                style={{ '--swatch': p.hex }}
               />
             ))}
           </div>
-          <span className="field-hint">tints every surface while you're inside this campaign</span>
+          <span className="field-hint">the rubric for headings, initials and rules while you’re inside this campaign — gold leaf stays gold</span>
         </div>
 
         {!showMore ? (
-          <button
-            type="button"
-            className="link-action"
-            onClick={() => setShowMore(true)}
-            style={{ fontSize: '14px', fontStyle: 'italic', color: 'var(--m-text-4)', textAlign: 'left', padding: 0 }}
-          >
-            + the rest of it
-          </button>
+          <button type="button" className="btn-link" onClick={() => setShowMore(true)}>+ the rest of it</button>
         ) : (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-              <div className="field">
-                <label className="field-label" htmlFor="campaign-short">Short name</label>
-                <input
-                  id="campaign-short"
-                  value={shortName}
-                  onChange={(e) => setShortName(e.target.value)}
-                  placeholder="League"
-                />
-              </div>
-              <div className="field">
-                <label className="field-label" htmlFor="campaign-gm">GM</label>
-                <input
-                  id="campaign-gm"
-                  value={dmName}
-                  onChange={(e) => setDmName(e.target.value)}
-                  placeholder="who runs it"
-                />
-              </div>
-              <div className="field">
-                <label className="field-label" htmlFor="campaign-pc">Your character</label>
-                <input
-                  id="campaign-pc"
-                  value={characterName}
-                  onChange={(e) => setCharacterName(e.target.value)}
-                  placeholder="Tav"
-                />
-              </div>
-              <div className="field">
-                <label className="field-label" htmlFor="campaign-class">Class / concept</label>
-                <input
-                  id="campaign-class"
-                  value={characterClass}
-                  onChange={(e) => setCharacterClass(e.target.value)}
-                  placeholder="warlock"
-                />
-              </div>
+            <div className="form-grid">
+              <label className="field">
+                <span className="field-label">Short name</span>
+                <input value={shortName} onChange={(e) => setShortName(e.target.value)} placeholder="Vell" />
+              </label>
+              <label className="field">
+                <span className="field-label">GM</span>
+                <input value={dmName} onChange={(e) => setDmName(e.target.value)} placeholder="who runs it" />
+              </label>
+              <label className="field">
+                <span className="field-label">Your character</span>
+                <input value={characterName} onChange={(e) => setCharacterName(e.target.value)} placeholder="Nenise" />
+              </label>
+              <label className="field">
+                <span className="field-label">Class / concept</span>
+                <input value={characterClass} onChange={(e) => setCharacterClass(e.target.value)} placeholder="bard" />
+              </label>
             </div>
 
-            <div className="field">
-              <label className="field-label" htmlFor="campaign-ddb">D&amp;D Beyond character link</label>
-              <input
-                id="campaign-ddb"
-                type="url"
-                value={ddbUrl}
-                onChange={(e) => setDdbUrl(e.target.value)}
-                placeholder="https://www.dndbeyond.com/characters/…"
-              />
+            <label className="field">
+              <span className="field-label">D&amp;D Beyond character link</span>
+              <input type="url" value={ddbUrl} onChange={(e) => setDdbUrl(e.target.value)} placeholder="https://www.dndbeyond.com/characters/…" />
               <span className="field-hint">for the rare lookup the imported sheet doesn’t cover</span>
-            </div>
+            </label>
 
             <div className="field">
-              <span className="field-label">Status</span>
-              <div className="pill-row">
-                {['active', 'hiatus', 'completed'].map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    className={`choice${status === s ? ' is-active' : ''}`}
-                    onClick={() => setStatus(s)}
-                  >
-                    {s}
+              <span className="field-label" id="status-label">Status</span>
+              <div className="toggle-row" role="group" aria-labelledby="status-label">
+                {['active', 'hiatus', 'completed'].map((st) => (
+                  <button key={st} type="button" className="toggle" aria-pressed={status === st} onClick={() => setStatus(st)}>
+                    {st}
                   </button>
                 ))}
               </div>
@@ -218,23 +162,14 @@ export default function CampaignForm({
           </>
         )}
 
-        <div className="modal-actions">
+        <div className="dialog-actions">
           {onDelete && (
-            <button
-              type="button"
-              className="btn-danger"
-              onClick={onDelete}
-              style={{ marginRight: 'auto' }}
-            >
-              delete campaign
-            </button>
+            <button type="button" className="btn-danger form-delete" onClick={onDelete}>Delete campaign</button>
           )}
-          <button type="button" className="link-action" onClick={close}>cancel</button>
-          <button type="submit" className="btn-primary" disabled={!name.trim()}>
-            {isEdit ? 'Save' : 'Create'}
-          </button>
+          <button type="button" className="btn" onClick={close}>Cancel</button>
+          <button type="submit" className="btn-primary" disabled={!name.trim()}>{isEdit ? 'Save' : 'Begin'}</button>
         </div>
       </form>
-    </div>
+    </>
   )
 }

@@ -8,8 +8,9 @@ import {
 } from '../lib/margins'
 import { formatRelative } from '../lib/formatRelative'
 import { toast } from '../lib/toast'
+import { Drollery, Mark } from './ornament'
 
-export default function MarginsPanel({ userId, campaignId }) {
+export default function MarginsPanel({ userId, campaignId, onClose }) {
   const [margins, setMargins] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
@@ -69,114 +70,105 @@ export default function MarginsPanel({ userId, campaignId }) {
   const archived = margins.filter((m) => m.archived)
 
   return (
-    <>
-      <div className="margins-head">
-        <span>Margins</span>
-        <span className="rail-count">{active.length}</span>
+    <div className="margins">
+      <div className="panel-head">
+        <h2 className="rubric">Margins</h2>
+        <span className="meta">{active.length ? `${active.length} waiting` : 'empty'}</span>
+        {onClose && (
+          <button className="btn-icon btn-icon--bare" onClick={onClose} aria-label="Close the Margins inbox">×</button>
+        )}
       </div>
 
       <div className="margins-composer">
-        <div className="margins-composer-inner">
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="dump it here, sort it later…"
-            rows={3}
-          />
-          <div className="row-between">
-            <span style={{ fontSize: '12px', fontStyle: 'italic', color: 'var(--m-text-4)' }}>
-              enter to save · shift+enter for a line
-            </span>
-            <button className="btn-primary btn-primary--sm" onClick={save} disabled={!input.trim()}>
-              Save
-            </button>
-          </div>
+        <textarea
+          ref={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Dump it here, sort it later…"
+          rows={3}
+          aria-label="New margin note"
+        />
+        <div className="margins-composer-foot">
+          <span className="field-hint">Enter saves · Shift+Enter for a new line</span>
+          <button className="btn-primary btn--sm" onClick={save} disabled={!input.trim()}>Note it</button>
         </div>
       </div>
 
-      <div className="margins-list">
+      <div className="panel-body">
         {loading ? (
-          <p className="hint">loading…</p>
+          <p className="hint home-pad">reading the margins…</p>
         ) : loadError ? (
-          <p className="hint" style={{ color: 'var(--m-danger)' }}>{loadError}</p>
+          <p className="hint home-pad">{loadError}</p>
         ) : active.length === 0 ? (
-          <p className="hint">nothing in the margins yet</p>
+          <div className="empty">
+            <Drollery type="cat" width={170} />
+            <p className="empty-title">Nothing waiting in the margins.</p>
+            <p className="empty-body">Every loose note has found its page. The cat approves, or is asleep.</p>
+          </div>
         ) : (
-          active.map((m) => (
-            <MarginNote
-              key={m.id}
-              margin={m}
-              actions={[
-                { label: '✓', title: 'Archive', run: () => act(() => archiveMargin(userId, campaignId, m.id), 'Could not archive that note.') },
-              ]}
-            />
-          ))
+          <ul className="margins-list">
+            {active.map((m) => (
+              <MarginNote
+                key={m.id}
+                margin={m}
+                actions={[
+                  { label: '✓', title: 'Archive', run: () => act(() => archiveMargin(userId, campaignId, m.id), 'Could not archive that note.') },
+                ]}
+              />
+            ))}
+          </ul>
         )}
 
         {archived.length > 0 && (
-          <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '9px' }}>
-            <button
-              onClick={() => setShowArchived((v) => !v)}
-              style={{
-                fontSize: '11px',
-                letterSpacing: '0.16em',
-                textTransform: 'uppercase',
-                color: 'var(--m-text-4)',
-                textAlign: 'left',
-                padding: 0,
-              }}
-            >
+          <>
+            <button className="margins-archived-toggle" onClick={() => setShowArchived((v) => !v)} aria-expanded={showArchived}>
               {showArchived ? '▾' : '▸'} archived ({archived.length})
             </button>
-            {showArchived &&
-              archived.map((m) => (
-                <MarginNote
-                  key={m.id}
-                  margin={m}
-                  archived
-                  actions={[
-                    { label: '↺', title: 'Restore', run: () => act(() => restoreMargin(userId, campaignId, m.id), 'Could not restore that note.') },
-                    {
-                      label: '×',
-                      title: 'Delete permanently',
-                      danger: true,
-                      run: () => {
-                        if (!confirm('Permanently delete this note? This cannot be undone.')) return
-                        act(() => deleteMargin(userId, campaignId, m.id), 'Could not delete that note.')
+            {showArchived && (
+              <ul className="margins-list">
+                {archived.map((m) => (
+                  <MarginNote
+                    key={m.id}
+                    margin={m}
+                    archived
+                    actions={[
+                      { label: '↺', title: 'Restore', run: () => act(() => restoreMargin(userId, campaignId, m.id), 'Could not restore that note.') },
+                      {
+                        label: '×',
+                        title: 'Delete permanently',
+                        run: () => {
+                          if (!confirm('Permanently delete this note? This cannot be undone.')) return
+                          act(() => deleteMargin(userId, campaignId, m.id), 'Could not delete that note.')
+                        },
                       },
-                    },
-                  ]}
-                />
-              ))}
-          </div>
+                    ]}
+                  />
+                ))}
+              </ul>
+            )}
+          </>
         )}
       </div>
-    </>
+    </div>
   )
 }
 
 function MarginNote({ margin, archived, actions }) {
   return (
-    <div className={`margin-note${archived ? ' is-archived' : ''}`}>
-      <div className="margin-note-text">{margin.text}</div>
-      <div className="margin-note-foot">
+    <li className={`margin-note${archived ? ' is-archived' : ''}`}>
+      <span className="log-mark"><Mark type="margin" size={20} title="" /></span>
+      <span className="log-text">
+        {margin.text}
         <span className="margin-note-when">{formatRelative(margin.createdAt)}</span>
-        <div className="margin-note-actions">
-          {actions.map((a) => (
-            <button
-              key={a.label}
-              className="btn-icon"
-              title={a.title}
-              onClick={a.run}
-              style={a.danger ? { color: 'var(--m-danger)' } : undefined}
-            >
-              {a.label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+      </span>
+      <span className="margin-note-actions">
+        {actions.map((a) => (
+          <button key={a.label} className="btn-icon btn-icon--bare" aria-label={a.title} title={a.title} onClick={a.run}>
+            {a.label}
+          </button>
+        ))}
+      </span>
+    </li>
   )
 }

@@ -123,3 +123,53 @@ export function summarizeDiff(diff) {
   }
   return parts.join(' · ')
 }
+
+/**
+ * diff → [{ label, from, to }] for the re-import proclamation, in the order a
+ * player cares about: class, HP, proficiency, slots, abilities, then lists.
+ */
+export function diffRows(diff) {
+  if (!diff) return []
+  const rows = []
+  const dash = (v) => (v == null || v === '' ? '—' : String(v))
+  const add = (label, from, to) => rows.push({ label, from: dash(from), to: dash(to) })
+  const list = (label, names) => names.length && add(label, null, names.join(', '))
+  if (diff.classLevel) add('Class', diff.classLevel.from, diff.classLevel.to)
+  if (diff.maxHp) add('Hit points', diff.maxHp.from, diff.maxHp.to)
+  if (diff.profBonus) add('Proficiency', signed(diff.profBonus.from), signed(diff.profBonus.to))
+  for (const s of diff.slots) add(`${ordinal(s.level)}-level slots`, s.from, s.to)
+  for (const a of diff.abilities) add(a.key.toUpperCase(), a.from, a.to)
+  list(diff.spells.added.length === 1 ? 'New spell' : 'New spells', diff.spells.added)
+  if (diff.spells.removed.length) add('Spells gone', diff.spells.removed.join(', '), null)
+  list(diff.features.added.length === 1 ? 'New feature' : 'New features', diff.features.added)
+  if (diff.features.removed.length) add('Features gone', diff.features.removed.join(', '), null)
+  list('New items', diff.items.added)
+  if (diff.items.removed.length) add('Items gone', diff.items.removed.join(', '), null)
+  for (const c of diff.items.changed) add(c.name, c.from, c.to)
+  return rows
+}
+
+const signed = (n) => (n == null ? null : n >= 0 ? `+${n}` : String(n))
+
+const LEVEL_WORDS = [
+  '', 'First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth',
+  'Eleventh', 'Twelfth', 'Thirteenth', 'Fourteenth', 'Fifteenth', 'Sixteenth', 'Seventeenth',
+  'Eighteenth', 'Nineteenth', 'Twentieth',
+]
+
+/**
+ * What the re-import proclaims. A level gained is announced as one; anything
+ * else is an amendment. → { lead, title } — title is null when there is no
+ * rank to announce.
+ */
+export function proclamation(diff, identity = {}) {
+  const classes = (identity.classes ?? []).map((c) => c.class).join(' / ')
+  const who = [identity.name || 'this hero', classes].filter(Boolean).join(', ')
+  const from = Number(diff?.level?.from)
+  const to = Number(diff?.level?.to)
+  if (diff?.level && to > from && LEVEL_WORDS[to]) {
+    return { lead: `that ${who}, is risen to the`, title: `${LEVEL_WORDS[to]} Level` }
+  }
+  if (diff?.hasChanges) return { lead: `that the sheet of ${who} is amended thus:`, title: null }
+  return { lead: `that the sheet of ${who} stands as it was.`, title: null }
+}

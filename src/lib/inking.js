@@ -210,6 +210,7 @@ export function recapBlocks(html) {
   let m
   while ((m = re.exec(String(html ?? ''))) !== null) {
     const text = m[2]
+      .replace(/(<span[^>]*data-type="mention"[^>]*>)@/g, '$1') // a mention reads as the name
       .replace(/<br\s*\/?>/g, '\n')
       .replace(/<[^>]*>/g, '')
       .replace(/&nbsp;/g, ' ')

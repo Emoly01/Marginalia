@@ -1,0 +1,175 @@
+/* Marginalia — ornament. SVG pieces take their colours from these
+   classes, so the campaign ink and the gold leaf apply automatically. */
+
+.fill-gold { fill: var(--gold); }
+.fill-gold-hi { fill: var(--gold-hi); }
+.fill-gold-lo { fill: var(--gold-lo); }
+.fill-accent { fill: var(--m-accent); }
+.fill-ink-on-gold { fill: var(--m-ink-on-gold); }
+.stroke-gold { stroke: var(--gold); }
+.stroke-gold-lo { stroke: var(--gold-lo); }
+.stroke-gold-line { stroke: var(--gold-line); }
+.stroke-ink-on-gold { stroke: var(--m-ink-on-gold); }
+
+/* Illuminated initials */
+.ornament-initial {
+  display: block;
+  flex: none;
+}
+
+.ornament-initial-letter {
+  font-family: var(--font-title);
+}
+
+.ornament-initial-plain {
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+.illuminated {
+  font-family: var(--font-title);
+  font-weight: normal;
+  line-height: 0.95;
+  color: var(--m-text);
+  min-width: 0;
+}
+
+.illuminated-visual {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  min-width: 0;
+}
+
+.illuminated-rest {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.illuminated--wrap .illuminated-rest {
+  white-space: normal;
+}
+
+/* Marginal marks */
+.mark {
+  display: block;
+  flex: none;
+}
+
+/* Gilded roundels */
+.roundel {
+  position: relative;
+  width: var(--target);
+  height: var(--target);
+  flex: none;
+  border-radius: 50%;
+}
+
+.roundel-ring,
+.roundel-leaf {
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+}
+
+.roundel-ring {
+  border: 1.5px solid var(--m-text-3);
+}
+
+.roundel-leaf {
+  background: var(--leaf);
+  box-shadow: inset 0 0 0 1px var(--gold-lo), 0 1px 0 var(--gold-lo);
+  transition: opacity 0.45s ease-out, transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+/* Spending flakes the leaf off: it shrinks, turns and fades. A rest
+   re-gilds it with the same motion in reverse. */
+.roundel.is-spent .roundel-leaf {
+  opacity: 0;
+  transform: scale(0.5) rotate(50deg);
+}
+
+.roundel:focus-visible {
+  outline-offset: -2px;
+}
+
+.leaf-dot {
+  display: inline-block;
+  width: var(--leaf-size, 20px);
+  height: var(--leaf-size, 20px);
+  flex: none;
+  border-radius: 50%;
+  background: var(--leaf);
+  box-shadow: inset 0 0 0 1px var(--gold-lo);
+}
+
+/* HP bar */
+.hp-bar {
+  height: 6px;
+  background: var(--m-line-2);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  background: var(--m-accent);
+  transition: width 0.3s ease;
+}
+
+/* Drolleries */
+.drollery {
+  display: block;
+  flex: none;
+  color: var(--m-text-3);
+  max-width: 100%;
+  height: auto;
+}
+
+/* The gilded frame: gold leaf border, inner rules, corner bosses. */
+.frame {
+  position: relative;
+  height: 100%;
+  padding: var(--frame-pad);
+  background: var(--frame-bg);
+  overflow: hidden; /* the corner bosses hang 3px past the edge */
+}
+
+.frame-surface {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--m-bg);
+  background-image: var(--bg-image);
+  box-shadow: var(--frame-inner);
+  color: var(--m-text);
+  overflow: hidden;
+}
+
+.frame-boss {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.frame-boss--tl { left: -3px; top: -3px; }
+.frame-boss--tr { right: -3px; top: -3px; }
+.frame-boss--bl { left: -3px; bottom: -3px; }
+.frame-boss--br { right: -3px; bottom: -3px; }
+
+/* A panel inside the frame, with its own fine gold rule. */
+.panel {
+  background: var(--m-panel);
+  border: 1px solid var(--m-line);
+  box-shadow: var(--panel-shadow);
+  border-radius: var(--radius);
+}
+
+@media (max-width: 560px) {
+  :root {
+    --frame-pad: 5px;
+  }
+}

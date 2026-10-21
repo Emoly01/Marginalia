@@ -1,6 +1,7 @@
-// Table view, left side, below the trackers: Spells / Features / Items /
-// Attacks. Spell and item text is only ever what the PDF had or what I
-// typed — row metadata, feature text, my notes; never rules text.
+// Table view, the sheet panel beside the trackers: Spells / Skills /
+// Features / Items / Attacks. Spell and item text is only ever what the PDF
+// had or what I typed — row metadata, feature text, my notes; never rules
+// text.
 import { useState, useEffect, useMemo } from 'react'
 import { getSpellNotes, setSpellNote } from '../lib/characterSheet'
 import { stripHtml } from '../lib/text'
@@ -8,12 +9,23 @@ import { toast } from '../lib/toast'
 
 const TABS = [
   { key: 'spells', label: 'Spells' },
+  { key: 'skills', label: 'Skills' },
   { key: 'features', label: 'Features' },
   { key: 'items', label: 'Items' },
   { key: 'attacks', label: 'Attacks' },
 ]
 
 const ordinal = (n) => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] ?? 'th')
+const signed = (n) => (n == null ? '—' : n >= 0 ? `+${n}` : `−${Math.abs(n)}`)
+const levelLabel = (level) => (level === 0 ? 'Cantrip' : level == null ? 'Level ?' : ordinal(level))
+const joinDot = (...parts) => parts.filter(Boolean).join(' · ')
+
+// Proficiency is a glyph with a spelled-out title and a legend, never colour alone.
+const PROF_MARK = {
+  expertise: { mark: '◆', label: 'expertise' },
+  proficient: { mark: '●', label: 'proficient' },
+  half: { mark: '◐', label: 'half proficiency' },
+}
 const matches = (q, ...texts) => !q || texts.some((t) => String(t ?? '').toLowerCase().includes(q))
 
 export default function TableReference({
@@ -34,34 +46,40 @@ export default function TableReference({
 
   return (
     <div className="table-reference">
-      <nav className="tabs table-tabs" aria-label="Reference">
+      <div className="tabs table-tabs" role="tablist" aria-label="Reference">
         {TABS.map((t) => (
           <button
             key={t.key}
-            className={`tab${active === t.key ? ' is-active' : ''}`}
-            aria-pressed={active === t.key}
+            role="tab"
+            id={`ref-tab-${t.key}`}
+            aria-selected={active === t.key}
+            aria-controls="ref-panel"
+            className="tab"
             onClick={() => onTabChange(t.key)}
           >
             {t.label}
           </button>
         ))}
-      </nav>
-      {(active === 'spells' || active === 'features' || active === 'items') && (
-        <input
-          className="table-search"
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={`search ${active}…`}
-          aria-label={`Search ${active}`}
-        />
-      )}
-      {active === 'spells' && (
-        <SpellList userId={userId} campaignId={campaignId} sheet={sheet} state={state} actions={actions} q={q} focusSpell={focusSpell} />
-      )}
-      {active === 'features' && <FeatureList features={sheet.features} q={q} />}
-      {active === 'items' && <ItemList sheet={sheet} entities={entities} q={q} onOpenEntity={onOpenEntity} />}
-      {active === 'attacks' && <AttackTable attacks={sheet.attacks} />}
+      </div>
+      <div className="table-ref-body" id="ref-panel" role="tabpanel" aria-labelledby={`ref-tab-${active}`}>
+        {(active === 'spells' || active === 'features' || active === 'items') && (
+          <input
+            className="table-ref-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Find in ${active}…`}
+            aria-label={`Search ${active}`}
+          />
+        )}
+        {active === 'spells' && (
+          <SpellList userId={userId} campaignId={campaignId} sheet={sheet} state={state} actions={actions} q={q} focusSpell={focusSpell} />
+        )}
+        {active === 'skills' && <SkillList skills={sheet.skills} />}
+        {active === 'features' && <FeatureList features={sheet.features} q={q} />}
+        {active === 'items' && <ItemList sheet={sheet} entities={entities} q={q} onOpenEntity={onOpenEntity} />}
+        {active === 'attacks' && <AttackList attacks={sheet.attacks} />}
+      </div>
     </div>
   )
 }
@@ -115,9 +133,9 @@ function SpellList({ userId, campaignId, sheet, state, actions, q, focusSpell })
   return (
     <div className="table-spells">
       {levels.map(([level, spells]) => (
-        <section key={level} className="table-spell-level">
-          <h4 className="sheet-group-title">{level === 0 ? 'Cantrips' : `${ordinal(level)} level`}</h4>
-          <ul className="table-spell-list">
+        <section key={level ?? 'unknown'} className="table-spell-level" aria-label={level === 0 ? 'Cantrips' : `${levelLabel(level)} level`}>
+          <h4 className="rubric">{level === 0 ? 'Cantrips' : level == null ? 'Level not on the sheet' : `${ordinal(level)} level`}</h4>
+          <ul className="table-cards">
             {spells.map((s) => (
               <Spell
                 key={s.key}
@@ -146,41 +164,54 @@ function Spell({ spell: s, state, actions, isOpen, onToggle, note, onSaveNote })
   const cast = (extra) => actions.castSpell({ name: s.name, level: s.level, concentration: s.concentration, ...extra })
 
   return (
-    <li id={`spell-${s.key}`} className={`table-spell${isOpen ? ' is-open' : ''}`}>
+    <li id={`spell-${s.key}`} className={`card table-spell${isOpen ? ' is-open' : ''}`}>
       <div className="table-spell-head">
-        <button className="table-spell-name" onClick={onToggle} aria-expanded={isOpen}>
-          {s.name}
-          {s.concentration && <abbr title="concentration"> (C)</abbr>}
-          {note && <span className="sheet-tag">note</span>}
+        <button className="table-spell-toggle" onClick={onToggle} aria-expanded={isOpen}>
+          <span className="table-card-title">
+            {s.name}
+            {s.concentration && <abbr className="table-spell-flag" title="concentration"> C</abbr>}
+            {s.alwaysPrepared && <abbr className="table-spell-flag" title="always prepared"> P</abbr>}
+          </span>
+          <span className="table-card-line">{joinDot(s.castingTime, s.range, s.duration)}</span>
+          <span className="table-card-line">{joinDot(s.components, s.saveHit, s.sources.join(', '))}</span>
+          {note && !isOpen && <span className="table-spell-note">{note}</span>}
         </button>
         <span className="table-spell-cast">
-          {s.level === 0 ? (
-            <button className="table-btn" onClick={() => cast({})}>Cast</button>
-          ) : (
-            <>
-              {free && (
-                <button className="table-btn" disabled={free.left <= 0} onClick={() => cast({ resourceId: free.id })}>
-                  Free
-                </button>
-              )}
-              {castable.map((x) => (
-                <button
-                  key={x.level}
-                  className="table-btn"
-                  onClick={() => cast({ slotLevel: x.level })}
-                  aria-label={`Cast ${s.name} with a ${ordinal(x.level)}-level slot`}
-                >
-                  {ordinal(x.level)}
-                </button>
-              ))}
-              {castable.length === 0 && !free && <span className="hint">no slots</span>}
-            </>
-          )}
+          <span className="table-spell-level-label">{levelLabel(s.level)}</span>
+          <span className="table-spell-cast-btns">
+            {s.level === 0 ? (
+              <button className="btn btn--cast" onClick={() => cast({})} aria-label={`Cast ${s.name}`}>Cast</button>
+            ) : (
+              <>
+                {free && (
+                  <button
+                    className="btn btn--cast"
+                    disabled={free.left <= 0}
+                    onClick={() => cast({ resourceId: free.id })}
+                    aria-label={`Cast ${s.name} free`}
+                  >
+                    Free
+                  </button>
+                )}
+                {castable.map((x) => (
+                  <button
+                    key={x.level}
+                    className="btn btn--cast"
+                    onClick={() => cast({ slotLevel: x.level })}
+                    aria-label={`Cast ${s.name} with a ${ordinal(x.level)}-level slot`}
+                  >
+                    {ordinal(x.level)}
+                  </button>
+                ))}
+                {castable.length === 0 && !free && <span className="meta">no slots</span>}
+              </>
+            )}
+          </span>
         </span>
       </div>
       {isOpen && (
         <div className="table-spell-body">
-          <dl className="sheet-facts">
+          <dl className="table-spell-facts">
             {[
               ['Time', s.castingTime],
               ['Range', s.range],
@@ -193,7 +224,7 @@ function Spell({ spell: s, state, actions, isOpen, onToggle, note, onSaveNote })
             ]
               .filter(([, v]) => v)
               .map(([label, v]) => (
-                <div key={label} className="sheet-fact">
+                <div key={label}>
                   <dt>{label}</dt>
                   <dd>{v}</dd>
                 </div>
@@ -202,6 +233,7 @@ function Spell({ spell: s, state, actions, isOpen, onToggle, note, onSaveNote })
           <label className="field">
             <span className="field-label">My note</span>
             <textarea
+              className="input-hand"
               rows={2}
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
@@ -215,25 +247,52 @@ function Spell({ spell: s, state, actions, isOpen, onToggle, note, onSaveNote })
   )
 }
 
+function SkillList({ skills }) {
+  return (
+    <>
+      <p className="table-skill-legend">
+        ◆ expertise · ● proficient · ◐ half
+      </p>
+      <ul className="table-skills">
+        {skills.map((s) => {
+          const prof = PROF_MARK[s.proficiency]
+          return (
+            <li key={s.key} className="table-skill">
+              <span className="table-skill-mark">{prof ? <abbr title={prof.label}>{prof.mark}</abbr> : ''}</span>
+              <span className="table-skill-name">
+                {s.label} <span className="table-skill-ability">{s.ability}</span>
+              </span>
+              <span className="numeral table-skill-bonus">{signed(s.bonus)}</span>
+            </li>
+          )
+        })}
+      </ul>
+    </>
+  )
+}
+
 function FeatureList({ features, q }) {
   const list = features.filter((f) => matches(q, f.name, f.text, f.group, f.notes.join(' ')))
   if (list.length === 0) return <p className="hint">no features{q && ' match'}</p>
   return (
-    <div className="table-features">
+    <ul className="table-cards">
       {list.map((f, i) => (
-        <details key={`${f.name}-${i}`} className="sheet-details" open={Boolean(q)}>
-          <summary>
-            {f.name} <span className="sheet-tag">{f.group}</span>
-          </summary>
-          {f.notes.length > 0 && (
-            <ul className="sheet-notes">
-              {f.notes.map((n, j) => <li key={j}>{n}</li>)}
-            </ul>
-          )}
-          {f.text && <p className="sheet-text">{f.text}</p>}
-        </details>
+        <li key={`${f.name}-${i}`} className="card table-feature">
+          <details open={Boolean(q)}>
+            <summary className="table-card-head">
+              <span className="table-card-title">{f.name}</span>
+              <span className="table-card-aside">{f.group}</span>
+            </summary>
+            {f.notes.length > 0 && (
+              <ul className="table-feature-notes">
+                {f.notes.map((n, j) => <li key={j}>{n}</li>)}
+              </ul>
+            )}
+            {f.text && <p className="table-feature-text">{f.text}</p>}
+          </details>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }
 
@@ -245,39 +304,44 @@ function ItemList({ sheet, entities, q, onOpenEntity }) {
     .filter((e) => matches(q, e.name, stripHtml(e.notes)))
   const coin = ['pp', 'gp', 'ep', 'sp', 'cp'].filter((c) => sheet.inventory.currency[c]).map((c) => `${sheet.inventory.currency[c]} ${c}`)
   return (
-    <div className="table-items">
-      {coin.length > 0 && <p className="sheet-sub">{coin.join(' · ')}</p>}
+    <>
+      {coin.length > 0 && <p className="table-coin numeral">{coin.join(' · ')}</p>}
       {items.length === 0 ? (
         <p className="hint">no items{q && ' match'}</p>
       ) : (
-        <ul className="table-item-list">
-          {items.map((e) => (
-            <li key={e.id} className="table-item">
-              <button className="table-item-name" onClick={() => onOpenEntity(e.id)}>
-                {e.name}
-                {qty.get(e.name.toLowerCase()) > 1 && <span className="sheet-tag">×{qty.get(e.name.toLowerCase())}</span>}
-              </button>
-              {stripHtml(e.notes) && <p className="table-item-note">{stripHtml(e.notes)}</p>}
-            </li>
-          ))}
+        <ul className="table-cards">
+          {items.map((e) => {
+            const n = qty.get(e.name.toLowerCase())
+            const note = stripHtml(e.notes)
+            return (
+              <li key={e.id}>
+                <button className="card table-item" onClick={() => onOpenEntity(e.id)}>
+                  <span className="table-card-title">{e.name}</span>
+                  <span className="numeral table-item-qty">{n > 0 ? n : ''}</span>
+                  {note && <span className="table-item-note">{note}</span>}
+                </button>
+              </li>
+            )
+          })}
         </ul>
       )}
-    </div>
+    </>
   )
 }
 
-function AttackTable({ attacks }) {
+function AttackList({ attacks }) {
   if (attacks.length === 0) return <p className="hint">no attacks on the sheet</p>
   return (
-    <table className="sheet-table">
-      <thead>
-        <tr><th>Name</th><th>Hit</th><th>Damage</th><th>Notes</th></tr>
-      </thead>
-      <tbody>
-        {attacks.map((a, i) => (
-          <tr key={i}><td>{a.name}</td><td>{a.bonus}</td><td>{a.damage}</td><td>{a.notes}</td></tr>
-        ))}
-      </tbody>
-    </table>
+    <ul className="table-cards">
+      {attacks.map((a, i) => (
+        <li key={i} className="card table-attack">
+          <span className="table-attack-text">
+            <span className="table-card-title">{a.name}</span>
+            <span className="table-card-line">{joinDot(a.damage, a.notes)}</span>
+          </span>
+          <span className="numeral table-attack-hit">{a.bonus}</span>
+        </li>
+      ))}
+    </ul>
   )
 }

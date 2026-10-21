@@ -63,10 +63,6 @@ const MentionList = forwardRef((props, ref) => {
             className={`mention-item ${index === selectedIndex ? 'is-selected' : ''}`}
             onClick={() => selectItem(index)}
           >
-            <span
-              className="mention-type-dot"
-              style={{ background: info.color }}
-            />
             <span className="mention-item-name">{item.name}</span>
             <span className="mention-item-type">{info.label}</span>
           </button>
@@ -79,9 +75,8 @@ const MentionList = forwardRef((props, ref) => {
           }`}
           onClick={() => selectItem(props.items.length)}
         >
-          <span className="mention-type-dot" style={{ background: 'var(--m-accent)' }} />
           <span className="mention-item-name">
-            Create NPC: <strong>{props.query.trim()}</strong>
+            New NPC page: <strong>{props.query.trim()}</strong>
           </span>
         </button>
       )}

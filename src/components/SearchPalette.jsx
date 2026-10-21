@@ -8,6 +8,9 @@ import { listCampaigns } from '../lib/campaigns'
 import { useSearchIndex } from '../lib/useSearchIndex'
 import { searchIndex, targetPath, snippet } from '../lib/search'
 import { onOpenSearch } from '../lib/searchBus'
+import { entityTypeInfo } from '../lib/entities'
+import { stripAt } from '../lib/mentionText'
+import { Drollery, Mark, SearchIcon } from './ornament'
 
 export default function SearchPalette({ userId }) {
   const navigate = useNavigate()
@@ -92,46 +95,52 @@ export default function SearchPalette({ userId }) {
   let n = -1
 
   return (
-    <div className="modal-backdrop search-backdrop" onClick={close}>
-      <div className="search" role="dialog" aria-modal="true" aria-label="Search" onClick={(e) => e.stopPropagation()} onKeyDown={onKeyDown}>
+    <>
+      <div className="overlay" onClick={close} />
+      <div className="dialog search" role="dialog" aria-modal="true" aria-label="Search" onKeyDown={onKeyDown}>
         <div className="search-head">
+          <SearchIcon size={22} />
           <input
             ref={inputRef}
             className="search-input"
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="search sessions, people, spells, notes…"
+            placeholder="Sessions, people, spells, notes…"
             aria-label="Search"
             aria-controls="search-results"
             aria-activedescendant={flat[active] ? `search-result-${active}` : undefined}
             autoComplete="off"
           />
-          <button className="table-btn" onClick={close} aria-label="Close search">Esc</button>
+          <button className="btn btn--sm" onClick={close} aria-label="Close search">Esc</button>
         </div>
 
         {currentId && (
-          <div className="search-scope" role="group" aria-label="Search in">
-            <button className={`table-mark${!allCampaigns ? ' is-on' : ''}`} aria-pressed={!allCampaigns} onClick={() => setAllCampaigns(false)}>
-              {currentName ? currentName.shortName || currentName.name : 'this campaign'}
+          <div className="search-scope segmented" role="group" aria-label="Search in">
+            <button aria-pressed={!allCampaigns} onClick={() => setAllCampaigns(false)}>
+              {currentName ? currentName.shortName || currentName.name : 'This campaign'}
             </button>
-            <button className={`table-mark${allCampaigns ? ' is-on' : ''}`} aria-pressed={allCampaigns} onClick={() => setAllCampaigns(true)}>
-              all campaigns
+            <button aria-pressed={allCampaigns} onClick={() => setAllCampaigns(true)}>
+              All campaigns
             </button>
           </div>
         )}
 
         <div className="search-results" id="search-results" role="listbox" aria-label="Results">
           {!ready ? (
-            <p className="hint">reading the archive…</p>
+            <p className="search-note">reading the archive…</p>
           ) : query.trim().length < 2 ? (
-            <p className="hint">type at least two letters — typos are forgiven</p>
+            <p className="search-note">Type at least two letters. Typos are forgiven.</p>
           ) : groups.length === 0 ? (
-            <p className="hint">nothing found{scopeId && currentId ? ' here — try all campaigns' : ''}</p>
+            <div className="search-empty">
+              <Drollery type="rabbit" width={180} />
+              <p className="empty-title">Nothing by that name.</p>
+              <p className="empty-body">{scopeId && currentId ? 'Try all campaigns, or a shorter word.' : 'Try a shorter word.'}</p>
+            </div>
           ) : (
             groups.map((g) => (
-              <section key={g.type} className="search-group">
-                <h3 className="dossier-label">{g.label}</h3>
+              <section key={g.type} className="search-group" aria-label={g.label}>
+                <h3 className="rubric search-group-title">{g.label}</h3>
                 {g.results.map((r) => {
                   n += 1
                   const i = n
@@ -142,15 +151,20 @@ export default function SearchPalette({ userId }) {
                       id={`search-result-${i}`}
                       role="option"
                       aria-selected={i === active}
-                      className={`search-result${i === active ? ' is-active' : ''}`}
+                      className="search-result"
                       onMouseMove={() => setActive(i)}
                       onClick={() => go(r)}
                     >
-                      <span className="search-result-title">{r.title}</span>
-                      <span className="search-result-sub">
-                        {[r.subtitle, !scopeId && r.campaignName].filter(Boolean).join(' · ')}
+                      <span className="search-result-mark">{r.mark && <Mark type={r.mark} size={20} />}</span>
+                      <span className="search-result-body">
+                        <span className="search-result-title">{r.type === 'log' ? stripAt(r.title) : r.title}</span>
+                        <span className="search-result-sub">
+                          {[r.type === 'entity' ? entityTypeInfo(r.subtitle).label : r.subtitle, !scopeId && r.campaignName]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </span>
+                        {detail && <span className="search-result-text">{detail}</span>}
                       </span>
-                      {detail && <span className="search-result-text">{detail}</span>}
                     </button>
                   )
                 })}
@@ -158,7 +172,11 @@ export default function SearchPalette({ userId }) {
             ))
           )}
         </div>
+        <p className="search-foot" aria-hidden="true">
+          <span className="kbd">↑</span> <span className="kbd">↓</span> to move · <span className="kbd">Enter</span> to open ·{' '}
+          <span className="kbd">Esc</span> to close
+        </p>
       </div>
-    </div>
+    </>
   )
 }

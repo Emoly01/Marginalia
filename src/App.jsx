@@ -9,6 +9,7 @@ import TableView from './components/TableView'
 import SearchPalette from './components/SearchPalette'
 import UpdatePrompt from './components/UpdatePrompt'
 import { signInWithGoogle, finishRedirectSignIn } from './lib/signIn'
+import { useInk } from './lib/useInk'
 import { toast } from './lib/toast'
 
 export default function App() {
@@ -44,20 +45,7 @@ export default function App() {
     await signOut(auth)
   }
 
-  if (loading) {
-    return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100dvh',
-        color: 'var(--m-text-4)',
-        fontStyle: 'italic',
-      }}>
-        opening the archive…
-      </div>
-    )
-  }
+  if (loading) return <Opening />
 
   const layout = <Layout user={user} onSignOut={handleSignOut} />
 
@@ -80,5 +68,17 @@ export default function App() {
         </Routes>
       )}
     </>
+  )
+}
+
+// Before anything has loaded: the frame, in this device's ground.
+function Opening() {
+  useInk(null, 'desk')
+  return (
+    <div className="frame app">
+      <div className="frame-surface">
+        <div className="waiting">opening the archive…</div>
+      </div>
+    </div>
   )
 }

@@ -8,7 +8,7 @@ import { sheetData } from './sheet/importPlan'
 // Result groups, in the order they're shown.
 export const RESULT_TYPES = [
   { type: 'session', label: 'Sessions' },
-  { type: 'entity', label: 'Entities' },
+  { type: 'entity', label: 'Codex' },
   { type: 'log', label: 'Session log' },
   { type: 'margin', label: 'Margins' },
   { type: 'dossier', label: 'Dossier' },
@@ -32,7 +32,7 @@ const join = (...parts) => parts.flat().filter(Boolean).join(' · ')
 
 /**
  * One campaign's data → search documents:
- * { id, type, campaignId, title, text, subtitle, target }.
+ * { id, type, mark?, campaignId, title, text, subtitle, target }.
  * `target` is what targetPath() turns into a route.
  */
 export function buildDocuments({ campaign, sessions = [], entities = [], margins = [], log = [], character = null, sheetDoc = null, spellNotes = {} }) {
@@ -55,13 +55,14 @@ export function buildDocuments({ campaign, sessions = [], entities = [], margins
     })
   }
   for (const m of margins) {
-    add({ id: `${cid}:margin:${m.id}`, type: 'margin', title: m.text, text: '', subtitle: m.archived ? 'archived' : '', target: { kind: 'campaign' } })
+    add({ id: `${cid}:margin:${m.id}`, type: 'margin', mark: 'margin', title: m.text, text: '', subtitle: m.archived ? 'archived' : '', target: { kind: 'campaign' } })
   }
   for (const l of log) {
     if (l.auto) continue // tracker taps are noise in search
     add({
       id: `${cid}:log:${l.id}`,
       type: 'log',
+      mark: l.mark || 'note',
       title: l.text,
       text: '',
       subtitle: join(l.mark !== 'note' && l.mark, sessionTitle[l.sessionId]),
@@ -118,7 +119,7 @@ export const fuzziness = (term) => (term.length < 5 ? 0 : 2)
 export function createIndex(docs) {
   const index = new MiniSearch({
     fields: ['title', 'text'],
-    storeFields: ['type', 'campaignId', 'campaignName', 'title', 'text', 'subtitle', 'target'],
+    storeFields: ['type', 'mark', 'campaignId', 'campaignName', 'title', 'text', 'subtitle', 'target'],
     searchOptions: { prefix: true, fuzzy: fuzziness, boost: { title: 3 }, combineWith: 'AND' },
   })
   index.addAll(docs)

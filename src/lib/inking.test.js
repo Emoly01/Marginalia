@@ -108,10 +108,10 @@ describe('recall', () => {
 })
 
 describe('recapBlocks', () => {
-  it('reads the recap back as text blocks', () => {
+  it('reads the recap back as text blocks, mentions as plain names', () => {
     const html = `<p>We met ${mentionHtml(gnarl)} &amp; ran.</p><blockquote><p>"Run."</p></blockquote><h3>Where did it end?</h3><p>crypt<br>at night</p>`
     expect(recapBlocks(html)).toEqual([
-      { kind: 'text', text: 'We met @Gnarl & ran.' },
+      { kind: 'text', text: 'We met Gnarl & ran.' },
       { kind: 'text', text: '"Run."' },
       { kind: 'heading', text: 'Where did it end?' },
       { kind: 'text', text: 'crypt\nat night' },
