@@ -2,9 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// Theme colours are the app's base tokens (--m-bg in global.css). The
-// per-campaign palettes are applied at runtime and can't reach the manifest.
-const INK = '#1c1a17'
+// Theme colours are night vellum in gold ink (--m-bg in tokens.css, from
+// inkTokens(gold, 'night')). The per-campaign inks are applied at runtime
+// and can't reach the manifest.
+const INK = '#110e09'
 
 export default defineConfig({
   plugins: [
@@ -24,7 +25,7 @@ export default defineConfig({
         orientation: 'any',
         theme_color: INK,
         background_color: INK,
-        // Placeholders; the redesign replaces them.
+        // A blackletter M in gold leaf on the gold ink's field (iconField).
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
@@ -33,13 +34,14 @@ export default defineConfig({
       },
       workbox: {
         // Precache the app shell and serve it for every route…
-        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,woff2}'],
         navigateFallback: 'index.html',
         // …except Firebase Auth's own pages (/__/auth/handler, /__/firebase/init.json),
         // which have to reach the network or sign-in breaks.
         navigateFallbackDenylist: [/^\/__\//],
         // pdf.js (~1.7 MB) is only needed to import a sheet, which needs the network anyway.
-        globIgnores: ['**/pdf-*.js', '**/pdf.worker*'],
+        // Fonts: Latin subsets only — the others are never requested here.
+        globIgnores: ['**/pdf-*.js', '**/pdf.worker*', '**/*-{cyrillic,cyrillic-ext,greek,greek-ext,vietnamese}-*.woff2'],
         cleanupOutdatedCaches: true,
         // No runtimeCaching: Google and Firebase API traffic is never handled by the
         // service worker. Firestore keeps its own offline cache (src/firebase.js).

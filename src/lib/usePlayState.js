@@ -107,6 +107,8 @@ export function usePlayState(userId, campaignId, { liveSessionId = null } = {}) 
       shortRest: (opts) => run(play.shortRest, opts),
       longRest: () => run(play.longRest),
       toggleCondition: (name) => run(play.toggleCondition, name),
+      setExhaustion: (level) => run(play.setExhaustion, level),
+      clearConditions: () => run(play.clearConditions),
       setConcentration: (spellName) => run(play.setConcentration, spellName),
       castSpell: (cast) => run(play.castSpell, cast),
       deathSave: (kind) => run(play.deathSave, kind),

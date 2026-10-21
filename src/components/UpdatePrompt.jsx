@@ -22,8 +22,8 @@ export default function UpdatePrompt() {
   return (
     <div className="update-prompt" role="status">
       <span>A new version of Marginalia is ready.</span>
-      <button className="btn-primary btn-primary--sm" onClick={() => updateServiceWorker(true)}>Reload</button>
-      <button className="btn" onClick={() => setNeedRefresh(false)}>Later</button>
+      <button className="btn-primary btn--sm" onClick={() => updateServiceWorker(true)}>Reload</button>
+      <button className="btn btn--sm" onClick={() => setNeedRefresh(false)}>Later</button>
     </div>
   )
 }

@@ -1,0 +1,1359 @@
+/* At the table: its own layout, never the app rails. Tuned to the
+   measured tablet (1316 × 648 landscape, and the same turned portrait),
+   and still usable on a phone. */
+
+.table-view {
+  height: 100dvh;
+}
+
+.table-surface {
+  min-height: 0;
+}
+
+/* ---------- The bar ---------- */
+
+.table-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 60px;
+  padding: 6px 12px 6px 8px;
+  border-bottom: 1px solid var(--m-line);
+}
+
+.table-back {
+  font-size: 22px;
+  color: var(--m-text-2);
+  text-decoration: none;
+}
+
+.table-bar-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.table-campaign {
+  font-size: 25px;
+  line-height: 1.05;
+  color: var(--m-text);
+}
+
+.table-campaign .ornament-initial {
+  width: 40px;
+  height: 40px;
+}
+
+.table-bar-session {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0 4px;
+}
+
+.table-clock-label {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--m-text-3);
+  white-space: nowrap;
+}
+
+.table-clock-time {
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.table-rests {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.table-rests > .btn-gilt {
+  flex: 1;
+}
+
+/* Rests sit in the bar when the tablet is on its side; anywhere else they
+   close the tracker column. */
+.table-rests--bar {
+  display: none;
+}
+
+/* ---------- The body ---------- */
+
+.table-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(620px, 54%) minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+.table-body--no-sheet {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+}
+
+.table-sheet {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
+
+.table-side {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---------- Summary: who, armour, hit points, small numbers ---------- */
+
+.table-summary {
+  flex: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 76px 214px 168px;
+  gap: 10px;
+  height: 120px;
+}
+
+.table-who {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.table-name {
+  font-family: var(--font-title);
+  font-weight: normal;
+  font-size: 30px;
+  line-height: 0.95;
+  color: var(--m-text);
+}
+
+.table-who-line {
+  font-size: var(--t-meta);
+  line-height: 1.2;
+  color: var(--m-text-2);
+}
+
+.table-who-part {
+  display: block;
+}
+
+.table-who-quiet {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 13px;
+  line-height: 1.25;
+  color: var(--m-text-3);
+}
+
+.table-ac {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding-bottom: 8px;
+  border-radius: 2px 2px 38px 38px / 2px 2px 30px 30px;
+}
+
+.table-ac-label {
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m-text-3);
+}
+
+.table-ac-value {
+  font-size: 46px;
+}
+
+.table-hp-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.table-hp {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 7px 8px;
+}
+
+.table-hp-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.table-hp-temp {
+  font-size: 13px;
+  color: var(--m-text-2);
+}
+
+.table-hp-temp .numeral {
+  font-size: 18px;
+  color: var(--m-text);
+}
+
+.table-hp-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.table-hp-step {
+  background: var(--m-panel);
+  font-size: 28px;
+  line-height: 1;
+  color: var(--m-text);
+}
+
+.table-hp-now {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--target);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  border-radius: var(--radius);
+}
+
+.table-hp-now:hover,
+.table-hp-now[aria-expanded='true'] {
+  background: var(--m-accent-wash);
+}
+
+.table-hp-current {
+  font-size: var(--t-num-xl);
+}
+
+.table-hp-max {
+  font-size: 22px;
+  color: var(--m-text-2);
+}
+
+.table-hp-dice {
+  font-size: 13px;
+  color: var(--m-text-3);
+}
+
+.table-hp-pop {
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+}
+
+.table-hp-input {
+  min-height: 56px;
+  font-size: 30px;
+  text-align: center;
+}
+
+.table-hp-pop-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.table-hp-pop-actions > button {
+  padding: 0 6px;
+}
+
+.table-mini {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+}
+
+.table-mini-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.table-mini-cell dd {
+  font-size: var(--t-stat);
+}
+
+.table-mini-cell dt {
+  margin-top: 5px;
+  font-size: var(--t-micro);
+  line-height: 1;
+  color: var(--m-text-3);
+  white-space: nowrap;
+}
+
+.table-abilities {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  height: 66px;
+}
+
+.table-ability {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border-top: var(--heading-rule);
+}
+
+.table-ability-key {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--m-text-3);
+}
+
+.table-ability-score {
+  letter-spacing: 0;
+  color: var(--m-text-2);
+}
+
+.table-ability-mod {
+  font-size: var(--t-stat-lg);
+}
+
+.table-ability-save {
+  font-size: 13px;
+  color: var(--m-text-2);
+}
+
+.table-prof {
+  color: var(--m-accent);
+  text-decoration: none;
+}
+
+/* ---------- Lower half: trackers beside the reference ---------- */
+
+.table-lower {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.table-trackers {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* The roundels scroll; concentration and conditions stay put. */
+.table-trackers-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overscroll-behavior: contain;
+}
+
+.tracker-list {
+  flex: none;
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  background: var(--m-line-2);
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+}
+
+/* A use-once feature takes half a row, so two of them share one. */
+.tracker-list--pairs {
+  grid-template-columns: 1fr 1fr;
+  grid-auto-flow: row dense;
+}
+
+.tracker-list--pairs > .tracker {
+  grid-column: 1 / -1;
+}
+
+.tracker-list--pairs > .tracker--single {
+  grid-column: auto;
+}
+
+.tracker {
+  display: flex;
+  align-items: center;
+  min-height: var(--target);
+  padding: 0 6px 0 8px;
+  background: var(--m-card);
+}
+
+.tracker-label {
+  width: 72px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tracker--slot .tracker-label {
+  width: 42px;
+}
+
+.tracker--single .tracker-label {
+  width: auto;
+  flex: 1;
+}
+
+.tracker-name {
+  overflow: hidden;
+  font-size: var(--t-small);
+  font-weight: 600;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+}
+
+.tracker--slot .tracker-name {
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--m-accent);
+}
+
+.tracker-sub {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--m-text-3);
+}
+
+.tracker-roundels {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tracker--single .tracker-roundels {
+  flex: none;
+}
+
+.tracker-count {
+  min-width: 24px;
+  flex: none;
+  text-align: right;
+  font-size: 20px;
+}
+
+.tracker--slot .tracker-count {
+  min-width: 40px;
+}
+
+.table-death {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px dashed var(--m-danger);
+  border-radius: var(--radius);
+}
+
+.table-death-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.table-death-row > .btn {
+  flex: 1;
+  padding: 0 8px;
+}
+
+.table-pinned {
+  flex: none;
+  display: flex;
+  gap: 8px;
+  min-height: 56px;
+}
+
+.table-conc {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 3px 0 10px;
+  background: var(--m-card);
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+}
+
+.table-conc.is-on {
+  background: var(--m-accent-wash);
+  border: 1px dashed var(--m-accent);
+}
+
+.table-conc-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-conc-label {
+  overflow: hidden;
+  font-size: var(--t-micro);
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--m-text-3);
+}
+
+.table-conc > .btn {
+  padding: 0 10px;
+}
+
+.table-conc.is-on .table-conc-label {
+  color: var(--m-accent-strong);
+}
+
+.table-conc-name {
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-conc {
+  position: relative;
+}
+
+/* The select covers the whole box, so the tap target is the box. */
+.table-conc-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-height: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.table-conc:focus-within {
+  outline: 2px solid var(--gold-line);
+  outline-offset: 2px;
+}
+
+.table-conc-none {
+  font-size: 16px;
+  font-style: italic;
+  color: var(--m-text-2);
+}
+
+.table-cond-btn {
+  width: 100px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 10px;
+  background: var(--m-card);
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+  text-align: left;
+}
+
+.table-cond-btn.is-on {
+  background: var(--m-accent-wash);
+  border-color: var(--m-accent);
+}
+
+.table-cond-summary {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: pre;
+}
+
+.table-rests--column {
+  flex: none;
+}
+
+/* ---------- Conditions and rests ---------- */
+
+.table-conditions {
+  left: 24px;
+  bottom: 24px;
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  gap: 12px;
+  padding: 18px 18px 16px;
+}
+
+.table-conditions-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.table-conditions-count {
+  flex: 1;
+}
+
+.table-conditions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.table-condition {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 12px;
+  background: var(--m-card);
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+  font-size: 17px;
+  text-align: left;
+}
+
+.table-condition[aria-pressed='true'] {
+  background: var(--m-accent-wash);
+  border: 1.5px solid var(--m-accent);
+  font-weight: 600;
+}
+
+.table-conditions-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: var(--heading-rule);
+}
+
+.table-exhaustion {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-exhaustion-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.table-conditions-foot .btn-primary {
+  margin-left: 8px;
+  padding: 0 22px;
+}
+
+.table-short-rest {
+  width: min(440px, calc(100vw - 32px));
+}
+
+.table-short-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.table-short-label {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--t-body);
+}
+
+/* ---------- Reference: spells, skills, features, items, attacks ---------- */
+
+.table-reference {
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-tabs {
+  flex: none;
+}
+
+.table-tabs .tab {
+  padding: 0 4px;
+  font-size: 15px;
+}
+
+.table-ref-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  overscroll-behavior: contain;
+}
+
+.table-ref-search {
+  flex: none;
+  min-height: var(--target);
+  font-size: 16px;
+  font-style: italic;
+}
+
+.table-spells {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.table-spell-level {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.table-cards {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.table-spell {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-spell-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.table-spell-toggle {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--target);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 4px 9px 11px;
+  text-align: left;
+}
+
+.table-card-title {
+  font-size: var(--t-hand);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.table-spell-flag {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--m-accent);
+  text-decoration: none;
+}
+
+.table-card-line {
+  font-size: var(--t-small);
+  line-height: 1.3;
+  color: var(--m-text-2);
+}
+
+.table-spell-note {
+  margin-top: 3px;
+  padding-top: 4px;
+  border-top: 1px solid var(--m-line-2);
+  font-size: var(--t-meta);
+  font-style: italic;
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+
+.table-spell-cast {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 6px 6px 6px 0;
+}
+
+.table-spell-level-label {
+  font-size: var(--t-small);
+  font-style: italic;
+  color: var(--m-accent);
+}
+
+.table-spell-cast-btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 160px;
+}
+
+.btn--cast {
+  min-width: var(--target);
+  padding: 0 8px;
+  font-size: 15px;
+}
+
+.table-spell-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 11px 11px;
+}
+
+.table-spell-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 6px 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--m-line-2);
+}
+
+.table-spell-facts dt {
+  font-size: var(--t-micro);
+  color: var(--m-text-3);
+}
+
+.table-spell-facts dd {
+  font-size: var(--t-meta);
+}
+
+.table-skill-legend {
+  font-size: 13px;
+  color: var(--m-text-3);
+}
+
+.table-skills {
+  list-style: none;
+}
+
+.table-skill {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 34px;
+  border-bottom: 1px solid var(--m-line-2);
+}
+
+.table-skill-mark {
+  font-size: 13px;
+  color: var(--m-accent);
+}
+
+.table-skill-mark abbr {
+  text-decoration: none;
+}
+
+.table-skill-name {
+  font-size: var(--t-meta);
+}
+
+.table-skill-ability {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--m-text-3);
+}
+
+.table-skill-bonus {
+  font-size: 20px;
+}
+
+.table-feature > details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.table-feature > details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.table-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-height: var(--target);
+  padding: 10px 11px;
+}
+
+.table-card-head .table-card-title {
+  flex: 1;
+  font-size: 17px;
+}
+
+.table-card-aside {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--m-accent);
+  text-align: right;
+}
+
+.table-feature-notes {
+  padding: 0 11px 6px 30px;
+  font-size: var(--t-meta);
+  color: var(--m-text-2);
+}
+
+.table-feature-text {
+  padding: 0 11px 11px;
+  font-size: var(--t-meta);
+  line-height: 1.4;
+  white-space: pre-line;
+  color: var(--m-text-2);
+  text-wrap: pretty;
+}
+
+.table-coin {
+  font-size: 17px;
+  color: var(--m-text-2);
+}
+
+.table-item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  min-height: var(--target);
+  padding: 8px 11px;
+  text-align: left;
+}
+
+.table-item:hover {
+  background: var(--m-card-hi);
+}
+
+.table-item .table-card-title {
+  font-size: 17px;
+}
+
+.table-item-qty {
+  font-size: 20px;
+}
+
+.table-item-note {
+  grid-column: 1 / -1;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: var(--t-meta);
+  font-style: italic;
+  color: var(--m-text-2);
+}
+
+.table-attack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0 10px;
+  padding: 8px 11px;
+}
+
+.table-attack-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.table-attack .table-card-title {
+  font-size: 17px;
+}
+
+.table-attack-hit {
+  font-size: 22px;
+  text-align: right;
+}
+
+/* ---------- The live log ---------- */
+
+.table-log {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-log-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--m-line);
+}
+
+.table-intention {
+  flex: none;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--m-line-2);
+  font-size: var(--t-meta);
+  font-style: italic;
+  color: var(--m-text-2);
+}
+
+.table-log-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  list-style: none;
+  padding: 4px 6px 8px 0;
+  overscroll-behavior: contain;
+}
+
+.table-log-empty {
+  padding: 18px 14px;
+  font-size: var(--t-meta);
+  font-style: italic;
+  color: var(--m-text-3);
+}
+
+.table-log-remove {
+  width: var(--target);
+  height: var(--target);
+  font-size: 20px;
+  color: var(--m-text-4);
+  opacity: 0.5;
+}
+
+.log-line:hover .table-log-remove,
+.table-log-remove:focus-visible {
+  opacity: 1;
+}
+
+.table-capture {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 10px 10px;
+  border-top: 1px solid var(--m-line);
+  background: var(--m-card);
+}
+
+.table-marks {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.table-mark {
+  width: var(--target);
+  height: var(--target);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  color: var(--m-text-2);
+}
+
+.table-mark[aria-pressed='true'] {
+  background: var(--m-accent-wash);
+  box-shadow: inset 0 0 0 1.5px var(--m-accent);
+  color: var(--m-accent-strong);
+}
+
+.table-mark-name {
+  flex: 1;
+  font-size: var(--t-small);
+  font-style: italic;
+  text-align: right;
+  color: var(--m-text-2);
+  white-space: nowrap;
+}
+
+.table-capture-row {
+  display: flex;
+  gap: 8px;
+}
+
+.table-capture-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Before the session ---------- */
+
+.table-previously {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-previously-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.table-previously-title {
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.table-previously-recap {
+  font-size: 19px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.table-previously-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.table-previously-list--ruled {
+  padding-top: 8px;
+  border-top: var(--heading-rule);
+}
+
+.table-previously-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.table-previously-mystery {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-style: italic;
+}
+
+.table-previously-mystery .mark {
+  margin-top: 3px;
+  color: var(--m-accent);
+}
+
+.table-start {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--m-line);
+  background: var(--m-card);
+}
+
+/* ---------- Layouts ---------- */
+
+/* On its side: the rests move up into the bar, which frees the tracker
+   column for roundels at 648 px tall. */
+@media (min-width: 1100px) and (orientation: landscape) {
+  .table-rests--bar {
+    display: flex;
+  }
+
+  .table-rests--bar > .btn-gilt {
+    padding: 0 14px;
+  }
+
+  .table-rests--column {
+    display: none;
+  }
+}
+
+/* Narrow landscape (a small laptop, a phone on its side). */
+@media (max-width: 1240px) and (orientation: landscape) {
+  .table-ddb {
+    display: none;
+  }
+}
+
+/* Portrait, and anything under 1100 px: the log goes under the sheet. */
+@media (max-width: 1099px), (orientation: portrait) {
+  .table-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1.4fr) minmax(320px, 1fr);
+  }
+
+  .table-body--no-sheet {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .table-summary {
+    grid-template-columns: 76px minmax(0, 1fr) minmax(150px, 190px);
+    grid-template-areas:
+      'who who who'
+      'ac hp mini';
+    height: auto;
+  }
+
+  .table-who {
+    grid-area: who;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 2px 14px;
+  }
+
+  .table-who-part {
+    display: inline;
+  }
+
+  .table-who-part + .table-who-part::before {
+    content: ' · ';
+  }
+
+  .table-ac {
+    grid-area: ac;
+    min-height: 120px;
+  }
+
+  .table-hp-wrap {
+    grid-area: hp;
+  }
+
+  .table-mini {
+    grid-area: mini;
+  }
+
+  .table-lower {
+    grid-template-columns: 310px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .table-ddb {
+    display: none;
+  }
+}
+
+/* A phone: one long column; the page scrolls, each list scrolls inside. */
+@media (max-width: 599px) {
+  .table-bar {
+    flex-wrap: wrap;
+  }
+
+  .table-clock {
+    display: none;
+  }
+
+  .table-body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 8px;
+  }
+
+  .table-sheet {
+    flex: none;
+  }
+
+  .table-side {
+    flex: none;
+    height: min(78dvh, 620px);
+  }
+
+  .table-summary {
+    grid-template-columns: 76px minmax(0, 1fr);
+    grid-template-areas:
+      'who who'
+      'ac hp'
+      'mini mini';
+  }
+
+  .table-mini {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: 56px;
+  }
+
+  .table-abilities {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    height: auto;
+  }
+
+  .table-ability {
+    min-height: 64px;
+  }
+
+  .table-lower {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-trackers-scroll {
+    flex: none;
+    overflow: visible;
+  }
+
+  .table-ref-body {
+    max-height: 70dvh;
+  }
+
+  .table-conditions {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+  }
+
+  .table-conditions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .table-conditions-foot {
+    flex-wrap: wrap;
+  }
+
+  .table-marks {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .table-mark-name {
+    display: none;
+  }
+}
+
+.table-hp-input {
+  appearance: textfield;
+}
+
+.table-hp-input::-webkit-inner-spin-button,
+.table-hp-input::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}

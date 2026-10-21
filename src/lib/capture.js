@@ -1,8 +1,8 @@
 // The live log's one-line capture: prefix shortcuts and marks. Pure.
 import { parseLine } from './npcLine'
 
-// What I can tag a typed line as. `auto` (tracker taps) and `milestone`
-// (level-ups) are written by the app, never typed.
+// What I can tag a typed line as. `auto` (tracker taps) is written by the
+// app only; `milestone` is also written by a level-up re-import.
 export const CAPTURE_MARKS = [
   { value: 'note', label: 'note' },
   { value: 'important', label: 'important', prefix: '!:' },
@@ -10,11 +10,11 @@ export const CAPTURE_MARKS = [
   { value: 'npc', label: 'NPC', prefix: 'npc:' },
   { value: 'mystery', label: 'mystery', prefix: '?:' },
   { value: 'loot', label: 'loot', prefix: '$:' },
+  { value: 'milestone', label: 'milestone' },
 ]
 
 export function markLabel(mark) {
   if (mark === 'auto') return 'sheet'
-  if (mark === 'milestone') return 'milestone'
   return CAPTURE_MARKS.find((m) => m.value === mark)?.label ?? mark
 }
 

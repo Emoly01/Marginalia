@@ -1,0 +1,879 @@
+/* Marginalia — shared components. */
+
+/* ---------- Rubrics: the small-caps labels in campaign ink ---------- */
+
+.rubric {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--m-accent);
+}
+
+.rubric--quiet {
+  color: var(--m-text-3);
+}
+
+.meta {
+  font-size: var(--t-small);
+  font-style: italic;
+  color: var(--m-text-3);
+}
+
+.hint {
+  font-size: var(--t-meta);
+  font-style: italic;
+  color: var(--m-text-3);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-weight: normal;
+  line-height: 1.05;
+  color: var(--m-accent);
+}
+
+.numeral {
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.rule {
+  height: 0;
+  border: 0;
+  border-top: var(--heading-rule);
+}
+
+.rule--double {
+  border-top: 3px double var(--m-accent);
+}
+
+/* ---------- Buttons ---------- */
+
+.btn,
+.btn-primary,
+.btn-gilt,
+.btn-leaf,
+.btn-quiet,
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: var(--target);
+  padding: 0 16px;
+  border-radius: var(--radius);
+  font-size: 16px;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn {
+  border: 1px solid var(--m-line);
+  color: var(--m-text-2);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--m-card);
+  color: var(--m-text);
+}
+
+.btn-primary {
+  background: var(--m-accent);
+  color: var(--m-on-accent);
+  font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.btn-gilt {
+  border: 1px solid var(--gold-line);
+  color: var(--m-text);
+}
+
+.btn-gilt:hover:not(:disabled) {
+  background: var(--m-card);
+}
+
+.btn-quiet {
+  border: 1px solid var(--m-accent);
+  color: var(--m-accent-strong);
+  font-weight: 600;
+}
+
+.btn-quiet:hover:not(:disabled) {
+  background: var(--m-accent-wash);
+}
+
+.btn-leaf {
+  background: var(--leaf);
+  border: 1px solid var(--gold-lo);
+  color: var(--m-ink-on-gold);
+  font-weight: 700;
+}
+
+.btn-danger {
+  border: 1px solid transparent;
+  color: var(--m-danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  border-color: var(--m-danger);
+}
+
+.btn--lg {
+  min-height: 56px;
+  font-size: 19px;
+  padding: 0 24px;
+}
+
+.btn--sm {
+  min-height: var(--target);
+  font-size: 15px;
+  padding: 0 12px;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn-kbd {
+  font-size: var(--t-small);
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--target);
+  height: var(--target);
+  flex: none;
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+  color: var(--m-text-2);
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: var(--m-card);
+  color: var(--m-text);
+}
+
+.btn-icon--bare {
+  border-color: transparent;
+}
+
+.btn-link {
+  min-height: var(--target);
+  padding: 0 4px;
+  color: var(--m-text-2);
+  text-decoration: underline dotted 1px;
+  text-underline-offset: 4px;
+}
+
+.btn-link:hover {
+  color: var(--m-text);
+}
+
+.kbd {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--m-text-3);
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+  padding: 1px 6px;
+  font-style: normal;
+}
+
+@media (hover: none) {
+  .kbd--hint {
+    display: none;
+  }
+}
+
+/* ---------- Toggles: pressed state = ink wash + ink rule ---------- */
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target);
+  padding: 0 12px;
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+  color: var(--m-text);
+  font-size: 16px;
+}
+
+.toggle:hover {
+  background: var(--m-card);
+}
+
+.toggle[aria-pressed='true'],
+.toggle.is-on {
+  background: var(--m-accent-wash);
+  border: 1.5px solid var(--m-accent);
+  color: var(--m-accent-strong);
+  font-weight: 600;
+}
+
+.toggle-count {
+  font-size: var(--t-small);
+  font-weight: 400;
+  color: var(--m-text-3);
+}
+
+.toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.btn.btn--danger {
+  border-color: var(--m-danger);
+  color: var(--m-danger);
+}
+
+/* A small floating panel anchored to its control; the scrim catches the
+   tap outside that closes it. */
+.popover-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.popover {
+  position: absolute;
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 12px;
+  background: var(--m-panel);
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius);
+  box-shadow: var(--panel-shadow), var(--shadow-lift);
+}
+
+/* A dashed "add one more" button. */
+.btn-dashed {
+  border-style: dashed;
+  color: var(--m-text-2);
+}
+
+/* − 3 + : a number nudged by touch. */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.stepper .btn-icon {
+  font-size: 24px;
+}
+
+.stepper-value {
+  min-width: 36px;
+  text-align: center;
+  font-size: 24px;
+}
+
+/* One-of-n, joined: Short rest | Long rest. */
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.segmented > button {
+  min-height: var(--target);
+  padding: 0 14px;
+  color: var(--m-text-3);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.segmented > button + button {
+  border-left: 1px solid var(--m-line-2);
+}
+
+.segmented > button[aria-pressed='true'] {
+  background: var(--m-accent-wash);
+  box-shadow: inset 0 -3px 0 var(--m-accent);
+  color: var(--m-text);
+  font-weight: 600;
+}
+
+.error-note {
+  padding: 10px 14px;
+  border: 1px solid var(--m-danger);
+  border-radius: var(--radius);
+  color: var(--m-danger);
+  font-size: var(--t-meta);
+}
+
+/* A tickable row (checkbox semantics on a button). */
+.tick {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--m-text-3);
+  border-radius: var(--radius);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--m-accent-strong);
+}
+
+[aria-checked='true'] > .tick,
+[aria-pressed='true'] > .tick {
+  border-color: var(--m-accent);
+}
+
+/* ---------- Tabs: underline in ink ---------- */
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--m-line);
+}
+
+.tab {
+  flex: 1;
+  min-height: var(--target);
+  padding: 0 10px;
+  border-bottom: 3px solid transparent;
+  color: var(--m-text-3);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--m-text-2);
+}
+
+.tab.is-active,
+.tab[aria-selected='true'] {
+  border-bottom-color: var(--m-accent);
+  color: var(--m-text);
+  font-weight: 600;
+}
+
+.tabs--start .tab {
+  flex: none;
+  padding: 0 16px;
+}
+
+/* ---------- Fields ---------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.field-label {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--m-text-3);
+}
+
+.field-hint {
+  font-size: var(--t-small);
+  font-style: italic;
+  color: var(--m-text-3);
+}
+
+.input-hand {
+  font-style: italic;
+  font-size: var(--t-hand);
+  min-height: var(--target);
+}
+
+.input-ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.input-ghost:hover {
+  border-color: var(--m-line-2);
+}
+
+.input-ghost:focus {
+  border-color: var(--m-accent);
+}
+
+/* ---------- Cards & lists ---------- */
+
+.card {
+  background: var(--m-card);
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+}
+
+.card--ruled {
+  border-top: var(--heading-rule);
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--m-line);
+  flex: none;
+}
+
+.panel-head .meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.panel-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.wash-box {
+  border: 1px dashed var(--m-accent);
+  background: var(--m-accent-wash);
+  border-radius: var(--radius);
+}
+
+/* Fact grid: small label over a value */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: var(--m-card);
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+  min-width: 0;
+}
+
+.fact dt {
+  font-size: var(--t-micro);
+  color: var(--m-text-3);
+}
+
+.fact dd {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.fact--prose dd {
+  font-size: var(--t-body);
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+/* ---------- Empty states with drolleries ---------- */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.empty-title {
+  font-size: 25px;
+  line-height: 1.15;
+}
+
+.empty-body {
+  max-width: 400px;
+  font-size: var(--t-body);
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--m-text-2);
+}
+
+/* ---------- Margin log lines (table, editor margin, Inking timeline) ---------- */
+
+.log-line {
+  display: grid;
+  grid-template-columns: 62px 32px minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.log-time {
+  padding-top: 11px;
+  text-align: right;
+  font-size: 13px;
+  color: var(--m-text-3);
+  white-space: nowrap;
+}
+
+.log-mark {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  color: var(--m-text-2);
+}
+
+.log-mark--important,
+.log-mark--mystery {
+  color: var(--m-accent);
+}
+
+.log-mark--milestone {
+  color: var(--gold-line);
+}
+
+.log-mark--auto {
+  color: var(--m-text-4);
+  padding-top: 9px;
+}
+
+.log-text {
+  min-width: 0;
+  padding: 7px 0 7px 10px;
+  border-left: var(--ruling);
+  font-size: var(--t-hand);
+  font-style: italic;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.log-text--auto {
+  padding: 9px 0 7px 10px;
+  font-size: var(--t-meta);
+  font-style: normal;
+  line-height: 1.3;
+  color: var(--m-text-3);
+}
+
+.log-text--milestone {
+  color: var(--gold-hi);
+}
+
+:root[data-ground='day'] .log-text--milestone {
+  color: var(--m-accent-strong);
+}
+
+.mention-word {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--m-accent-strong);
+  text-decoration: underline dotted 1px;
+  text-underline-offset: 4px;
+}
+
+button.mention-word:hover {
+  color: var(--m-text);
+}
+
+/* ---------- Dialogs & overlays ---------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: oklch(0 0 0 / 0.55);
+}
+
+.dialog {
+  position: fixed;
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+  background: var(--m-panel);
+  border: 1px solid var(--gold-line);
+  box-shadow: var(--panel-shadow), var(--shadow-lift);
+  border-radius: var(--radius);
+  color: var(--m-text);
+}
+
+.dialog--center {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  padding: 22px 24px;
+  gap: 14px;
+}
+
+.dialog-title {
+  font-family: var(--font-title);
+  font-weight: normal;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--m-accent);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ---------- Toasts and the update prompt ---------- */
+
+.toast-stack {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(480px, calc(100vw - 32px));
+}
+
+.toast {
+  padding: 12px 16px;
+  background: var(--m-panel);
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+  font-size: var(--t-body);
+  text-align: left;
+  color: var(--m-text);
+  animation: toast-in 0.2s ease;
+}
+
+.toast-error {
+  border-color: var(--m-danger);
+  color: var(--m-danger);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.update-prompt {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 91;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 32px);
+  padding: 10px 14px;
+  background: var(--m-panel);
+  border: 1px solid var(--gold-line);
+  box-shadow: var(--panel-shadow), var(--shadow-lift);
+  border-radius: var(--radius);
+}
+
+.save-state {
+  font-size: var(--t-meta);
+  font-style: italic;
+  color: var(--m-text-3);
+  white-space: nowrap;
+}
+
+.save-state--unsaved {
+  color: var(--m-danger);
+}
+
+/* ---------- The writing surface (Tiptap) ---------- */
+
+.marginalia-prose {
+  min-height: 160px;
+  outline: none;
+  font-size: var(--t-prose);
+  line-height: 1.62;
+  color: var(--m-text);
+}
+
+.marginalia-prose--tall {
+  min-height: 50vh;
+}
+
+.marginalia-prose > * + * {
+  margin-top: 0.75em;
+}
+
+.marginalia-prose h1,
+.marginalia-prose h2,
+.marginalia-prose h3 {
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--m-accent);
+}
+
+.marginalia-prose h1 {
+  font-size: 1.5em;
+}
+
+.marginalia-prose h2 {
+  font-size: 1.25em;
+}
+
+.marginalia-prose h3 {
+  font-size: var(--t-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 1.4em;
+}
+
+.marginalia-prose blockquote {
+  padding-left: 16px;
+  border-left: var(--ruling);
+  font-style: italic;
+  color: var(--m-text-2);
+}
+
+.marginalia-prose ul,
+.marginalia-prose ol {
+  padding-left: 1.4em;
+}
+
+.marginalia-prose a {
+  color: var(--m-accent-strong);
+}
+
+.marginalia-prose p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: var(--m-text-3);
+  font-style: italic;
+}
+
+/* The illuminated drop cap on the first paragraph of a recap: gold leaf,
+   the letter in campaign ink, set in blackletter. */
+.prose-illuminated .marginalia-prose > p:first-child::first-letter {
+  float: left;
+  margin: 0.12em 0.12em 0 0;
+  padding: 0.08em 0.12em 0;
+  font-family: var(--font-title);
+  font-size: 3.2em;
+  line-height: 0.9;
+  color: var(--m-ink-on-gold);
+  background: var(--leaf);
+  box-shadow: inset 0 0 0 2px var(--gold), inset 0 0 0 3px var(--m-ink-on-gold);
+}
+
+.marginalia-mention {
+  font-weight: 600;
+  color: var(--m-accent-strong);
+  text-decoration: underline dotted 1px;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.marginalia-bubble-menu {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--m-panel);
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+}
+
+.bubble-btn {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 8px;
+  border-radius: var(--radius);
+  color: var(--m-text-2);
+  font-size: 15px;
+}
+
+.bubble-btn:hover,
+.bubble-btn.is-active {
+  background: var(--m-accent-wash);
+  color: var(--m-accent-strong);
+}
+
+.bubble-divider {
+  width: 1px;
+  margin: 4px 2px;
+  background: var(--m-line);
+}
+
+/* @-mention suggestions */
+.tippy-box {
+  background: transparent;
+}
+
+.mention-dropdown {
+  min-width: 240px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 4px;
+  background: var(--m-panel);
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+}
+
+.mention-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: var(--target);
+  padding: 0 10px;
+  border-radius: var(--radius);
+  text-align: left;
+}
+
+.mention-item.is-selected,
+.mention-item:hover {
+  background: var(--m-accent-wash);
+}
+
+.mention-item-name {
+  flex: 1;
+  font-size: 16px;
+}
+
+.mention-item-type {
+  font-size: var(--t-small);
+  font-style: italic;
+  color: var(--m-accent);
+}
+
+.mention-empty {
+  padding: 10px;
+  font-style: italic;
+  color: var(--m-text-3);
+}

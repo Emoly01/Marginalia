@@ -1,17 +1,12 @@
+// The codex: every NPC, place, thread, item and faction of a campaign.
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { createEntity, ENTITY_TYPES, entityTypeInfo } from '../lib/entities'
 import { excerptFrom } from '../lib/text'
+import { lastSeen, codexFilters } from '../lib/campaignHome'
 import { toast } from '../lib/toast'
+import { Drollery } from './ornament'
 
-export default function EntitiesView({
-  userId,
-  campaignId,
-  entities,
-  sessions,
-  initialKind = 'all',
-  onOpenEntity,
-  onEntityCreated,
-}) {
+export default function EntitiesView({ userId, campaignId, entities, sessions, initialKind = 'all', onOpenEntity, onEntityCreated }) {
   const [filter, setFilter] = useState(initialKind)
   const [composing, setComposing] = useState(false)
   const [name, setName] = useState('')
@@ -19,25 +14,15 @@ export default function EntitiesView({
   const [saving, setSaving] = useState(false)
   const nameRef = useRef(null)
 
-  // The Codex rail can jump straight to a single kind.
+  // The campaign home can jump straight to a single kind.
   useEffect(() => setFilter(initialKind), [initialKind])
 
   useEffect(() => {
     if (composing) nameRef.current?.focus()
   }, [composing])
 
-  // Which session each entity first turns up in, from the mention index.
-  const firstSeen = useMemo(() => {
-    const seen = {}
-    for (const s of sessions || []) {
-      for (const id of s.mentionIds || []) {
-        const n = s.sessionNumber
-        if (seen[id] === undefined || n < seen[id]) seen[id] = n
-      }
-    }
-    return seen
-  }, [sessions])
-
+  const seen = useMemo(() => lastSeen(sessions), [sessions])
+  const filters = codexFilters(entities, ENTITY_TYPES)
   const filtered = filter === 'all' ? entities : entities.filter((e) => e.type === filter)
 
   const handleCreate = async (e) => {
@@ -59,98 +44,70 @@ export default function EntitiesView({
   }
 
   return (
-    <div className="column column--wide">
-      <div className="row-between">
-        <span className="hint">people, places and things met so far</span>
-        <button className="btn-quiet" onClick={() => setComposing((c) => !c)}>
-          {composing ? 'cancel' : '+ New entity'}
+    <div className="page-wide">
+      <header className="page-head">
+        <div className="page-head-text">
+          <h1 className="title page-title">Codex</h1>
+          <span className="meta">people, places and things met so far</span>
+        </div>
+        <button className="btn-gilt" onClick={() => setComposing((c) => !c)} aria-expanded={composing}>
+          {composing ? 'Cancel' : '+ New page'}
         </button>
-      </div>
+      </header>
 
       {composing && (
-        <form className="panel" onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <form className="panel codex-compose" onSubmit={handleCreate}>
+          <label className="field">
+            <span className="field-label">Name</span>
+            <input ref={nameRef} value={name} onChange={(e) => setName(e.target.value)} placeholder="Brother Anselm" />
+          </label>
           <div className="field">
-            <label className="field-label" htmlFor="new-entity-name">Name</label>
-            <input
-              id="new-entity-name"
-              ref={nameRef}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Asharti"
-            />
-          </div>
-          <div className="field">
-            <span className="field-label">Kind</span>
-            <div className="pill-row">
+            <span className="field-label" id="new-kind">Kind</span>
+            <div className="toggle-row" role="group" aria-labelledby="new-kind">
               {ENTITY_TYPES.map((t) => (
-                <button
-                  key={t.value}
-                  type="button"
-                  className={`choice${type === t.value ? ' is-active' : ''}`}
-                  onClick={() => setType(t.value)}
-                >
+                <button key={t.value} type="button" className="toggle" aria-pressed={type === t.value} onClick={() => setType(t.value)}>
                   {t.label}
                 </button>
               ))}
             </div>
           </div>
-          <div className="modal-actions">
-            <button type="button" className="link-action" onClick={() => setComposing(false)}>
-              cancel
-            </button>
+          <div className="dialog-actions">
             <button type="submit" className="btn-primary" disabled={!name.trim() || saving}>
-              {saving ? 'adding…' : 'Add'}
+              {saving ? 'Adding…' : 'Add to the codex'}
             </button>
           </div>
         </form>
       )}
 
-      <div className="pill-row">
-        <button
-          className={`choice${filter === 'all' ? ' is-active' : ''}`}
-          onClick={() => setFilter('all')}
-        >
-          all
-        </button>
-        {ENTITY_TYPES.map((t) => (
-          <button
-            key={t.value}
-            className={`choice${filter === t.value ? ' is-active' : ''}`}
-            onClick={() => setFilter(t.value)}
-          >
-            {t.label}
+      <div className="toggle-row" role="group" aria-label="Show">
+        {filters.map((f) => (
+          <button key={f.value} className="toggle" aria-pressed={filter === f.value} onClick={() => setFilter(f.value)}>
+            {f.label} <span className="toggle-count">{f.count}</span>
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <div className="empty-state">
-          <span className="empty-state-title">
-            {filter === 'all' ? 'nobody here yet' : `no ${entityTypeInfo(filter).label.toLowerCase()}s yet`}
-          </span>
-          <span className="empty-state-sub">
-            add one above, or type @ while writing a session and it will make itself.
-          </span>
+        <div className="panel empty">
+          <Drollery type="owl" width={200} />
+          <p className="empty-title">
+            {filter === 'all' ? 'The codex has no pages yet.' : `No ${entityTypeInfo(filter).plural.toLowerCase()} yet.`}
+          </p>
+          <p className="empty-body">Add one above, type @ while writing a session, or ink a session and name them there.</p>
         </div>
       ) : (
-        <div className="card-grid card-grid--tight">
+        <ul className="codex-cards">
           {filtered.map((e) => (
-            <button key={e.id} className="entity-card" onClick={() => onOpenEntity(e.id)}>
-              <div className="entity-card-head">
-                <span className="entity-card-name">{e.name}</span>
-                <span className="pill">{entityTypeInfo(e.type).label}</span>
-              </div>
-              <p className="entity-card-note">
-                {excerptFrom(e.notes, 110) || 'nothing written down yet.'}
-              </p>
-              <div className="entity-card-foot">
-                {firstSeen[e.id] !== undefined
-                  ? `session ${firstSeen[e.id]}`
-                  : 'not mentioned yet'}
-              </div>
-            </button>
+            <li key={e.id}>
+              <button className="card codex-card" onClick={() => onOpenEntity(e.id)}>
+                <span className="codex-row-name">{e.name}</span>
+                <span className="codex-row-type">{entityTypeInfo(e.type).label}</span>
+                <span className="codex-card-note">{excerptFrom(e.notes, 120) || 'nothing written down yet'}</span>
+                <span className="codex-row-seen">{seen[e.id] ? `last seen in session ${seen[e.id]}` : 'not mentioned yet'}</span>
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   )

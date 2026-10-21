@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   getDocs,
@@ -33,6 +34,16 @@ export async function createMargin(userId, campaignId, text) {
     createdAt: serverTimestamp(),
   })
   return docRef.id
+}
+
+/**
+ * Add a margin without waiting for the server: the id comes back at once
+ * and the write is queued (offline-safe). Used by Inking's "Keep for later".
+ */
+export function addMargin(userId, campaignId, text, extra = {}) {
+  const ref = doc(marginsRef(userId, campaignId))
+  const done = setDoc(ref, { text: String(text).trim(), archived: false, createdAt: serverTimestamp(), ...extra })
+  return { id: ref.id, done }
 }
 
 export async function archiveMargin(userId, campaignId, marginId) {

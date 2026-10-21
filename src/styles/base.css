@@ -1,0 +1,136 @@
+/* Marginalia — base. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--frame-bg);
+  background-color: var(--gold-lo);
+  color: var(--m-text);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: 1.5;
+  font-variant-numeric: lining-nums tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--m-accent-strong);
+  text-decoration: underline dotted 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--m-text);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: var(--m-text);
+  background: var(--m-bg);
+  border: 1px solid var(--m-line);
+  border-radius: var(--radius);
+  padding: 0 12px;
+  min-height: var(--target);
+}
+
+textarea {
+  padding: 10px 12px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+select {
+  padding-right: 28px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--m-text-3);
+  font-style: italic;
+  opacity: 1;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--m-accent);
+}
+
+/* Keyboard focus is always visible: a gold rule, never colour alone. */
+:focus-visible {
+  outline: 2px solid var(--gold-line);
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--gold-line);
+  outline-offset: 1px;
+}
+
+::selection {
+  background: var(--m-accent-wash);
+  color: var(--m-text);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+abbr[title] {
+  text-decoration: none;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--m-line) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

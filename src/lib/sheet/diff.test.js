@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import fixture from './__fixtures__/ddb-nenise.fixture.json'
 import { parseDdbSheet } from './parseDdbSheet'
-import { diffSheets, summarizeDiff } from './diff'
+import { diffSheets, summarizeDiff, diffRows, proclamation } from './diff'
 
 const level5 = parseDdbSheet(fixture.fields)
 
@@ -78,5 +78,39 @@ describe('summarizeDiff', () => {
     const s = structuredClone(level5)
     s.inventory.items.push({ name: 'Rope', qty: 1, weight: '5 lb.' })
     expect(summarizeDiff(diffSheets(level5, s))).toBe('items: +Rope')
+  })
+})
+
+describe('diffRows and proclamation', () => {
+  const base = {
+    classLevel: { from: 'Bard 5', to: 'Bard 6' },
+    level: { from: 5, to: 6 },
+    maxHp: { from: 38, to: 45 },
+    profBonus: null,
+    slots: [{ level: 3, from: 2, to: 3 }],
+    abilities: [],
+    spells: { added: ['Hypnotic Pattern'], removed: [] },
+    features: { added: [], removed: ['Old Trick'] },
+    items: { added: [], removed: [], changed: [] },
+    hasChanges: true,
+  }
+
+  it('lists what moved, old beside new', () => {
+    expect(diffRows(base)).toEqual([
+      { label: 'Class', from: 'Bard 5', to: 'Bard 6' },
+      { label: 'Hit points', from: '38', to: '45' },
+      { label: '3rd-level slots', from: '2', to: '3' },
+      { label: 'New spell', from: '—', to: 'Hypnotic Pattern' },
+      { label: 'Features gone', from: 'Old Trick', to: '—' },
+    ])
+    expect(diffRows(null)).toEqual([])
+  })
+
+  it('announces a level gained, and otherwise an amendment', () => {
+    const identity = { name: 'Nenise', classes: [{ class: 'Bard', level: 6 }] }
+    expect(proclamation(base, identity)).toEqual({ lead: 'that Nenise, Bard, is risen to the', title: 'Sixth Level' })
+    expect(proclamation({ ...base, level: null }, identity).title).toBeNull()
+    expect(proclamation({ ...base, level: null }, identity).lead).toMatch(/amended/)
+    expect(proclamation({ hasChanges: false }, identity).lead).toMatch(/stands as it was/)
   })
 })

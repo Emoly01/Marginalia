@@ -1,5 +1,5 @@
 // Read-only view of a parsed D&D Beyond sheet: the import preview and the
-// Sheet tab. Functional markup only — styling lives in the .sheet-* classes.
+// Sheet tab. Styling lives in screens/sheet.css.
 import { ABILITY_KEYS } from '../lib/sheet'
 
 const signed = (n) => (n == null ? '—' : n >= 0 ? `+${n}` : String(n))
@@ -30,15 +30,15 @@ export default function SheetPreview({ sheet }) {
 
   return (
     <div className="sheet">
-      <section className="sheet-section">
-        <h3 className="sheet-name">{identity.name || 'unnamed'}</h3>
+      <section className="sheet-ident">
+        <h3 className="title sheet-name">{identity.name || 'unnamed'}</h3>
         <p className="sheet-sub">
           {[identity.classLevel, identity.species, identity.background, identity.alignment].filter(Boolean).join(' · ')}
         </p>
       </section>
 
-      <section className="sheet-section">
-        <h4 className="dossier-label">Combat</h4>
+      <section className="panel sheet-section">
+        <h4 className="rubric">Combat</h4>
         <dl className="sheet-facts">
           <Fact label="AC" value={combat.ac} />
           <Fact label="HP" value={combat.maxHp} />
@@ -54,13 +54,13 @@ export default function SheetPreview({ sheet }) {
         </dl>
       </section>
 
-      <section className="sheet-section">
-        <h4 className="dossier-label">Abilities &amp; saves</h4>
-        <div className="stat-grid">
+      <section className="panel sheet-section">
+        <h4 className="rubric">Abilities &amp; saves</h4>
+        <div className="sheet-stats">
           {ABILITY_KEYS.map((k) => (
-            <div key={k} className="stat">
-              <div className="stat-label">{k}</div>
-              <div className="stat-value">{abilities[k].score ?? '—'}</div>
+            <div key={k} className="sheet-stat">
+              <div className="sheet-stat-label">{k}</div>
+              <div className="sheet-stat-value">{abilities[k].score ?? '—'}</div>
               <div className="sheet-stat-mod">{signed(abilities[k].mod)}</div>
               <div className="sheet-stat-save">
                 save {signed(abilities[k].save)}
@@ -71,8 +71,8 @@ export default function SheetPreview({ sheet }) {
         </div>
       </section>
 
-      <section className="sheet-section">
-        <h4 className="dossier-label">Skills</h4>
+      <section className="panel sheet-section">
+        <h4 className="rubric">Skills</h4>
         <ul className="sheet-skills">
           {skills.map((s) => {
             const prof = PROF_MARK[s.proficiency]
@@ -91,8 +91,8 @@ export default function SheetPreview({ sheet }) {
       </section>
 
       {attacks.length > 0 && (
-        <section className="sheet-section">
-          <h4 className="dossier-label">Attacks</h4>
+        <section className="panel sheet-section">
+          <h4 className="rubric">Attacks</h4>
           <table className="sheet-table">
             <thead>
               <tr><th>Name</th><th>Hit</th><th>Damage</th><th>Notes</th></tr>
@@ -107,8 +107,8 @@ export default function SheetPreview({ sheet }) {
       )}
 
       {sheet.spells.length > 0 && (
-        <section className="sheet-section">
-          <h4 className="dossier-label">Spells</h4>
+        <section className="panel sheet-section">
+          <h4 className="rubric">Spells</h4>
           {sheet.spellcasting.map((c, i) => (
             <p key={i} className="sheet-sub">
               {c.class} · {c.ability} · save DC {c.saveDC ?? '—'} · attack {signed(c.attackBonus)}
@@ -119,7 +119,7 @@ export default function SheetPreview({ sheet }) {
               <summary>
                 {level === 0 ? 'Cantrips' : `${ordinal(level)} level`}
                 {level > 0 && sheet.slots[level] != null && ` · ${sheet.slots[level]} slots`}
-                <span className="tab-count">{spells.length}</span>
+                <span className="toggle-count">{spells.length}</span>
               </summary>
               <table className="sheet-table">
                 <thead>
@@ -148,8 +148,8 @@ export default function SheetPreview({ sheet }) {
       )}
 
       {actions.length > 0 && (
-        <section className="sheet-section">
-          <h4 className="dossier-label">Actions</h4>
+        <section className="panel sheet-section">
+          <h4 className="rubric">Actions</h4>
           {actions.map((a, i) => (
             <details key={i} className="sheet-details">
               <summary>
@@ -162,8 +162,8 @@ export default function SheetPreview({ sheet }) {
         </section>
       )}
 
-      <section className="sheet-section">
-        <h4 className="dossier-label">Features <span className="tab-count">{features.length}</span></h4>
+      <section className="panel sheet-section">
+        <h4 className="rubric">Features <span className="toggle-count">{features.length}</span></h4>
         {[...featureGroups].map(([group, list]) => (
           <div key={group} className="sheet-group">
             {group && <h5 className="sheet-group-title">{group}</h5>}
@@ -184,8 +184,8 @@ export default function SheetPreview({ sheet }) {
         ))}
       </section>
 
-      <section className="sheet-section">
-        <h4 className="dossier-label">Inventory <span className="tab-count">{inventory.items.length}</span></h4>
+      <section className="panel sheet-section">
+        <h4 className="rubric">Inventory <span className="toggle-count">{inventory.items.length}</span></h4>
         <p className="sheet-sub">
           {['pp', 'gp', 'ep', 'sp', 'cp'].filter((c) => inventory.currency[c]).map((c) => `${inventory.currency[c]} ${c}`).join(' · ') || 'no coin'}
           {inventory.carried.weight && ` · carrying ${inventory.carried.weight}`}
@@ -203,8 +203,8 @@ export default function SheetPreview({ sheet }) {
         {inventory.attuned.length > 0 && <p className="sheet-sub">attuned: {inventory.attuned.join(', ')}</p>}
       </section>
 
-      <section className="sheet-section">
-        <h4 className="dossier-label">Proficiencies</h4>
+      <section className="panel sheet-section">
+        <h4 className="rubric">Proficiencies</h4>
         <dl className="sheet-facts">
           {Object.entries(proficiencies).map(([k, list]) => (
             <Fact key={k} label={k} value={list.join(', ')} />
@@ -213,8 +213,8 @@ export default function SheetPreview({ sheet }) {
       </section>
 
       {Object.values(personality).some(Boolean) && (
-        <section className="sheet-section">
-          <h4 className="dossier-label">Personality</h4>
+        <section className="panel sheet-section">
+          <h4 className="rubric">Personality</h4>
           <dl className="sheet-facts sheet-facts--prose">
             {[
               ['Traits', personality.traits],

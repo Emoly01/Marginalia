@@ -5,11 +5,19 @@ import { useDebounce } from '../lib/useDebounce'
 import { buildMentionSuggestion } from '../lib/mentionSuggestion'
 import { toast } from '../lib/toast'
 import { sessionStatus } from '../lib/sessionStatus'
+import { useSessionLog } from '../lib/useSessionLog'
+import { updateLogEntry } from '../lib/log'
+import { appendHtml, recapFragment } from '../lib/inking'
+import { stripAt } from '../lib/mentionText'
+import { sessionDuration, formatDuration, toDate } from '../lib/sessionStatus'
+import { stripHtml } from '../lib/text'
 import RichTextEditor from './RichTextEditor'
-import NpcQuickCapture from './NpcQuickCapture'
+import { IlluminatedTitle, Mark } from './ornament'
+import MentionText from './MentionText'
 
 export default function SessionEditor({
   userId,
+  campaign,
   campaignId,
   session,
   entities,
@@ -25,6 +33,8 @@ export default function SessionEditor({
   const [sessionNumber, setSessionNumber] = useState(session.sessionNumber)
   const [content, setContent] = useState(session.content || '')
   const [saveStatus, setSaveStatus] = useState('saved') // 'saved' | 'saving' | 'unsaved'
+  const [savedAt, setSavedAt] = useState(null)
+  const [editingTitle, setEditingTitle] = useState(false)
 
   const debouncedTitle = useDebounce(title, 800)
   const debouncedDate = useDebounce(date, 800)
@@ -77,6 +87,7 @@ export default function SessionEditor({
     setDate(session.date)
     setSessionNumber(session.sessionNumber)
     setContent(session.content || '')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.id])
 
   // Single save path shared by autosave and Cmd+S
@@ -90,6 +101,7 @@ export default function SessionEditor({
         content: values.content,
       })
       setSaveStatus('saved')
+      setSavedAt(new Date())
       onUpdated?.()
     } catch (err) {
       console.error('Save failed:', err)
@@ -166,93 +178,148 @@ export default function SessionEditor({
     }
   }
 
+  // The session's own log, down the margin: "Weave in" pulls a line into
+  // the page (the same as Inking's "Add to recap") and marks it inked.
+  const { entries } = useSessionLog(userId, campaignId, session.id, { entities })
+  const typed = entries.filter((e) => !e.auto && e.mark !== 'auto')
+  const remaining = typed.filter((e) => !e.inked).length
+  const weave = (entry) => {
+    setContent((c) => appendHtml(c, recapFragment(entry.text, { action: 'recap', mark: entry.mark, entities })))
+    updateLogEntry(userId, campaignId, entry.id, { inked: true, inkedAs: { action: 'recap', via: 'weave', entityId: null } }).catch((err) => {
+      console.error('Could not mark the line woven:', err)
+      toast('Could not mark that line as woven in.')
+    })
+  }
+
+  const words = stripHtml(content).split(/\s+/).filter(Boolean).length
+  const duration = formatDuration(sessionDuration(session))
+  const people = useMemo(() => {
+    const ids = new Set()
+    const re = /data-id="([^"]+)"/g
+    let m
+    while ((m = re.exec(content)) !== null) ids.add(m[1])
+    return entities.filter((e) => ids.has(e.id) && (e.type === 'npc' || e.type === 'pc')).map((e) => e.name).slice(0, 4)
+  }, [content, entities])
+  const status = sessionStatus(session)
+  const dateLabel = (() => {
+    const d = toDate(date ? `${date}T12:00:00` : null)
+    return d ? d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' }) : ''
+  })()
+  const savedLabel = { saved: savedAt ? `saved ${savedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'saved', saving: 'saving…', unsaved: 'unsaved' }[saveStatus]
+
   return (
-    <div className="view">
-      <header className="view-header" style={{ alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', flex: 1, minWidth: 0 }}>
-          <span style={{ fontSize: '13px', color: 'var(--m-text-4)' }}>#</span>
-          <input
-            type="number"
-            className="input-ghost"
-            aria-label="Session number"
-            value={sessionNumber}
-            onChange={(e) => setSessionNumber(e.target.value)}
-            style={{ width: '64px', fontVariantNumeric: 'tabular-nums' }}
-          />
-          <input
-            type="date"
-            className="input-ghost"
-            aria-label="Session date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            style={{ width: 'auto', color: 'var(--m-text-3)', fontSize: '14px' }}
-          />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 'none' }}>
-          <SaveIndicator status={saveStatus} />
-          <button className="btn" onClick={handleBack}>← back</button>
-          <button className="btn-danger" onClick={handleDelete}>delete</button>
-        </div>
-      </header>
-
-      <div className="view-body">
-        <div className="column column--narrow" style={{ gap: '18px' }}>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Session title…"
-            aria-label="Session title"
-            style={{
-              width: '100%',
-              fontSize: '32px',
-              fontStyle: 'italic',
-              color: 'var(--m-accent)',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 0,
-              padding: '4px 0',
-              lineHeight: 1.15,
-            }}
-          />
-
-          {sessionStatus(session) === 'ended' && onInk && (
-            <div className="ink-banner">
-              <span>This session hasn’t been inked yet — its log and your margins are waiting.</span>
-              <button className="btn-primary" onClick={handleInk}>Ink it</button>
-            </div>
-          )}
-
-          {/* Quick-add NPC roster — capture names fast without breaking flow */}
-          <NpcQuickCapture
-            userId={userId}
-            campaignId={campaignId}
-            entities={entities}
-            onEntityCreated={onEntityCreated}
-            onOpenEntity={onOpenEntity}
-          />
-
-          {/* Body — Tiptap rich text editor */}
-          <RichTextEditor
-            content={content}
-            onChange={setContent}
-            placeholder="What happened this session? Type @ to mention an NPC, place, or thread."
-            mentionSuggestion={mentionSuggestion}
-            onMentionClick={onOpenEntity}
-            tall
-          />
-        </div>
+    <>
+      <div className="toolbar">
+        <button className="btn" onClick={handleBack}>‹ {campaign?.shortName || campaign?.name || 'Back'}</button>
+        <span className="rubric rubric--quiet">Sessions · {sessionNumber}</span>
+        <span className="toolbar-spacer" />
+        <span className={`save-state${saveStatus === 'unsaved' ? ' save-state--unsaved' : ''}`} aria-live="polite">
+          {words} {words === 1 ? 'word' : 'words'} · {savedLabel}
+        </span>
+        {status !== 'live' && (
+          remaining > 0 || status === 'ended' ? (
+            <button className="btn-quiet" onClick={handleInk}>Ink the log{remaining ? ` · ${remaining} left` : ''}</button>
+          ) : typed.length > 0 ? (
+            <span className="meta">Inked</span>
+          ) : null
+        )}
+        <button className="btn-danger" onClick={handleDelete}>Delete</button>
+        <button className="btn-primary" onClick={handleBack}>Done</button>
       </div>
-    </div>
+
+      <div className="editor">
+        <div className="editor-page">
+          <article className="editor-sheet">
+            {editingTitle ? (
+              <input
+                className="input-ghost editor-title-input"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onBlur={() => setEditingTitle(false)}
+                onKeyDown={(e) => e.key === 'Enter' && setEditingTitle(false)}
+                placeholder="Session title…"
+                aria-label="Session title"
+                autoFocus
+              />
+            ) : (
+              <button className="editor-title" onClick={() => setEditingTitle(true)} aria-label={`Session title: ${title || 'untitled'} — tap to edit`}>
+                <IlluminatedTitle text={title || 'Untitled'} as="span" size={128} variant="grand" className="illuminated--wrap editor-title-text" />
+              </button>
+            )}
+            <div className="editor-meta">
+              <label className="editor-meta-num">
+                <span className="rubric">Session</span>
+                <input type="number" inputMode="numeric" className="input-ghost" aria-label="Session number" value={sessionNumber} onChange={(e) => setSessionNumber(e.target.value)} />
+              </label>
+              <label className="editor-meta-date">
+                <span className="sr-only">Date</span>
+                <input type="date" className="input-ghost" value={date} onChange={(e) => setDate(e.target.value)} aria-label="Session date" />
+              </label>
+              {dateLabel && <span>{dateLabel}</span>}
+              {duration && <span>{duration} at the table</span>}
+              {people.length > 0 && <span>{people.join(', ')}</span>}
+            </div>
+            <hr className="rule rule--double" />
+            {sessionStatus(session) === 'ended' && onInk && (
+              <div className="wash-box ink-banner">
+                <span>This session hasn’t been inked yet — its log and your margins are waiting.</span>
+                <button className="btn-primary" onClick={handleInk}>Ink it</button>
+              </div>
+            )}
+            <div className="prose-illuminated">
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
+                placeholder="What happened this session? Type @ to name someone from the codex."
+                mentionSuggestion={mentionSuggestion}
+                onMentionClick={onOpenEntity}
+                tall
+              />
+            </div>
+            <p className="field-hint">@ names someone from the codex · “Weave in” pulls a margin note into the page</p>
+          </article>
+        </div>
+
+        <aside className="panel panel-col editor-margin" aria-labelledby="margin-head">
+          <div className="panel-head">
+            <h2 className="rubric" id="margin-head">In the margin</h2>
+            <span className="meta">{typed.length ? (remaining ? `${remaining} not yet woven in` : 'all woven in') : 'no log for this session'}</span>
+          </div>
+          <div className="panel-body">
+            {entries.length === 0 ? (
+              <p className="hint home-pad">Lines you log at the table land here, ready to weave into the page.</p>
+            ) : (
+              <ol className="margin-log">
+                {entries.map((e) => (
+                  <MarginLine key={e.id} entry={e} entities={entities} onWeave={() => weave(e)} onOpenEntity={onOpenEntity} />
+                ))}
+              </ol>
+            )}
+          </div>
+        </aside>
+      </div>
+    </>
   )
 }
 
-function SaveIndicator({ status }) {
-  const display = {
-    saved: { text: 'saved', color: 'var(--m-text-4)' },
-    saving: { text: 'saving…', color: 'var(--m-accent)' },
-    unsaved: { text: 'unsaved', color: 'var(--m-danger)' },
-  }[status]
-
-  return <span className="save-indicator" style={{ color: display.color }}>{display.text}</span>
+function MarginLine({ entry: e, entities, onWeave, onOpenEntity }) {
+  const auto = e.auto || e.mark === 'auto'
+  const time = toDate(e.clientAt)?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ?? ''
+  const woven = e.inked && e.inkedAs?.action === 'recap'
+  return (
+    <li className="log-line">
+      <span className="log-time">{time}</span>
+      <span className={`log-mark log-mark--${auto ? 'auto' : e.mark}`}><Mark type={auto ? 'auto' : e.mark} size={20} /></span>
+      <span className={`log-text${auto ? ' log-text--auto' : ''}${e.inked ? ' log-text--done' : ''}`}>
+        <span>{auto ? e.text : <MentionText text={e.text} entities={entities} onOpenEntity={onOpenEntity} />}</span>
+        {!auto && !e.inked && (
+          <button className="btn-gilt btn--sm margin-weave" onClick={onWeave} aria-label={`Weave in: ${stripAt(e.text)}`}>
+            Weave in ↵
+          </button>
+        )}
+        {woven && <span className="margin-woven">✓ woven into the page</span>}
+        {e.inked && !woven && <span className="margin-woven">✓ inked</span>}
+      </span>
+    </li>
+  )
 }

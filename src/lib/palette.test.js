@@ -6,7 +6,12 @@ import {
   paletteFor,
   nearestPalette,
   hexToRgb,
+  inkTokens,
+  hexToOklch,
+  contrastRatio,
+  iconField,
 } from './palette'
+import { readGroundPref, resolveGround } from './ground'
 
 describe('hexToRgb', () => {
   it('parses six-digit hex', () => {
@@ -91,5 +96,77 @@ describe('paletteById', () => {
       expect(p.hue).toBeLessThan(360)
       expect(p.chroma).toBeGreaterThan(0)
     }
+  })
+})
+
+describe('ink model', () => {
+
+  it('keeps the accent hue as the rubric on both grounds', () => {
+    for (const p of PALETTE) {
+      const { H } = hexToOklch(p.hex)
+      for (const ground of ['night', 'day']) {
+        const accent = inkTokens(p, ground)['--m-accent']
+        expect(Number(accent.match(/([\d.]+)\)$/)[1])).toBeCloseTo(H, 0)
+      }
+    }
+  })
+
+  it('keeps gold leaf the same for every campaign on the night ground', () => {
+    const golds = PALETTE.map((p) => inkTokens(p, 'night')['--gold'])
+    expect(new Set(golds).size).toBe(1)
+  })
+
+  it('never tints the text ramp with the ink', () => {
+    const texts = PALETTE.map((p) => inkTokens(p, 'night')['--m-text'])
+    expect(new Set(texts).size).toBe(1)
+  })
+
+  // WCAG AA: 4.5:1 for normal text. Checked for every ink, not just three.
+  const pairs = [
+    ['--m-text', ['--m-bg', '--m-panel', '--m-card', '--m-card-hi']],
+    ['--m-text-2', ['--m-bg', '--m-panel', '--m-card', '--m-card-hi']],
+    ['--m-text-3', ['--m-bg', '--m-panel', '--m-card']],
+    ['--m-text-4', ['--m-bg', '--m-panel', '--m-card']],
+    ['--m-accent', ['--m-bg', '--m-panel', '--m-card']],
+    ['--m-accent-strong', ['--m-bg', '--m-panel', '--m-card', '--m-accent-wash']],
+    ['--m-on-accent', ['--m-accent']],
+    ['--m-danger', ['--m-bg', '--m-panel', '--m-card']],
+  ]
+  for (const ground of ['night', 'day']) {
+    for (const p of PALETTE) {
+      it(`meets AA on ${ground} vellum in ${p.name}`, () => {
+        const t = inkTokens(p, ground)
+        const failures = []
+        for (const [fg, bgs] of pairs) {
+          for (const bg of bgs) {
+            const ratio = contrastRatio(t[fg], t[bg])
+            if (ratio < 4.5) failures.push(`${fg} on ${bg}: ${ratio.toFixed(2)}`)
+          }
+        }
+        // The ink on gold is drawn at display size (initials), so 3:1 (AA large).
+        const initial = contrastRatio(t['--m-ink-on-gold'], t['--gold'])
+        if (initial < 3) failures.push(`--m-ink-on-gold on --gold: ${initial.toFixed(2)}`)
+        expect(failures).toEqual([])
+      })
+    }
+  }
+
+  it('computes contrast like WCAG', () => {
+    expect(contrastRatio('#000000', '#ffffff')).toBeCloseTo(21, 0)
+    expect(contrastRatio('#777777', '#777777')).toBeCloseTo(1, 5)
+  })
+
+  it('derives the icon field from the ink', () => {
+    expect(iconField(paletteById('gold'))).toMatch(/^oklch\(0\.260 /)
+  })
+
+  it('reads the ground preference defensively', () => {
+    expect(readGroundPref({ getItem: () => 'day' })).toBe('day')
+    expect(readGroundPref({ getItem: () => 'chartreuse' })).toBe('night')
+    expect(readGroundPref({ getItem: () => { throw new Error('blocked') } })).toBe('night')
+    expect(readGroundPref(undefined)).toBe('night')
+    expect(resolveGround('auto', 'table')).toBe('night')
+    expect(resolveGround('auto', 'desk')).toBe('day')
+    expect(resolveGround('day', 'table')).toBe('day')
   })
 })

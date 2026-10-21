@@ -45,3 +45,14 @@ export function initials(name) {
   const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
   return (first + last).toUpperCase()
 }
+
+/**
+ * Split a title for an illuminated initial: "The Drowned Bells" →
+ * { letter: 'T', lead: '', rest: 'he Drowned Bells' }. Leading punctuation
+ * ("“Run.”") stays in `lead`; text with no letter or digit has no initial.
+ */
+export function firstLetter(text) {
+  const s = String(text ?? '').trim()
+  const i = s.search(/[\p{L}\p{N}]/u)
+  return i < 0 ? { letter: '', rest: s } : { letter: s[i].toUpperCase(), lead: s.slice(0, i), rest: s.slice(i + 1) }
+}

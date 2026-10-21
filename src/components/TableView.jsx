@@ -1,37 +1,36 @@
-// /campaigns/:campaignId/table — Marginalia at the table. Full screen, no
-// app rails. Landscape: sheet + trackers left, live log right. Portrait:
-// log under the sheet. Either way the capture line stays pinned at the
-// bottom, and the screen is kept awake while this is open.
+// /campaigns/:campaignId/table — Marginalia at the table. Its own layout,
+// never the app rails. Landscape: the sheet panel left, the live log right.
+// Portrait: the log under the sheet. Either way the capture line stays
+// pinned at the bottom, and the screen is kept awake while this is open.
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { getCampaign } from '../lib/campaigns'
 import { listEntities } from '../lib/entities'
 import { subscribeSessions, startSession, endSession } from '../lib/sessions'
-import { findLiveSession, findPreviousSession } from '../lib/sessionStatus'
-import { applyPalette, paletteFor } from '../lib/palette'
+import { findLiveSession, findPreviousSession, sessionDuration, formatClock } from '../lib/sessionStatus'
+import { paletteFor } from '../lib/palette'
+import { useInk } from '../lib/useInk'
 import { usePlayState } from '../lib/usePlayState'
 import { useSessionLog } from '../lib/useSessionLog'
 import { useWakeLock } from '../lib/useWakeLock'
 import { toast } from '../lib/toast'
 import { openSearch } from '../lib/searchBus'
-import TableTrackers from './TableTrackers'
+import TableTrackers, { TableSummary, Rests } from './TableTrackers'
 import TableReference from './TableReference'
 import LiveLog from './LiveLog'
 import PreviouslyOn from './PreviouslyOn'
+import { Drollery, FrameCorners, IlluminatedTitle, SearchIcon } from './ornament'
 
-// Reported in the corner so the real tablet's numbers can be read off the
-// Vercel preview for the design phase.
-const readViewport = () => ({ w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio })
-
-function useViewportInfo() {
-  const [info, setInfo] = useState(readViewport)
+// A clock that ticks once a second while `running`.
+function useNow(running) {
+  const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
-    console.info('Table view viewport', readViewport())
-    const onResize = () => setInfo(readViewport())
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-  return info
+    if (!running) return undefined
+    setNow(Date.now())
+    const id = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(id)
+  }, [running])
+  return now
 }
 
 export default function TableView({ user }) {
@@ -46,7 +45,6 @@ export default function TableView({ user }) {
   const [starting, setStarting] = useState(false)
 
   useWakeLock(true)
-  const viewport = useViewportInfo()
 
   useEffect(() => {
     let cancelled = false
@@ -70,12 +68,11 @@ export default function TableView({ user }) {
     }
   }, [userId, campaignId])
 
-  useEffect(() => {
-    if (campaign) applyPalette(paletteFor(campaign))
-    return () => applyPalette(null)
-  }, [campaign])
+  const palette = useMemo(() => (campaign ? paletteFor(campaign) : null), [campaign])
+  useInk(palette, 'table')
 
   const live = findLiveSession(sessions)
+  const now = useNow(Boolean(live))
   const previous = findPreviousSession(sessions)
   const threads = useMemo(() => entities.filter((e) => e.type === 'thread'), [entities])
 
@@ -119,76 +116,101 @@ export default function TableView({ user }) {
       return next
     }, { replace: true })
 
-  if (campaign === undefined) return <div className="table-view table-waiting">opening the table…</div>
+  if (campaign === undefined) return <TableFrame><p className="waiting">opening the table…</p></TableFrame>
   if (!campaign) {
     return (
-      <div className="table-view table-waiting">
-        that campaign isn’t here — <Link to="/">back to all campaigns</Link>
-      </div>
+      <TableFrame>
+        <p className="waiting">
+          That campaign isn’t here. <Link to="/">Back to all campaigns</Link>
+        </p>
+      </TableFrame>
     )
   }
 
+  const hasSheet = !playLoading && sheet && state
+
   return (
-    <div className="table-view">
+    <TableFrame>
       <header className="table-bar">
-        <Link className="table-btn" to={`/campaigns/${campaignId}`} aria-label={`Back to ${campaign.name}`}>
-          ← {campaign.shortName || campaign.name}
+        <Link className="btn-icon btn-icon--bare table-back" to={`/campaigns/${campaignId}`} aria-label={`Back to ${campaign.name}`}>
+          ←
         </Link>
-        <span className="table-bar-status">
-          {live ? <><span className="table-badge">live</span> {live.title}</> : 'not playing yet'}
-        </span>
-        <span className="table-bar-actions">
-          <button className="table-btn" onClick={openSearch}>Search</button>
-          {campaign.ddbUrl && (
-            <a className="table-btn" href={campaign.ddbUrl} target="_blank" rel="noreferrer">
-              D&amp;D Beyond ↗
-            </a>
-          )}
-          {live && (
-            <button className="table-btn" onClick={handleEnd}>End session</button>
-          )}
-        </span>
+        <div className="table-bar-title">
+          <IlluminatedTitle text={campaign.name || 'Untitled campaign'} size={44} className="title table-campaign" />
+          <span className="rubric table-bar-session">
+            {live
+              ? [live.sessionNumber && `Session ${live.sessionNumber}`, live.title]
+                  .filter((part, i, all) => part && all.indexOf(part) === i)
+                  .join(' · ')
+              : 'Not playing yet'}
+          </span>
+        </div>
+        <span className="toolbar-spacer" />
+        {hasSheet && <Rests state={state} actions={actions} className="table-rests table-rests--bar" />}
+        <div className="table-clock" aria-label={live ? `Running ${formatClock(sessionDuration(live, now))}` : 'Not started'}>
+          <span className="table-clock-label" aria-hidden="true">{live ? 'Running' : 'Not started'}</span>
+          <span className="numeral table-clock-time" aria-hidden="true">{live ? formatClock(sessionDuration(live, now)) : '—'}</span>
+        </div>
+        <button className="btn-icon" onClick={openSearch} aria-label="Search" title="Search (Ctrl K)">
+          <SearchIcon />
+        </button>
+        {campaign.ddbUrl && (
+          <a className="btn table-ddb" href={campaign.ddbUrl} target="_blank" rel="noreferrer">
+            D&amp;D Beyond ↗
+          </a>
+        )}
+        {live && (
+          <button className="btn-quiet" onClick={handleEnd}>End session</button>
+        )}
       </header>
 
-      <div className="table-body">
-        <section className="table-sheet" aria-label="Character sheet">
+      <div className={`table-body${hasSheet ? '' : ' table-body--no-sheet'}`}>
+        <section className="panel table-sheet" aria-label="Character sheet">
           {playLoading ? (
-            <p className="hint">loading sheet…</p>
-          ) : sheet && state ? (
+            <p className="waiting">opening the sheet…</p>
+          ) : hasSheet ? (
             <>
-              <TableTrackers sheet={sheet} state={state} actions={actions} />
-              <TableReference
-                userId={userId}
-                campaignId={campaignId}
-                sheet={sheet}
-                state={state}
-                actions={actions}
-                entities={entities}
-                tab={refTab}
-                focusSpell={searchParams.get('spell')}
-                onTabChange={setRefTab}
-                onOpenEntity={openEntity}
-              />
+              <TableSummary sheet={sheet} state={state} actions={actions} />
+              <div className="table-lower">
+                <TableTrackers sheet={sheet} state={state} actions={actions} />
+                <TableReference
+                  userId={userId}
+                  campaignId={campaignId}
+                  sheet={sheet}
+                  state={state}
+                  actions={actions}
+                  entities={entities}
+                  tab={refTab}
+                  focusSpell={searchParams.get('spell')}
+                  onTabChange={setRefTab}
+                  onOpenEntity={openEntity}
+                />
+              </div>
             </>
           ) : (
-            <div className="empty-state">
-              <span className="empty-state-title">no sheet yet</span>
-              <span className="empty-state-sub">
-                Import your D&amp;D Beyond PDF on the <Link to={`/campaigns/${campaignId}?tab=sheet`}>Sheet tab</Link> to
-                get trackers here. The log works without it.
-              </span>
+            <div className="empty">
+              <Drollery type="cat" width={180} />
+              <p className="empty-title">No sheet bound yet.</p>
+              <p className="empty-body">
+                Bind your D&amp;D Beyond PDF on the <Link to={`/campaigns/${campaignId}?tab=sheet`}>Sheet tab</Link> to get
+                trackers here. The log works without it.
+              </p>
             </div>
           )}
-          <p className="table-viewport hint">
-            viewport {viewport.w} × {viewport.h} · DPR {viewport.dpr}
-          </p>
         </section>
 
-        <section className="table-side" aria-label={live ? 'Session log' : 'Before the session'}>
+        <section className="panel table-side" aria-label={live ? 'Session log' : 'Before the session'}>
           {sessions === null ? (
-            <p className="hint">loading sessions…</p>
+            <p className="waiting">opening the log…</p>
           ) : live ? (
-            <LiveLog session={live} entries={log.entries} onCapture={capture} onRemove={log.remove} onOpenEntity={openEntity} />
+            <LiveLog
+              session={live}
+              entries={log.entries}
+              entities={entities}
+              onCapture={capture}
+              onRemove={log.remove}
+              onOpenEntity={openEntity}
+            />
           ) : (
             <PreviouslyOn
               userId={userId}
@@ -202,6 +224,15 @@ export default function TableView({ user }) {
           )}
         </section>
       </div>
+    </TableFrame>
+  )
+}
+
+function TableFrame({ children }) {
+  return (
+    <div className="frame table-view">
+      <div className="frame-surface table-surface">{children}</div>
+      <FrameCorners />
     </div>
   )
 }

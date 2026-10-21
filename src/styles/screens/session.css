@@ -1,0 +1,171 @@
+/* The session editor: the writing page, with the session's log in the margin. */
+
+.editor {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+}
+
+.editor-page {
+  min-height: 0;
+  overflow: auto;
+  padding: 40px 56px 56px;
+}
+
+.editor-sheet {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.editor-title {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border-radius: var(--radius);
+}
+
+.editor-title:hover .illuminated-rest {
+  color: var(--m-accent-strong);
+}
+
+.editor-title-text {
+  font-size: 66px;
+  line-height: 0.86;
+}
+
+.editor-title-text .illuminated-visual {
+  align-items: flex-end;
+}
+
+.editor-title-text .illuminated-rest {
+  padding-bottom: 4px;
+}
+
+.editor-title-input {
+  width: 100%;
+  min-height: 72px;
+  font-family: var(--font-title);
+  font-size: 54px;
+  line-height: 1;
+}
+
+.editor-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  font-size: 16px;
+  color: var(--m-text-3);
+}
+
+.editor-meta-num {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editor-meta-num input {
+  width: 64px;
+  min-height: var(--target);
+  font-weight: 600;
+  color: var(--m-text-2);
+}
+
+.editor-meta-date input {
+  min-height: var(--target);
+  color: var(--m-text-3);
+  font-size: var(--t-meta);
+}
+
+.editor-margin {
+  border-radius: 0;
+  border-width: 0 0 0 1px;
+}
+
+.margin-log {
+  list-style: none;
+  padding: 4px 14px 12px 0;
+}
+
+.margin-log .log-line {
+  grid-template-columns: 62px 30px minmax(0, 1fr);
+}
+
+.margin-log .log-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--t-body);
+}
+
+.margin-log .log-text--auto {
+  font-size: var(--t-small);
+}
+
+.log-text--done {
+  color: var(--m-text-3);
+}
+
+.margin-weave {
+  align-self: flex-start;
+  font-style: normal;
+}
+
+.margin-woven {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--m-accent);
+}
+
+.ink-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  font-style: italic;
+  color: var(--m-text-2);
+}
+
+@media (max-width: 1180px) {
+  .editor {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+
+  .editor-page {
+    padding: 28px 32px 48px;
+  }
+
+  .editor-title-text {
+    font-size: 52px;
+  }
+}
+
+@media (max-width: 860px) {
+  .editor {
+    display: block;
+    overflow: auto;
+  }
+
+  .editor-page {
+    overflow: visible;
+    padding: 20px 18px 28px;
+  }
+
+  .editor-margin {
+    border-width: 1px 0 0;
+  }
+
+  .editor-margin .panel-body {
+    overflow: visible;
+  }
+
+  .editor-title-text {
+    font-size: 40px;
+  }
+}

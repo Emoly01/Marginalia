@@ -23,11 +23,11 @@ const entityDoc = (userId, campaignId, entityId) =>
   doc(db, 'users', userId, 'campaigns', campaignId, 'entities', entityId)
 
 export const ENTITY_TYPES = [
-  { value: 'npc', label: 'NPC', color: '#8a9a7b' },
-  { value: 'location', label: 'Location', color: '#9b8aa4' },
-  { value: 'thread', label: 'Thread', color: '#b88654' },
-  { value: 'item', label: 'Item', color: '#c9a961' },
-  { value: 'faction', label: 'Faction', color: '#7a8fa4' },
+  { value: 'npc', label: 'NPC', plural: 'NPCs', color: '#8a9a7b' },
+  { value: 'location', label: 'Place', plural: 'Places', color: '#9b8aa4' },
+  { value: 'thread', label: 'Thread', plural: 'Threads', color: '#b88654' },
+  { value: 'item', label: 'Item', plural: 'Items', color: '#c9a961' },
+  { value: 'faction', label: 'Faction', plural: 'Factions', color: '#7a8fa4' },
 ]
 
 export function entityTypeInfo(type) {
