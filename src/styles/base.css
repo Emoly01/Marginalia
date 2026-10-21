@@ -59,7 +59,7 @@ select {
   border: 1px solid var(--m-line);
   border-radius: var(--radius);
   padding: 0 12px;
-  min-height: 44px;
+  min-height: var(--target);
 }
 
 textarea {

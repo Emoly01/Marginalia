@@ -86,8 +86,9 @@
   - resources         // [{ id, name, max, reset: "short" | "long" }] — confirmed at import
   - resourcesUsed     // { [resourceId]: n }
   - hitDiceUsed
-  - conditions        // ["Poisoned", …]
-  - concentration     // spell name or null
+  - conditions        // ["Poisoned", …]; a legacy "Exhaustion" here reads as exhaustion 1
+  - exhaustion        // 0–6, a counter (no rules text); a long rest lowers it by 1
+  - concentration     // spell name or null; a long rest clears it
   - deathSaves        // { successes, failures }
   - updatedAt
 
@@ -108,7 +109,16 @@
   - clientAt          // Date.now() when written — survives offline queueing
   - createdAt         // serverTimestamp()
   - inked             // false until handled in Inking
-  - inkedAs           // null, or { action: "recap" | "entity" | "link" | "toss", entityId }
+  - inkedAs           // null, or { action: "recap" | "entity" | "link" | "toss" | "later",
+                      //   entityId, marginId } — "later" moved the line into the Margins
+                      //   inbox; marginId is the margin it became
+
+/users/{userId}/campaigns/{campaignId}/margins/{marginId}
+  // The Margins inbox: loose notes not tied to a session.
+  - text
+  - archived          // true once used or tossed in Inking
+  - createdAt
+  - fromLog           // log entryId, when "Keep for later" moved a log line here
 ```
 
 Entities created by a sheet import carry `source: "sheet"`. One is created per

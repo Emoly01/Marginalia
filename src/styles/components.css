@@ -132,7 +132,7 @@
 }
 
 .btn--sm {
-  min-height: 40px;
+  min-height: var(--target);
   font-size: 15px;
   padding: 0 12px;
 }
@@ -169,7 +169,7 @@
 }
 
 .btn-link {
-  min-height: 40px;
+  min-height: var(--target);
   padding: 0 4px;
   color: var(--m-text-2);
   text-decoration: underline dotted 1px;
@@ -202,7 +202,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: var(--target);
   padding: 0 12px;
   border: 1px solid var(--m-line);
   border-radius: var(--radius);
@@ -850,7 +850,7 @@ button.mention-word:hover {
   align-items: center;
   gap: 10px;
   width: 100%;
-  min-height: 44px;
+  min-height: var(--target);
   padding: 0 10px;
   border-radius: var(--radius);
   text-align: left;

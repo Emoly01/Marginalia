@@ -546,18 +546,29 @@
   white-space: nowrap;
 }
 
+.table-conc {
+  position: relative;
+}
+
+/* The select covers the whole box, so the tap target is the box. */
 .table-conc-select {
-  min-height: 32px;
-  padding: 0 24px 0 0;
-  border: 0;
-  background-color: transparent;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-height: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.table-conc:focus-within {
+  outline: 2px solid var(--gold-line);
+  outline-offset: 2px;
+}
+
+.table-conc-none {
   font-size: 16px;
   font-style: italic;
   color: var(--m-text-2);
-}
-
-.table-conc-select:focus-visible {
-  outline: 2px solid var(--gold-line);
 }
 
 .table-cond-btn {
@@ -712,7 +723,7 @@
 
 .table-ref-search {
   flex: none;
-  min-height: 44px;
+  min-height: var(--target);
   font-size: 16px;
   font-style: italic;
 }
@@ -1030,8 +1041,8 @@
 }
 
 .table-log-remove {
-  width: 40px;
-  height: 40px;
+  width: var(--target);
+  height: var(--target);
   font-size: 20px;
   color: var(--m-text-4);
   opacity: 0.5;

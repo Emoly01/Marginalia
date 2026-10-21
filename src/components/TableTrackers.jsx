@@ -112,7 +112,7 @@ function HitPoints({ state, actions }) {
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
             aria-haspopup="dialog"
-            aria-label={`${current} of ${max} hit points. Type an amount`}
+            aria-label={`${current} / ${max} hit points, type an amount`}
           >
             <span className="numeral table-hp-current" aria-live="polite">{current}</span>
             <span className="table-hp-max">/ {max}</span>
@@ -199,11 +199,6 @@ export default function TableTrackers({ sheet, state, actions }) {
   const concentrationSpells = sheet.spells.filter((s) => s.concentration)
   const nConditions = state.conditions.length
   const afflicted = nConditions > 0 || state.exhaustion > 0
-  const conditionSummary = nConditions
-    ? `${state.conditions[0]}${nConditions > 1 ? ` +${nConditions - 1}` : ''}`
-    : state.exhaustion
-      ? `Exhaustion ${state.exhaustion}`
-      : 'None  +'
 
   return (
     <div className="table-trackers">
@@ -260,6 +255,7 @@ export default function TableTrackers({ sheet, state, actions }) {
           ) : (
             <label className="table-conc-text">
               <span className="table-conc-label">Concentration</span>
+              <span className="table-conc-none" aria-hidden="true">Not concentrating ▾</span>
               <select
                 className="table-conc-select"
                 value=""
@@ -277,10 +273,28 @@ export default function TableTrackers({ sheet, state, actions }) {
           className={`table-cond-btn${afflicted ? ' is-on' : ''}`}
           onClick={() => setConditionsOpen(true)}
           aria-haspopup="dialog"
-          aria-label={`Conditions: ${nConditions ? state.conditions.join(', ') : 'none'}${state.exhaustion ? `, exhaustion ${state.exhaustion}` : ''}`}
         >
           <span className="table-conc-label">Conditions</span>
-          <span className="table-cond-summary">{conditionSummary}</span>
+          <span className="table-cond-summary">
+            {nConditions ? (
+              <>
+                {state.conditions[0]}
+                {nConditions > 1 && (
+                  <>
+                    <span aria-hidden="true"> +{nConditions - 1}</span>
+                    <span className="sr-only">, {state.conditions.slice(1).join(', ')}</span>
+                  </>
+                )}
+                {state.exhaustion > 0 && <span className="sr-only">, exhaustion {state.exhaustion}</span>}
+              </>
+            ) : state.exhaustion ? (
+              `Exhaustion ${state.exhaustion}`
+            ) : (
+              <>
+                None<span aria-hidden="true">  +</span>
+              </>
+            )}
+          </span>
         </button>
       </div>
 

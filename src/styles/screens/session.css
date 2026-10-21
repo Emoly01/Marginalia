@@ -70,13 +70,13 @@
 
 .editor-meta-num input {
   width: 64px;
-  min-height: 40px;
+  min-height: var(--target);
   font-weight: 600;
   color: var(--m-text-2);
 }
 
 .editor-meta-date input {
-  min-height: 40px;
+  min-height: var(--target);
   color: var(--m-text-3);
   font-size: var(--t-meta);
 }

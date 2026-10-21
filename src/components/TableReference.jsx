@@ -134,7 +134,7 @@ function SpellList({ userId, campaignId, sheet, state, actions, q, focusSpell })
     <div className="table-spells">
       {levels.map(([level, spells]) => (
         <section key={level ?? 'unknown'} className="table-spell-level" aria-label={level === 0 ? 'Cantrips' : `${levelLabel(level)} level`}>
-          <h4 className="rubric">{level === 0 ? 'Cantrips' : level == null ? 'Level not on the sheet' : `${ordinal(level)} level`}</h4>
+          <h3 className="rubric">{level === 0 ? 'Cantrips' : level == null ? 'Level not on the sheet' : `${ordinal(level)} level`}</h3>
           <ul className="table-cards">
             {spells.map((s) => (
               <Spell
