@@ -2,9 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// Theme colours are the app's base tokens (--m-bg in global.css). The
-// per-campaign palettes are applied at runtime and can't reach the manifest.
-const INK = '#1c1a17'
+// Theme colours are night vellum in gold ink (--m-bg in tokens.css, from
+// inkTokens(gold, 'night')). The per-campaign inks are applied at runtime
+// and can't reach the manifest.
+const INK = '#110e09'
 
 export default defineConfig({
   plugins: [
@@ -24,7 +25,7 @@ export default defineConfig({
         orientation: 'any',
         theme_color: INK,
         background_color: INK,
-        // Placeholders; the redesign replaces them.
+        // A blackletter M in gold leaf on the gold ink's field (iconField).
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
