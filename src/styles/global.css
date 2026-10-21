@@ -2485,6 +2485,148 @@ select:focus {
 }
 
 /* ============================================ */
+/* Search palette (Ctrl/Cmd+K)                   */
+/* ============================================ */
+
+.search-backdrop {
+  align-items: flex-start;
+  padding-top: min(10vh, 80px);
+}
+
+.search {
+  width: min(680px, calc(100vw - 32px));
+  max-height: min(80dvh, 720px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--m-panel);
+  border: 1px solid var(--m-line-2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.search-head {
+  display: flex;
+  gap: 8px;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  font-size: 18px;
+  padding: 0 12px;
+}
+
+.search-scope {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.search-results {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 60px;
+}
+
+.search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-height: 48px;
+  padding: 6px 10px;
+  text-align: left;
+  border-radius: var(--radius);
+}
+
+.search-result.is-active {
+  background: var(--m-card-hi);
+}
+
+.search-result-title {
+  color: var(--m-text);
+}
+
+.search-result-sub {
+  font-size: 12px;
+  color: var(--m-text-4);
+  font-style: italic;
+}
+
+.search-result-text {
+  font-size: 14px;
+  color: var(--m-text-3);
+}
+
+.sidebar-search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0 12px 8px;
+  padding: 0 12px;
+  color: var(--m-text-4);
+  border: 1px solid var(--m-line-2);
+  border-radius: var(--radius);
+}
+
+.sidebar-search:hover {
+  color: var(--m-text-2);
+  border-color: var(--m-line-3);
+}
+
+.sidebar-search-kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* No keyboard shortcut hint on touch-only screens. */
+@media (hover: none) {
+  .sidebar-search-kbd {
+    display: none;
+  }
+}
+
+/* ============================================ */
+/* "New version" prompt (service worker)         */
+/* ============================================ */
+
+.update-prompt {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 32px);
+  padding: 10px 14px;
+  background: var(--m-panel);
+  border: 1px solid var(--m-accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--m-text-2);
+}
+
+.update-prompt button {
+  min-height: 40px;
+}
+
+/* ============================================ */
 /* Responsive — rails become drawers             */
 /* ============================================ */
 

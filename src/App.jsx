@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth, googleProvider } from './firebase'
 import Layout from './components/Layout'
 import SignIn from './components/SignIn'
 import Toasts from './components/Toasts'
 import TableView from './components/TableView'
+import SearchPalette from './components/SearchPalette'
+import UpdatePrompt from './components/UpdatePrompt'
+import { signInWithGoogle, finishRedirectSignIn } from './lib/signIn'
 import { toast } from './lib/toast'
 
 export default function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  // Coming back from a redirect sign-in: report it if it failed.
+  useEffect(() => {
+    finishRedirectSignIn(auth).catch((err) => {
+      console.error('Redirect sign-in error:', err)
+      toast('Sign-in failed — try again.')
+    })
+  }, [])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -22,7 +33,7 @@ export default function App() {
 
   const handleSignIn = async () => {
     try {
-      await signInWithPopup(auth, googleProvider)
+      await signInWithGoogle(auth, googleProvider)
     } catch (err) {
       console.error('Sign-in error:', err)
       toast('Sign-in failed — try again.')
@@ -53,6 +64,8 @@ export default function App() {
   return (
     <>
       <Toasts />
+      <UpdatePrompt />
+      {user && <SearchPalette userId={user.uid} />}
       {!user ? (
         <SignIn onSignIn={handleSignIn} />
       ) : (

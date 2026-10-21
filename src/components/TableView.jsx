@@ -13,6 +13,7 @@ import { usePlayState } from '../lib/usePlayState'
 import { useSessionLog } from '../lib/useSessionLog'
 import { useWakeLock } from '../lib/useWakeLock'
 import { toast } from '../lib/toast'
+import { openSearch } from '../lib/searchBus'
 import TableTrackers from './TableTrackers'
 import TableReference from './TableReference'
 import LiveLog from './LiveLog'
@@ -137,6 +138,7 @@ export default function TableView({ user }) {
           {live ? <><span className="table-badge">live</span> {live.title}</> : 'not playing yet'}
         </span>
         <span className="table-bar-actions">
+          <button className="table-btn" onClick={openSearch}>Search</button>
           {campaign.ddbUrl && (
             <a className="table-btn" href={campaign.ddbUrl} target="_blank" rel="noreferrer">
               D&amp;D Beyond ↗

@@ -11,7 +11,9 @@ import {
 
 const firebaseConfig = {
   apiKey: "AIzaSyC92ZZvnXtrPs--bAKy_wOAcOP_Lj6zLGk",
-  authDomain: "marginalia-696c6.firebaseapp.com",
+  // Override with the app's own domain (Vercel proxies /__/auth/* there) so
+  // redirect sign-in survives third-party-storage blocking. Unset = Firebase's.
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "marginalia-696c6.firebaseapp.com",
   projectId: "marginalia-696c6",
   storageBucket: "marginalia-696c6.firebasestorage.app",
   messagingSenderId: "423222422415",

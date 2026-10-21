@@ -155,7 +155,9 @@ distinct item name, and only when no entity of any type already has that name
 
 - **Sharing**: if/when sharing is added, sessions can get a `sharedToken` field that grants
   read access via a public URL. Don't build until needed.
-- **Search**: Firestore full-text search is bad. If search becomes important, either use
-  Algolia or do client-side fuzzy search (small enough dataset, should work fine).
+- **Search**: done client-side with MiniSearch (`src/lib/search.js`), nothing stored. The
+  index is built on first open from live listeners on the campaigns in scope and rebuilt
+  when their data changes. Exact and prefix matches win; fuzzy matching (two edits for
+  terms of 5+ letters) only kicks in when they find nothing.
 - **Offline**: enabled (`persistentLocalCache` in `src/firebase.js`). Table-view writes are
   fired without awaiting, so they queue offline instead of blocking.
