@@ -90,11 +90,13 @@
 
 /* ---------- The body ---------- */
 
+/* The log's lines are short; the sheet's spell notes are not, so the sheet
+   gets the wider share. */
 .table-body {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(620px, 54%) minmax(0, 1fr);
+  grid-template-columns: minmax(620px, 3fr) minmax(380px, 2fr);
   gap: 12px;
   padding: 12px;
 }
@@ -788,14 +790,28 @@
   color: var(--m-text-2);
 }
 
+/* Closed, the note is a three-line reminder; open the card for all of it. */
 .table-spell-note {
-  margin-top: 3px;
-  padding-top: 4px;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin: 0 11px 9px;
+  padding-top: 6px;
   border-top: 1px solid var(--m-line-2);
   font-size: var(--t-meta);
   font-style: italic;
-  line-height: 1.3;
+  line-height: 1.4;
+  color: var(--m-text-2);
   text-wrap: pretty;
+  cursor: pointer;
+}
+
+.table-spell-note-input {
+  overflow: hidden;
+  font-size: var(--t-body);
+  line-height: 1.4;
+  resize: none;
 }
 
 .table-spell-cast {
@@ -831,15 +847,14 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 0 11px 11px;
+  padding: 8px 11px 11px;
+  border-top: 1px solid var(--m-line-2);
 }
 
 .table-spell-facts {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 6px 12px;
-  padding-top: 8px;
-  border-top: 1px solid var(--m-line-2);
 }
 
 .table-spell-facts dt {
@@ -849,6 +864,7 @@
 
 .table-spell-facts dd {
   font-size: var(--t-meta);
+  line-height: 1.3;
 }
 
 .table-skill-legend {
@@ -1204,9 +1220,11 @@
 
 /* Portrait, and anything under 1100 px: the log goes under the sheet. */
 @media (max-width: 1099px), (orientation: portrait) {
+  /* Height goes to the sheet, as width does on its side: the spell column
+     is narrow here, and the log needs only its newest lines in view. */
   .table-body {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1.4fr) minmax(320px, 1fr);
+    grid-template-rows: minmax(0, 2fr) minmax(320px, 1fr);
   }
 
   .table-body--no-sheet {

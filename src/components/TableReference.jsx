@@ -2,7 +2,7 @@
 // Features / Items / Attacks. Spell and item text is only ever what the PDF
 // had or what I typed — row metadata, feature text, my notes; never rules
 // text.
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { getSpellNotes, setSpellNote } from '../lib/characterSheet'
 import { stripHtml } from '../lib/text'
 import { toast } from '../lib/toast'
@@ -159,6 +159,16 @@ function Spell({ spell: s, state, actions, isOpen, onToggle, note, onSaveNote })
   const [draft, setDraft] = useState(note)
   useEffect(() => setDraft(note), [note])
 
+  // The note box grows with what's written, so a long note reads whole
+  // instead of scrolling inside two rows.
+  const noteRef = useRef(null)
+  useLayoutEffect(() => {
+    const el = noteRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight + el.offsetHeight - el.clientHeight}px`
+  }, [draft, isOpen])
+
   const free = state.resources.find((r) => r.id === `${s.key}-free-cast`)
   const castable = s.level === 0 ? [] : state.slots.filter((x) => x.level >= s.level && x.left > 0)
   const cast = (extra) => actions.castSpell({ name: s.name, level: s.level, concentration: s.concentration, ...extra })
@@ -174,7 +184,6 @@ function Spell({ spell: s, state, actions, isOpen, onToggle, note, onSaveNote })
           </span>
           <span className="table-card-line">{joinDot(s.castingTime, s.range, s.duration)}</span>
           <span className="table-card-line">{joinDot(s.components, s.saveHit, s.sources.join(', '))}</span>
-          {note && !isOpen && <span className="table-spell-note">{note}</span>}
         </button>
         <span className="table-spell-cast">
           <span className="table-spell-level-label">{levelLabel(s.level)}</span>
@@ -209,8 +218,26 @@ function Spell({ spell: s, state, actions, isOpen, onToggle, note, onSaveNote })
           </span>
         </span>
       </div>
+      {/* Under the head rather than in it, so the note gets the card's full
+          width instead of what the cast buttons leave. The toggle above is
+          the keyboard route; this is a bigger target for the mouse. */}
+      {note && !isOpen && (
+        <p className="table-spell-note" onClick={onToggle}>{note}</p>
+      )}
       {isOpen && (
         <div className="table-spell-body">
+          <label className="field">
+            <span className="field-label">My note</span>
+            <textarea
+              ref={noteRef}
+              className="input-hand table-spell-note-input"
+              rows={2}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onBlur={() => onSaveNote(draft)}
+              placeholder="what it does, in your words — the sheet has no description"
+            />
+          </label>
           <dl className="table-spell-facts">
             {[
               ['Time', s.castingTime],
@@ -230,17 +257,6 @@ function Spell({ spell: s, state, actions, isOpen, onToggle, note, onSaveNote })
                 </div>
               ))}
           </dl>
-          <label className="field">
-            <span className="field-label">My note</span>
-            <textarea
-              className="input-hand"
-              rows={2}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onBlur={() => onSaveNote(draft)}
-              placeholder="what it does, in your words — the sheet has no description"
-            />
-          </label>
         </div>
       )}
     </li>
