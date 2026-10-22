@@ -1220,9 +1220,11 @@
 
 /* Portrait, and anything under 1100 px: the log goes under the sheet. */
 @media (max-width: 1099px), (orientation: portrait) {
+  /* Height goes to the sheet, as width does on its side: the spell column
+     is narrow here, and the log needs only its newest lines in view. */
   .table-body {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1.4fr) minmax(320px, 1fr);
+    grid-template-rows: minmax(0, 2fr) minmax(320px, 1fr);
   }
 
   .table-body--no-sheet {
