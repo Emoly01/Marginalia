@@ -1,11 +1,10 @@
 // Questions: everything I've wondered about in a campaign, fished out of
 // the log, the recaps, the codex and the margins, so it stops drowning in
 // the notes around it. Open ones first; answered ones keep their answer.
-import { useState, useEffect, useMemo, useRef } from 'react'
-import { subscribeCampaignLog } from '../lib/log'
-import { listAllMargins } from '../lib/margins'
-import { subscribeQuestionMarks, markQuestion, reopenQuestion } from '../lib/questionMarks'
-import { collectQuestions, sortByStatus, sourceLabel } from '../lib/questions'
+import { useState, useEffect, useRef } from 'react'
+import { markQuestion, reopenQuestion } from '../lib/questionMarks'
+import { sourceLabel } from '../lib/questions'
+import { useQuestions } from '../lib/useQuestions'
 import { toast } from '../lib/toast'
 import { Drollery, Mark } from './ornament'
 import MentionText from './MentionText'
@@ -17,24 +16,8 @@ const VIEWS = [
 ]
 
 export default function QuestionsView({ userId, campaignId, sessions, entities, onOpenSession, onOpenEntity }) {
-  const [log, setLog] = useState([])
-  const [margins, setMargins] = useState([])
-  const [marks, setMarks] = useState({})
   const [view, setView] = useState('open')
-
-  useEffect(() => {
-    const fail = (what) => (err) => console.error(`Questions could not read ${what}:`, err)
-    const unLog = subscribeCampaignLog(userId, campaignId, setLog, fail('the log'))
-    const unMarks = subscribeQuestionMarks(userId, campaignId, setMarks, fail('answered questions'))
-    listAllMargins(userId, campaignId).then(setMargins).catch(fail('the margins'))
-    return () => {
-      unLog()
-      unMarks()
-    }
-  }, [userId, campaignId])
-
-  const questions = useMemo(() => collectQuestions({ sessions, log, entities, margins }), [sessions, log, entities, margins])
-  const groups = useMemo(() => sortByStatus(questions, marks), [questions, marks])
+  const { questions, groups } = useQuestions(userId, campaignId, sessions, entities)
   const list = groups[view]
 
   const act = (promise, failure) =>
