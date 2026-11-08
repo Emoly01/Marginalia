@@ -30,6 +30,7 @@ const SEARCH_SHORTCUT = /Mac|iPhone|iPad/.test(navigator.platform || navigator.u
 const SECTIONS = [
   { tab: 'home', label: 'Home' },
   { tab: 'entities', label: 'Codex' },
+  { tab: 'questions', label: 'Questions' },
   { tab: 'character', label: 'Dossier' },
   { tab: 'sheet', label: 'Sheet' },
 ]

@@ -115,6 +115,9 @@ redirect URI breaks the popup too.
 - Search ✅ — Ctrl/Cmd+K (or the Search buttons), prefix + forgiving fuzzy matching across
   sessions, entities, margins, log, dossier and sheet
 - Installable app ✅ — manifest, offline app shell, update prompt, popup → redirect sign-in
+- Questions ✅ — a campaign tab collecting every question from the log, recaps, codex and
+  margins (any sentence ending in `?`, or a `?:` line), with the line before it for
+  context; mark one answered (with the answer) or set it aside
 
 **Next — redesign phases 2–3**
 - The illuminated-manuscript look on top of the plumbing (logic lives in `src/lib/` + hooks)

@@ -119,6 +119,17 @@
   - archived          // true once used or tossed in Inking
   - createdAt
   - fromLog           // log entryId, when "Keep for later" moved a log line here
+
+/users/{userId}/campaigns/{campaignId}/questions/{questionId}
+  // What I decided about a question on the Questions page. The questions
+  // themselves are never stored: they are found in the log, session prose,
+  // entity notes and margins each time (src/lib/questions.js). A question
+  // with no doc here is open. questionId = questionId(questionKey(text)).
+  - status            // "answered" | "aside" (not really a question)
+  - answer            // optional one line, for "answered"
+  - key               // the normalised question text the id was made from
+  - text              // the wording when it was marked, for reference
+  - markedAt
 ```
 
 Entities created by a sheet import carry `source: "sheet"`. One is created per
@@ -152,6 +163,11 @@ distinct item name, and only when no entity of any type already has that name
 - **The log is campaign-level, not per session** — one single-field query per session,
   and deleting a session deletes its entries (`deleteSession`); `log` is in the campaign
   delete cascade too.
+- **Questions are found, not filed** — the Questions page reads every
+  sentence ending in "?" (and every `?:` line or mystery-marked log line) out of
+  what is already written, so nothing has to be typed twice or kept in sync.
+  Only the verdict is stored, keyed by a hash of the normalised text; edit a
+  question's wording and it comes back open, which is the honest outcome.
 - **Character is a singleton doc** — one PC per campaign for v1. Can extend to multi-PC
   campaigns later if Emily ever runs a duo character.
 - **A campaign stores a palette, not a colour** — `palette` names one of ten accent
