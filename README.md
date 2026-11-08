@@ -118,7 +118,8 @@ redirect URI breaks the popup too.
 - Questions ✅ — a campaign tab collecting every question from the log, recaps, codex and
   margins (any sentence ending in `?`, or a `?:` line), with the line before it for
   context; mark one answered (with the answer) or set it aside. Every open one is listed
-  in "Previously on…" before play
+  in "Previously on…" before play, and the live log's Questions tab shows them during play; an answer given
+  there is written into that session's recap
 
 **Next — redesign phases 2–3**
 - The illuminated-manuscript look on top of the plumbing (logic lives in `src/lib/` + hooks)

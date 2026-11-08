@@ -11,11 +11,15 @@
 //   - a log line with a question in it, whole.
 // Not counted: quotes (blockquotes in prose, quote-marked log lines — an
 // NPC asking is not me asking), headings (Inking's recall prompts are
-// questions to me, not mine), tracker lines, and log lines that were
-// tossed or moved to the Margins in Inking.
+// questions to me, not mine), tracker lines, log lines that were tossed or
+// moved to the Margins in Inking, and anything starting "Answered:" — the
+// line the table writes into the recap when a question is answered (and a
+// handy way to write one down by hand).
 //
 // The same question written twice — in the log and again in the recap,
 // or in two sessions — is one question with every place it was asked.
+
+import { inlineHtml } from './inking'
 
 const BLOCK = /<(p|li|blockquote|h[1-6])\b[^>]*>|<\/(p|li|blockquote|h[1-6])>/gi
 
@@ -62,6 +66,8 @@ export function questionId(key) {
   return `q${fnv(0x811c9dc5)}${fnv(0x01000193)}`
 }
 
+const ANSWERED = /^\s*answered\s*[:—–-]/i
+
 const words = (s) => (String(s).match(/[\p{L}\p{N}]+/gu) ?? []).length
 
 const CONTEXT_LENGTH = 140
@@ -88,7 +94,7 @@ function contextBefore(sentences, i) {
  */
 export function findQuestions(text) {
   const s = String(text ?? '').replace(/\s+/g, ' ').trim()
-  if (!s) return []
+  if (!s || ANSWERED.test(s)) return []
   if (/^\?:/.test(s)) {
     const rest = s.slice(2).trim()
     return rest ? [{ text: rest, context: '' }] : []
@@ -271,3 +277,17 @@ export function sourceLabel(src) {
   if (src.sessionNumber != null) return `Session ${src.sessionNumber}`
   return src.sessionTitle || 'A session'
 }
+
+/**
+ * The paragraph the table appends to the live session's recap when a
+ * question is answered: "Answered: Who rang the bell? — Mara has the key."
+ * Starts with "Answered:", so it is never read back as a new question.
+ * @-names in either half become real mentions.
+ */
+export function answerFragment(question, answer, entities = []) {
+  const q = String(question?.text ?? '').replace(/^\s*\?:\s*/, '').trim()
+  const a = String(answer ?? '').trim()
+  if (!q) return ''
+  return `<p><strong>Answered:</strong> <em>${inlineHtml(q, entities)}</em>${a ? ` — ${inlineHtml(a, entities)}` : ''}</p>`
+}
+

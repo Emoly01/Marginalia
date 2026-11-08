@@ -5,6 +5,7 @@
 // wrote it, and this only remembers the verdict.
 import { collection, doc, setDoc, deleteDoc, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase'
+import { toast } from './toast'
 
 const marksRef = (userId, campaignId) => collection(db, 'users', userId, 'campaigns', campaignId, 'questions')
 
@@ -31,4 +32,21 @@ export function markQuestion(userId, campaignId, question, { status, answer = ''
 /** Back to open. */
 export function reopenQuestion(userId, campaignId, questionId) {
   return deleteDoc(doc(marksRef(userId, campaignId), questionId))
+}
+
+/**
+ * The three things a question row can do, bound to a campaign, each
+ * reporting its own failure. Writes are queued offline, never awaited.
+ */
+export function questionActions(userId, campaignId) {
+  const act = (promise, failure) =>
+    Promise.resolve(promise).catch((err) => {
+      console.error(failure, err)
+      toast(failure)
+    })
+  return {
+    answer: (q, answer) => act(markQuestion(userId, campaignId, q, { status: 'answered', answer }), 'Could not mark that answered.'),
+    setAside: (q) => act(markQuestion(userId, campaignId, q, { status: 'aside' }), 'Could not set that aside.'),
+    reopen: (q) => act(reopenQuestion(userId, campaignId, q.id), 'Could not reopen that question.'),
+  }
 }

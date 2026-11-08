@@ -168,6 +168,10 @@ distinct item name, and only when no entity of any type already has that name
   what is already written, so nothing has to be typed twice or kept in sync.
   Only the verdict is stored, keyed by a hash of the normalised text; edit a
   question's wording and it comes back open, which is the honest outcome.
+  A question answered at the table during a live session also appends
+  `<p><strong>Answered:</strong> <em>question</em> — answer</p>` to that session's
+  `content`, so the answer is in the recap. Paragraphs starting "Answered:" are
+  never read as questions, so the line doesn't come back as a new one.
 - **Character is a singleton doc** — one PC per campaign for v1. Can extend to multi-PC
   campaigns later if Emily ever runs a duo character.
 - **A campaign stores a palette, not a colour** — `palette` names one of ten accent
