@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { questionKey, questionId, questionSentences, findQuestions, questionsInHtml, collectQuestions, sortByStatus, sourceLabel } from './questions'
+import { questionKey, questionId, questionSentences, findQuestions, questionsInHtml, collectQuestions, sortByStatus, sourceLabel, answerFragment } from './questions'
 
 describe('questionSentences', () => {
   it('picks out the sentences ending in a question mark', () => {
@@ -150,5 +150,34 @@ describe('sortByStatus / sourceLabel', () => {
     expect(sourceLabel({ kind: 'log', sessionTitle: 'Untitled' })).toBe('Untitled')
     expect(sourceLabel({ kind: 'entity', entityName: 'Gnarl' })).toBe('Gnarl')
     expect(sourceLabel({ kind: 'margin' })).toBe('Margins')
+  })
+})
+
+describe('answerFragment', () => {
+  const gnarl = { id: 'e1', name: 'Gnarl' }
+
+  it('writes the question and answer as one recap paragraph, with mentions', () => {
+    expect(answerFragment({ text: 'What is @Gnarl hiding?' }, 'Stolen bells <old ones>', [gnarl])).toBe(
+      '<p><strong>Answered:</strong> <em>What is <span data-type="mention" data-id="e1" data-label="Gnarl" class="marginalia-mention">@Gnarl</span> hiding?</em> — Stolen bells &lt;old ones&gt;</p>'
+    )
+  })
+
+  it('leaves the answer off when there is none, and drops a ?: prefix', () => {
+    expect(answerFragment({ text: '?: the locked chapel' }, '  ')).toBe('<p><strong>Answered:</strong> <em>the locked chapel</em></p>')
+    expect(answerFragment({ text: '' }, 'x')).toBe('')
+  })
+
+  it('is never read back as a new question', () => {
+    const recap = answerFragment({ text: 'Gnarl paid in old crowns. Where would he even get those?' }, 'A drowned vault?')
+    expect(questionsInHtml(recap)).toEqual([])
+    const qs = collectQuestions({
+      sessions: [{ id: 's5', sessionNumber: 5, content: `<p>We went back.</p>${recap}` }],
+      log: [{ id: 'l1', sessionId: 's3', mark: 'note', text: 'Gnarl paid in old crowns. Where would he even get those?' }],
+    })
+    expect(qs.map((q) => q.text)).toEqual(['Gnarl paid in old crowns. Where would he even get those?'])
+  })
+
+  it('skips hand-written "Answered:" lines too', () => {
+    expect(findQuestions('Answered — who rang the bell? Mara.')).toEqual([])
   })
 })

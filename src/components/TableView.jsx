@@ -6,7 +6,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { getCampaign } from '../lib/campaigns'
 import { listEntities } from '../lib/entities'
-import { subscribeSessions, startSession, endSession } from '../lib/sessions'
+import { subscribeSessions, startSession, endSession, updateSession } from '../lib/sessions'
 import { findLiveSession, findPreviousSession, sessionDuration, formatClock } from '../lib/sessionStatus'
 import { paletteFor } from '../lib/palette'
 import { useInk } from '../lib/useInk'
@@ -15,6 +15,8 @@ import { useSessionLog } from '../lib/useSessionLog'
 import { useWakeLock } from '../lib/useWakeLock'
 import { useQuestions } from '../lib/useQuestions'
 import { questionActions } from '../lib/questionMarks'
+import { answerFragment } from '../lib/questions'
+import { appendHtml } from '../lib/inking'
 import { toast } from '../lib/toast'
 import { openSearch } from '../lib/searchBus'
 import TableTrackers, { TableSummary, Rests } from './TableTrackers'
@@ -82,7 +84,23 @@ export default function TableView({ user }) {
   const addEntity = useCallback((e) => setEntities((list) => [...list, e]), [])
   const log = useSessionLog(userId, campaignId, live?.id, { entities, onEntityCreated: addEntity })
   const { groups: questions } = useQuestions(userId, campaignId, sessions, entities)
-  const askActions = useMemo(() => questionActions(userId, campaignId), [userId, campaignId])
+  const baseAsk = useMemo(() => questionActions(userId, campaignId), [userId, campaignId])
+  // Answered at the table → also a line in tonight's recap. `live.content`
+  // comes from the sessions listener, which reflects our own writes at
+  // once (offline too), so two quick answers both land.
+  const askActions = {
+    ...baseAsk,
+    answer: (q, answer) => {
+      baseAsk.answer(q, answer)
+      const fragment = live ? answerFragment(q, answer, entities) : ''
+      if (!fragment) return
+      updateSession(userId, campaignId, live.id, { content: appendHtml(live.content, fragment) }).catch((err) => {
+        console.error('Could not add the answer to the recap:', err)
+        toast('Answered — but it could not be added to the recap.')
+      })
+      toast('Answered · added to tonight’s recap', 'info')
+    },
+  }
 
   const capture = (input, mark) => {
     const parsed = log.capture(input, mark)
