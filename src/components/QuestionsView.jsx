@@ -1,11 +1,10 @@
 // Questions: everything I've wondered about in a campaign, fished out of
 // the log, the recaps, the codex and the margins, so it stops drowning in
 // the notes around it. Open ones first; answered ones keep their answer.
-import { useState, useEffect, useRef } from 'react'
-import { markQuestion, reopenQuestion } from '../lib/questionMarks'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { questionActions } from '../lib/questionMarks'
 import { sourceLabel } from '../lib/questions'
 import { useQuestions } from '../lib/useQuestions'
-import { toast } from '../lib/toast'
 import { Drollery, Mark } from './ornament'
 import MentionText from './MentionText'
 
@@ -20,15 +19,7 @@ export default function QuestionsView({ userId, campaignId, sessions, entities, 
   const { questions, groups } = useQuestions(userId, campaignId, sessions, entities)
   const list = groups[view]
 
-  const act = (promise, failure) =>
-    Promise.resolve(promise).catch((err) => {
-      console.error(failure, err)
-      toast(failure)
-    })
-
-  const answer = (q, text) => act(markQuestion(userId, campaignId, q, { status: 'answered', answer: text }), 'Could not mark that answered.')
-  const setAside = (q) => act(markQuestion(userId, campaignId, q, { status: 'aside' }), 'Could not set that aside.')
-  const reopen = (q) => act(reopenQuestion(userId, campaignId, q.id), 'Could not reopen that question.')
+  const { answer, setAside, reopen } = useMemo(() => questionActions(userId, campaignId), [userId, campaignId])
 
   return (
     <div className="page-wide">
@@ -80,7 +71,12 @@ export default function QuestionsView({ userId, campaignId, sessions, entities, 
   )
 }
 
-function QuestionRow({ question: q, entities, onOpenSession, onOpenEntity, onAnswer, onAside, onReopen }) {
+/**
+ * One question, with its answer controls. `compact` is the table's version:
+ * smaller, and where it was asked is a label rather than a link, so a tap
+ * mid-session never leaves the table.
+ */
+export function QuestionRow({ question: q, entities, compact = false, onOpenSession, onOpenEntity, onAnswer, onAside, onReopen }) {
   const [answering, setAnswering] = useState(false)
   const [draft, setDraft] = useState('')
   const inputRef = useRef(null)
@@ -98,9 +94,9 @@ function QuestionRow({ question: q, entities, onOpenSession, onOpenEntity, onAns
   }
 
   return (
-    <li className={`question-row question-row--${status}`}>
+    <li className={`question-row question-row--${status}${compact ? ' question-row--compact' : ''}`}>
       <span className="question-mark" aria-hidden="true">
-        <Mark type="mystery" size={22} title="" />
+        <Mark type="mystery" size={compact ? 20 : 22} title="" />
       </span>
       <div className="question-main">
         {q.context && <p className="question-context">{q.context}</p>}
@@ -111,7 +107,7 @@ function QuestionRow({ question: q, entities, onOpenSession, onOpenEntity, onAns
         <p className="question-where">
           {q.sources.map((s, i) => {
             const label = sourceLabel(s)
-            const go = s.kind === 'entity' ? () => onOpenEntity(s.entityId) : s.sessionId ? () => onOpenSession(s.sessionId) : null
+            const go = compact ? null : s.kind === 'entity' ? () => onOpenEntity(s.entityId) : s.sessionId ? () => onOpenSession(s.sessionId) : null
             return (
               <span key={`${s.kind}:${s.sessionId ?? s.entityId ?? s.marginId}:${i}`} className="question-where-item">
                 {go ? <button className="btn-link" onClick={go}>{label}</button> : label}

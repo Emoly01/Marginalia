@@ -13,6 +13,8 @@ import { useInk } from '../lib/useInk'
 import { usePlayState } from '../lib/usePlayState'
 import { useSessionLog } from '../lib/useSessionLog'
 import { useWakeLock } from '../lib/useWakeLock'
+import { useQuestions } from '../lib/useQuestions'
+import { questionActions } from '../lib/questionMarks'
 import { toast } from '../lib/toast'
 import { openSearch } from '../lib/searchBus'
 import TableTrackers, { TableSummary, Rests } from './TableTrackers'
@@ -79,6 +81,8 @@ export default function TableView({ user }) {
   const { loading: playLoading, sheet, state, actions } = usePlayState(userId, campaignId, { liveSessionId: live?.id })
   const addEntity = useCallback((e) => setEntities((list) => [...list, e]), [])
   const log = useSessionLog(userId, campaignId, live?.id, { entities, onEntityCreated: addEntity })
+  const { groups: questions } = useQuestions(userId, campaignId, sessions, entities)
+  const askActions = useMemo(() => questionActions(userId, campaignId), [userId, campaignId])
 
   const capture = (input, mark) => {
     const parsed = log.capture(input, mark)
@@ -210,13 +214,14 @@ export default function TableView({ user }) {
               onCapture={capture}
               onRemove={log.remove}
               onOpenEntity={openEntity}
+              questions={questions.open}
+              questionActions={askActions}
             />
           ) : (
             <PreviouslyOn
-              userId={userId}
               campaignId={campaignId}
               previous={previous}
-              sessions={sessions}
+              openQuestions={questions.open}
               entities={entities}
               threads={threads}
               onOpenEntity={openEntity}

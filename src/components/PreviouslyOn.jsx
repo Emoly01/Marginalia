@@ -5,14 +5,11 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { excerptFrom } from '../lib/text'
 import { sourceLabel } from '../lib/questions'
-import { useQuestions } from '../lib/useQuestions'
 import { Mark } from './ornament'
 import MentionText from './MentionText'
 
-export default function PreviouslyOn({ userId, campaignId, previous, sessions, entities, threads, characterName, onStart, starting, onOpenEntity }) {
+export default function PreviouslyOn({ campaignId, previous, openQuestions: open, entities, threads, characterName, onStart, starting, onOpenEntity }) {
   const [intention, setIntention] = useState('')
-  const { groups } = useQuestions(userId, campaignId, sessions, entities)
-  const open = groups.open
 
   const recap = previous ? excerptFrom(previous.content, 320) : ''
 

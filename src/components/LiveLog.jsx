@@ -1,28 +1,33 @@
 // Table view, right side while a session is live: the log in the margin
-// hand, newest at the bottom, and the capture line pinned under it.
+// hand, newest at the bottom, and the capture line pinned under it. The
+// head flips the list to the campaign's open questions — one tap, no
+// scrolling back through the log — with the capture line still there, so a
+// new `?:` line lands in the list as it is typed.
 import { useState, useEffect, useRef } from 'react'
 import { CAPTURE_MARKS } from '../lib/capture'
 import { MARK_LABELS } from '../lib/marks'
 import { toDate } from '../lib/sessionStatus'
 import { Mark } from './ornament'
 import MentionText from './MentionText'
+import { QuestionRow } from './QuestionsView'
 
 const time = (ms) => {
   const d = toDate(ms)
   return d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
 }
 
-export default function LiveLog({ session, entries, entities, onCapture, onRemove, onOpenEntity }) {
+export default function LiveLog({ session, entries, entities, onCapture, onRemove, onOpenEntity, questions = [], questionActions }) {
+  const [view, setView] = useState('log') // 'log' | 'questions'
   const [input, setInput] = useState('')
   const [mark, setMark] = useState('note')
   const listRef = useRef(null)
   const inputRef = useRef(null)
 
-  // Keep the newest line in view as entries arrive.
+  // Keep the newest line in view as entries arrive (and on flipping back).
   useEffect(() => {
     const el = listRef.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [entries.length])
+    if (el && view === 'log') el.scrollTop = el.scrollHeight
+  }, [entries.length, view])
 
   const submit = () => {
     if (onCapture(input, mark)) {
@@ -38,9 +43,18 @@ export default function LiveLog({ session, entries, entities, onCapture, onRemov
   return (
     <div className="table-log">
       <div className="table-log-head">
-        <h2 className="rubric">Log</h2>
+        <div className="tabs tabs--start table-log-tabs" role="tablist" aria-label="Show">
+          <button role="tab" id="live-tab-log" aria-selected={view === 'log'} aria-controls="live-panel" className="tab" onClick={() => setView('log')}>
+            Log
+          </button>
+          <button role="tab" id="live-tab-questions" aria-selected={view === 'questions'} aria-controls="live-panel" className="tab" onClick={() => setView('questions')}>
+            Questions <span className="toggle-count">{questions.length}</span>
+          </button>
+        </div>
         <span className="meta">
-          {entries.length === 0 ? 'nothing yet' : `${written} written · ${entries.length - written} from the sheet`}
+          {view === 'questions'
+            ? questions.length === 0 ? 'nothing open' : 'still open, newest first'
+            : entries.length === 0 ? 'nothing yet' : `${written} written · ${entries.length - written} from the sheet`}
         </span>
       </div>
       {session.intention && (
@@ -49,37 +63,57 @@ export default function LiveLog({ session, entries, entities, onCapture, onRemov
         </p>
       )}
 
-      <ol className="table-log-list" ref={listRef} aria-live="polite">
-        {entries.length === 0 && <li className="table-log-empty">Type below, or tap a tracker.</li>}
-        {entries.map((e) => {
-          const auto = e.auto || e.mark === 'auto'
-          const type = auto ? 'auto' : e.mark
-          return (
-            <li key={e.id} className="log-line">
-              <span className="log-time">{time(e.clientAt)}</span>
-              <span className={`log-mark log-mark--${type}`}>
-                <Mark type={type} size={20} title={MARK_LABELS[type]} />
-              </span>
-              <span className={`log-text${auto ? ' log-text--auto' : ''}${type === 'milestone' ? ' log-text--milestone' : ''}`}>
-                {auto ? (
-                  e.text
-                ) : e.entityId && onOpenEntity ? (
-                  <button className="mention-word" onClick={() => onOpenEntity(e.entityId)}>{e.text}</button>
-                ) : (
-                  <MentionText text={e.text} entities={entities} onOpenEntity={onOpenEntity} />
-                )}
-              </span>
-              <button
-                className="btn-icon btn-icon--bare table-log-remove"
-                onClick={() => confirm('Remove this line from the log?') && onRemove(e.id)}
-                aria-label={`Remove “${e.text}”`}
-              >
-                ×
-              </button>
-            </li>
-          )
-        })}
-      </ol>
+      {view === 'questions' ? (
+        <ol className="table-log-list table-questions" id="live-panel" role="tabpanel" aria-labelledby="live-tab-questions">
+          {questions.length === 0 && (
+            <li className="table-log-empty">No open questions. Start a line with ?: and it lands here.</li>
+          )}
+          {questions.map((q) => (
+            <QuestionRow
+              key={q.id}
+              question={q}
+              entities={entities}
+              compact
+              onOpenEntity={onOpenEntity}
+              onAnswer={(text) => questionActions?.answer(q, text)}
+              onAside={() => questionActions?.setAside(q)}
+              onReopen={() => questionActions?.reopen(q)}
+            />
+          ))}
+        </ol>
+      ) : (
+        <ol className="table-log-list" ref={listRef} id="live-panel" role="tabpanel" aria-labelledby="live-tab-log" aria-live="polite">
+          {entries.length === 0 && <li className="table-log-empty">Type below, or tap a tracker.</li>}
+          {entries.map((e) => {
+            const auto = e.auto || e.mark === 'auto'
+            const type = auto ? 'auto' : e.mark
+            return (
+              <li key={e.id} className="log-line">
+                <span className="log-time">{time(e.clientAt)}</span>
+                <span className={`log-mark log-mark--${type}`}>
+                  <Mark type={type} size={20} title={MARK_LABELS[type]} />
+                </span>
+                <span className={`log-text${auto ? ' log-text--auto' : ''}${type === 'milestone' ? ' log-text--milestone' : ''}`}>
+                  {auto ? (
+                    e.text
+                  ) : e.entityId && onOpenEntity ? (
+                    <button className="mention-word" onClick={() => onOpenEntity(e.entityId)}>{e.text}</button>
+                  ) : (
+                    <MentionText text={e.text} entities={entities} onOpenEntity={onOpenEntity} />
+                  )}
+                </span>
+                <button
+                  className="btn-icon btn-icon--bare table-log-remove"
+                  onClick={() => confirm('Remove this line from the log?') && onRemove(e.id)}
+                  aria-label={`Remove “${e.text}”`}
+                >
+                  ×
+                </button>
+              </li>
+            )
+          })}
+        </ol>
+      )}
 
       <form
         className="table-capture"
