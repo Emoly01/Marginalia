@@ -1183,6 +1183,37 @@
   color: var(--m-accent);
 }
 
+.table-previously-list--questions ul {
+  gap: 8px;
+}
+
+.table-previously-list-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.table-previously-more {
+  margin-left: auto;
+  font-size: var(--t-small);
+}
+
+.table-previously-question {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.table-previously-context,
+.table-previously-from {
+  font-size: var(--t-small);
+  color: var(--m-text-3);
+}
+
+.table-previously-from {
+  font-style: normal;
+}
+
 .table-start {
   flex: none;
   display: flex;

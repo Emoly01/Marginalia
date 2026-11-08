@@ -1,5 +1,6 @@
 // A campaign: its home (sessions, codex, dossier / sheet at a glance), and
-// the full pages behind each panel — the codex, the dossier, the sheet.
+// the full pages behind each panel — the codex, the questions, the dossier,
+// the sheet.
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { listSessions, createSession } from '../lib/sessions'
@@ -17,6 +18,7 @@ import { IlluminatedTitle, Drollery, Mark, Leaf } from './ornament'
 import CharacterDossier from './CharacterDossier'
 import EntitiesView from './EntitiesView'
 import SheetTab from './SheetTab'
+import QuestionsView from './QuestionsView'
 
 export default function CampaignDetail({
   userId,
@@ -79,6 +81,20 @@ export default function CampaignDetail({
           campaignId={campaign.id}
           campaignCharacterName={campaign.characterName}
           entities={entities}
+          onOpenEntity={onOpenEntity}
+        />
+      </div>
+    )
+  }
+  if (activeTab === 'questions') {
+    return (
+      <div className="page">
+        <QuestionsView
+          userId={userId}
+          campaignId={campaign.id}
+          sessions={sessions}
+          entities={entities}
+          onOpenSession={onOpenSession}
           onOpenEntity={onOpenEntity}
         />
       </div>

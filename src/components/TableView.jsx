@@ -216,7 +216,10 @@ export default function TableView({ user }) {
               userId={userId}
               campaignId={campaignId}
               previous={previous}
+              sessions={sessions}
+              entities={entities}
               threads={threads}
+              onOpenEntity={openEntity}
               characterName={sheet?.identity?.name || campaign.characterName}
               onStart={handleStart}
               starting={starting}
